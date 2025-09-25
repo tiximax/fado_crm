@@ -1,5 +1,41 @@
 # 🚀 FADO CRM - IMPLEMENTATION PLAN & ROADMAP
 
+---
+
+## 🔄 Phase: VNPay Return Signature & E2E Fix (2025-09-25)
+
+### Specify
+- Ngôn ngữ: Backend Python (FastAPI), Test E2E bằng Playwright (JS)
+- Mục tiêu: Sửa lỗi 500 khi gọi /payments/return và làm cho bài test E2E "simulate VNPay return" pass.
+- Ràng buộc:
+  - Chữ ký HMAC-SHA512 phải theo chuẩn VNPay: sort key tăng dần, URL encode kiểu quote_plus (space => +), loại trừ vnp_SecureHash/vnp_SecureHashType khi ký.
+  - Chỉ chạy test liên quan tính năng (không chạy toàn bộ suite).
+
+### Plan
+1) Xác định vị trí route /payments/return và helper ký VNPay trong backend.
+2) Tái hiện lỗi 500 và trích xuất log chi tiết để xác định nguyên nhân.
+3) Sửa lỗi trong backend; đảm bảo verify chữ ký chuẩn và không crash.
+4) Viết script PowerShell chuẩn để tạo chữ ký VNPay và gọi thử endpoint.
+5) Chạy lại test E2E đơn lẻ cho payments_return.
+6) Cập nhật agent.md với Specify/Plan/Tasks/Progress.
+
+### Tasks
+- [x] Tìm và đọc backend route /payments/return (backend/main.py) và helper (backend/integrations/payment/vnpay.py).
+- [x] Dò log lỗi trong backend/logs/errors_YYYY-MM-DD.log để tìm nguyên nhân 500.
+- [x] Sửa lỗi NameError: thiếu import PaymentStatus trong main.py.
+- [x] Tạo script PowerShell e2e/scripts/vnpay_return_test.ps1 để tạo HMAC và gọi thử.
+- [x] Gọi thử endpoint /payments/return với chữ ký đúng, xác nhận 200 OK và status=success.
+- [x] Chạy test E2E payments_return.spec.js bằng npm --prefix e2e run test -- --grep "simulate VNPay return".
+- [ ] (Optional) Bổ sung logging chi tiết trong route khi verify fail (hiện đã đủ qua middleware).
+
+### Progress
+- Đã sửa backend: thêm import PaymentStatus vào backend/main.py.
+- Đã xác thực chữ ký từ PowerShell: 200 OK, JSON trả về success với txn_ref đúng.
+- Test E2E đã PASS khi chạy đơn lẻ theo grep.
+- Khu vực rủi ro còn lại: môi trường Playwright runner khi chạy từ root cần dùng npm --prefix e2e (hoặc -c config) để chắc chắn load đúng config.
+
+---
+
 ## 📊 Hiện Trạng Dự Án (Current State Analysis)
 
 ### 🎯 **Codebase Overview**
