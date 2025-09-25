@@ -9,6 +9,7 @@ from sqlalchemy import func, and_, extract, or_, desc, asc, text
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 import uuid
+import os
 
 # Import các modules tự tạo - Đây là những đứa con tinh thần của chúng ta! 👨‍👩‍👧‍👦
 from database import get_db, create_tables
@@ -24,10 +25,15 @@ from auth import (
 
 # 📊 Import advanced analytics
 from analytics_service import get_analytics_data, get_business_insights
-from analytics import get_analytics_service
-from ai_recommendations import get_ai_recommendation_engine
-from advanced_export import get_advanced_export_service
-from performance_monitor import get_performance_monitor, PerformanceMiddleware
+# Optional advanced modules (non-blocking)
+try:
+    from analytics import get_analytics_service
+    from ai_recommendations import get_ai_recommendation_engine
+    from advanced_export import get_advanced_export_service
+    from performance_monitor import get_performance_monitor, PerformanceMiddleware
+    OPTIONAL_MODULES_AVAILABLE = True
+except Exception:
+    OPTIONAL_MODULES_AVAILABLE = False
 
 # 📁 Import file service
 from file_service import upload_product_image, upload_multiple_images, delete_product_image, file_service
@@ -95,8 +101,12 @@ app = FastAPI(
     redoc_url="/redoc"  # 📖 ReDoc
 )
 
-# 🔍 Add Performance Monitoring Middleware
-app.add_middleware(PerformanceMiddleware)
+# 🔍 Add Performance Monitoring Middleware (optional)
+try:
+    if OPTIONAL_MODULES_AVAILABLE:
+        app.add_middleware(PerformanceMiddleware)
+except Exception:
+    pass
 
 # 🍓 Optional GraphQL endpoint at /graphql
 try:
