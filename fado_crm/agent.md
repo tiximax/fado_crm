@@ -36,6 +36,21 @@
 
 ---
 
+## 🧹 Repo hygiene: E2E test & gitignore (2025-09-25)
+
+### Specify
+- Mục tiêu: Đưa bài test VNPay return vào repo và loại trừ file build/log/DB khỏi VCS.
+
+### Tasks
+- [x] Thêm e2e/tests/payments_return.spec.js vào repo.
+- [x] Tạo .gitignore để bỏ qua: *.pyc, __pycache__/, *.db, logs/, backend/logs/, uploads/, backend/uploads/, e2e/node_modules/.
+
+### Progress
+- Đã commit test E2E VNPay return.
+- Đã commit .gitignore mới, giảm ô nhiễm repo từ file tạm/log/DB.
+
+---
+
 ## 📊 Hiện Trạng Dự Án (Current State Analysis)
 
 ### 🎯 **Codebase Overview**
