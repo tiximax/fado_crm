@@ -258,6 +258,7 @@ async def vnpay_return(request: Request, db: Session = Depends(get_db)):
 
     return {"success": True, "message": "Payment processed", "txn_ref": txn_ref, "status": status.value}
 
+@rate_limit("30/minute")
 @app.post("/payments/webhook")
 async def vnpay_webhook(payload: Dict[str, Any], request: Request, db: Session = Depends(get_db)):
     # VNPay may send form or json; handle both

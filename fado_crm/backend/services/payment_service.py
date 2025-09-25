@@ -48,7 +48,10 @@ def update_status_by_ref(db: Session, gateway_ref: str, status: PaymentStatus) -
     txn = db.query(PaymentTransaction).filter(PaymentTransaction.gateway_reference == gateway_ref).first()
     if not txn:
         return None
-    # idempotent: if already final success/failed/refunded, do not downgrade
+    # idempotent: if already final success/refunded, do not change
+    if txn.status in (PaymentStatus.SUCCESS, PaymentStatus.REFUNDED):
+        return txn
+    # if equal, no-op
     if txn.status == status:
         return txn
     txn.status = status
