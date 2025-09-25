@@ -173,5 +173,26 @@ class SystemSetting(Base):
     description = Column(String(255))
     updated_at = Column(DateTime, default=datetime.utcnow)
 
+# 💳 Payment Status
+class PaymentStatus(enum.Enum):
+    PENDING = "pending"
+    SUCCESS = "success"
+    FAILED = "failed"
+    REFUNDED = "refunded"
+
+# 💳 Payment Transactions
+class PaymentTransaction(Base):
+    __tablename__ = "payment_transaction"
+
+    transaction_id = Column(String(64), primary_key=True)
+    don_hang_id = Column(Integer, ForeignKey("don_hang.id"), nullable=False)
+    payment_method = Column(String(50), nullable=False)
+    amount = Column(Float, nullable=False)
+    currency = Column(String(3), default="VND")
+    status = Column(Enum(PaymentStatus), default=PaymentStatus.PENDING)
+    gateway_reference = Column(String(255))
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow)
+
 # 🎯 Bùm! Xong phần models rồi!
 # Giờ có thể tạo database và chơi với dữ liệu như một pro! 🚀

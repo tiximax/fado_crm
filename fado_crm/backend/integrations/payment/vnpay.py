@@ -1,3 +1,41 @@
+import hmac
+import hashlib
+import urllib.parse
+from typing import Dict, Tuple, List
+
+# VNPay helpers: sign, build URL, verify
+
+EXCLUDED_FIELDS = {"vnp_SecureHash", "vnp_SecureHashType"}
+
+
+def _sorted_query_string(params: Dict[str, str]) -> str:
+    items = [(k, v) for k, v in params.items() if k not in EXCLUDED_FIELDS and v is not None]
+    items.sort(key=lambda kv: kv[0])
+    return "&".join(f"{k}={urllib.parse.quote_plus(str(v))}" for k, v in items)
+
+
+def sign_params(params: Dict[str, str], secret: str) -> str:
+    data = _sorted_query_string(params)
+    h = hmac.new(secret.encode("utf-8"), data.encode("utf-8"), hashlib.sha512)
+    return h.hexdigest()
+
+
+def build_payment_url(params: Dict[str, str], secret: str, pay_url: str) -> str:
+    secure_hash = sign_params(params, secret)
+    signed = dict(params)
+    signed["vnp_SecureHash"] = secure_hash
+    query = _sorted_query_string(signed)
+    # include vnp_SecureHash at the end as VNPay expects
+    if "vnp_SecureHash=" not in query:
+        query = f"{query}&vnp_SecureHash={urllib.parse.quote_plus(secure_hash)}"
+    return f"{pay_url}?{query}"
+
+
+def verify_signature(query_params: Dict[str, str], secret: str) -> bool:
+    provided = query_params.get("vnp_SecureHash", "").lower()
+    calculated = sign_params(query_params, secret).lower()
+    return provided == calculated
+
 # -*- coding: utf-8 -*-
 """
 VNPay Payment Gateway Integration

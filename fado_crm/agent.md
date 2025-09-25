@@ -893,6 +893,81 @@ NEXT
 
 ## 🗑️ SPECIFY / PLAN / TASKS - Delete Media
 
+---
+
+## 🚀 PHASE 6 – Enterprise Integration & Automation (SPECIFY / PLAN / TASKS)
+
+FEEDBACK (đánh giá & điều chỉnh nhẹ)
+- Giữ hướng tiếp cận tích hợp theo module trước, tránh microservices sớm: tách module integrations/ và services/ trong monolith FastAPI hiện tại. Khi lưu lượng tăng, mới cân nhắc tách service độc lập.
+- Đồng bộ naming DB với mô hình hiện có (KhachHang, DonHang...): thay vì orders/order_id → DonHang.id; tránh lẫn English/Vietnamese.
+- Bổ sung bắt buộc: idempotency + webhook signature verification (payments, shipping); retry-safe.
+- Secrets & môi trường: .env + biến môi trường cho sandbox/production; tuyệt đối không hardcode key.
+- Test-first cho các integration (mock/sandbox), log & audit đầy đủ; rate limit các webhook.
+
+IMPLEMENTATION ORDER (sprints đề xuất)
+1) Sprint 1 – Payment Foundation (VNPay) [2 tuần]
+2) Sprint 2 – Shipping (GHN) [1-2 tuần]
+3) Sprint 3 – Communication (Email/SMS/WhatsApp) [2-3 tuần]
+4) Sprint 4 – Security & Compliance (rate limit nâng cao, audit, GDPR tools) [2-3 tuần]
+5) Sprint 5 – Mobile Optimization & PWA [2 tuần]
+
+SPRINT 1 – Payment Foundation (VNPay)
+SPECIFY
+- Mục tiêu: Cho phép khách hàng thanh toán đơn hàng qua VNPay (sandbox), lưu transaction, xử lý webhook/return.
+- Phạm vi:
+  - Tạo payment session (redirect URL), xử lý return + webhook xác nhận.
+  - Trạng thái payment: pending, success, failed, refunded.
+  - Ghi log/audit + idempotency key theo transaction_id.
+- Ràng buộc:
+  - Không phá vỡ API cũ; chỉ thêm routes mới dưới /payments.
+  - Không commit secrets; dùng biến môi trường VNPAY_TMN_CODE, VNPAY_HASH_SECRET, VNPAY_RETURN_URL, VNPAY_PAYMENT_URL.
+
+PLAN
+- Kiến trúc file:
+  - backend/integrations/payment/vnpay.py (ký/verify, build URL, parse callback)
+  - backend/services/payment_service.py (nghiệp vụ: tạo tx, cập nhật trạng thái, idempotency)
+  - backend/schemas.py: PaymentCreate, PaymentReturn, PaymentWebhook, PaymentTransaction
+  - backend/main.py: routes /payments/create, /payments/return, /payments/webhook
+  - Alembic migration: bảng payment_transactions (don_hang_id → DonHang.id)
+- Logic chính:
+  - Create: POST /payments/create {order_id} → tính amount, build VNPay URL, trả redirect_url
+  - Return (GET) & Webhook (POST): verify signature, idempotent update tx, cập nhật DonHang (nếu cần)
+  - Refund: stub endpoint + service method (triển khai ở sprint sau)
+- Bảo mật & ổn định:
+  - Verify HMAC theo chuẩn VNPay
+  - Idempotent theo transaction_id/gateway_ref
+  - Rate limit /payments/webhook
+  - Detailed audit log (user_id, order_id, ip, ua)
+
+TASKS
+1) Tạo module vnpay integration (sign/verify/build URL/parse)
+2) Tạo payment_service với create_transaction, update_status, ensure_idempotent
+3) Thêm schema PaymentTransaction + migration DB (alembic)
+4) Thêm routes:
+   - POST /payments/create
+   - GET /payments/return
+   - POST /payments/webhook
+5) Biến môi trường .env.example: VNPAY_*
+6) Unit tests: sign/verify, service idempotency, route happy path (mock request)
+7) E2E test tối thiểu: simulate flow (mock gateway callback) xác nhận status cập nhật
+8) Docs: README cập nhật Payment Quick Start + env + test
+
+ACCEPTANCE CRITERIA
+- Tạo payment URL thành công cho đơn hàng hợp lệ (sandbox)
+- Return/webhook cập nhật trạng thái tx idempotent, verify signature OK
+- Logs/audit ghi nhận đầy đủ; không lộ secrets
+- Unit/E2E tests (phần mới) PASS
+
+RISKS & MITIGATION
+- Sai signature → viết helper verify có test; log chi tiết
+- Duplicate webhooks → idempotency theo transaction key
+- Time drift → dùng timestamp VNPay + tolerance, ghi chú lệch giờ Windows
+- Currency rounding → quy ước integer VND, test biên
+
+NEXT IMMEDIATE STEPS
+- Xác nhận bắt đầu Sprint 1 – Payment Foundation (VNPay)
+- Sau khi xác nhận: mình sẽ scaffold modules + schemas + routes (stub), thêm biến môi trường vào .env.example, viết tests cơ bản trước khi hoàn thiện logic.
+
 SPECIFY
 - Mục tiêu: Cho phép xóa file đã upload từ API và UI (xóa kèm thumbnails nếu là ảnh)
 - Backend: DELETE /upload/file (category, filename)

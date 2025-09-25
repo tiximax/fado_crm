@@ -43,6 +43,11 @@ from search_service import universal_search, advanced_search, get_search_suggest
 
 # 📊 Import export/import service
 from export_service import export_service
+from services.payment_service import (
+    create_transaction, get_order_amount, generate_txn_ref,
+    set_txn_gateway_ref, update_status_by_ref
+)
+from integrations.payment.vnpay import build_payment_url, verify_signature
 
 # 🔔 Import WebSocket service
 from websocket_service import manager, notification_service
@@ -198,6 +203,81 @@ async def health_check():
         "cache": cache_status,
         "version": "1.0.0"
     }
+
+# 💳 PAYMENTS ENDPOINTS (VNPay)
+@app.post("/payments/create", response_model=schemas.PaymentCreateResponse)
+async def create_payment(payload: schemas.PaymentCreateRequest, current_user: NguoiDung = Depends(get_current_active_user), db: Session = Depends(get_db)):
+    order_id = payload.order_id
+    amount = get_order_amount(db, order_id)
+    if amount is None or amount <= 0:
+        raise HTTPException(status_code=400, detail="Đơn hàng không hợp lệ hoặc số tiền = 0")
+
+    txn = create_transaction(db, order_id, amount, method="vnpay")
+    txn_ref = generate_txn_ref()
+    set_txn_gateway_ref(db, txn.transaction_id, txn_ref)
+
+    # Build VNPay redirect URL
+    tmn_code = os.getenv("VNPAY_TMN_CODE", "demo")
+    return_url = os.getenv("VNPAY_RETURN_URL", "http://127.0.0.1:8000/payments/return")
+    pay_url = os.getenv("VNPAY_PAYMENT_URL", "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html")
+    secret = os.getenv("VNPAY_HASH_SECRET", "secret")
+
+    params = {
+        "vnp_Version": "2.1.0",
+        "vnp_Command": "pay",
+        "vnp_TmnCode": tmn_code,
+        "vnp_Amount": int(amount * 100),  # VND x100
+        "vnp_CurrCode": "VND",
+        "vnp_TxnRef": txn_ref,
+        "vnp_OrderInfo": f"FADO Order {order_id}",
+        "vnp_OrderType": "other",
+        "vnp_Locale": "vn",
+        "vnp_ReturnUrl": return_url,
+        "vnp_CreateDate": datetime.utcnow().strftime("%Y%m%d%H%M%S"),
+        "vnp_IpAddr": "127.0.0.1",
+    }
+    redirect_url = build_payment_url(params, secret, pay_url)
+
+    return schemas.PaymentCreateResponse(
+        transaction_id=txn.transaction_id,
+        txn_ref=txn_ref,
+        redirect_url=redirect_url
+    )
+
+@app.get("/payments/return")
+async def vnpay_return(request: Request, db: Session = Depends(get_db)):
+    q = dict(request.query_params)
+    secret = os.getenv("VNPAY_HASH_SECRET", "secret")
+    if not verify_signature(q, secret):
+        raise HTTPException(status_code=400, detail="Chữ ký không hợp lệ")
+
+    txn_ref = q.get("vnp_TxnRef")
+    resp_code = q.get("vnp_ResponseCode")
+    status = PaymentStatus.SUCCESS if resp_code == "00" else PaymentStatus.FAILED
+    update_status_by_ref(db, txn_ref, status)
+
+    return {"success": True, "message": "Payment processed", "txn_ref": txn_ref, "status": status.value}
+
+@app.post("/payments/webhook")
+async def vnpay_webhook(payload: Dict[str, Any], request: Request, db: Session = Depends(get_db)):
+    # VNPay may send form or json; handle both
+    data = payload or {}
+    if not data and request.headers.get("content-type", "").startswith("application/x-www-form-urlencoded"):
+        body = await request.body()
+        s = body.decode("utf-8")
+        pairs = [kv.split("=") for kv in s.split("&") if "=" in kv]
+        data = {k: v for k, v in pairs}
+
+    secret = os.getenv("VNPAY_HASH_SECRET", "secret")
+    if not verify_signature(data, secret):
+        raise HTTPException(status_code=400, detail="Chữ ký không hợp lệ")
+
+    txn_ref = data.get("vnp_TxnRef")
+    resp_code = data.get("vnp_ResponseCode")
+    status = PaymentStatus.SUCCESS if resp_code == "00" else PaymentStatus.FAILED
+    update_status_by_ref(db, txn_ref, status)
+
+    return {"RspCode": "00", "Message": "Confirm Success"}
 
 # 📊 Prometheus metrics (if available)
 if METRICS_AVAILABLE:

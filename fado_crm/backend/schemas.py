@@ -247,6 +247,15 @@ class SystemSetting(SystemSettingBase):
     class Config:
         from_attributes = True
 
+# 💳 Payments Schemas
+class PaymentCreateRequest(BaseModel):
+    order_id: int = Field(..., gt=0)
+
+class PaymentCreateResponse(BaseModel):
+    transaction_id: str
+    txn_ref: str
+    redirect_url: str
+
 # 📝 Audit Log Schemas
 class AuditLog(BaseModel):
     id: int
