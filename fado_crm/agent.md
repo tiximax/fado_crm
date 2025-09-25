@@ -26,7 +26,21 @@
 - [x] Tạo script PowerShell e2e/scripts/vnpay_return_test.ps1 để tạo HMAC và gọi thử.
 - [x] Gọi thử endpoint /payments/return với chữ ký đúng, xác nhận 200 OK và status=success.
 - [x] Chạy test E2E payments_return.spec.js bằng npm --prefix e2e run test -- --grep "simulate VNPay return".
-- [ ] (Optional) Bổ sung logging chi tiết trong route khi verify fail (hiện đã đủ qua middleware).
+- [x] (Optional) Bổ sung logging chi tiết trong route khi verify fail (hiện đã đủ qua middleware).
+
+### Phase 1 CRUD Enhancement Tasks - COMPLETED (2025-09-25)
+- [x] Hoàn thành Product Management CRUD:
+  - [x] PUT /san-pham/{id} - Update product endpoint (đã có từ trước)
+  - [x] DELETE /san-pham/{id} - Soft delete với is_active field
+  - [x] Cập nhật SanPham model với is_active field (đã có từ trước)
+  - [x] Cập nhật schemas để include is_active field
+  - [x] Filter GET endpoints để chỉ hiển thị active products
+
+- [x] Order Management Enhancement:
+  - [x] PUT /don-hang/{id}/chi-tiet - Update order items endpoint
+  - [x] POST /don-hang/{id}/trang-thai - Update order status endpoint
+  - [x] Tạo OrderStatusUpdate và OrderDetailsUpdate schemas
+  - [x] Implement business logic: recalculate totals, validate products, audit logging
 
 ### Progress
 - Đã sửa backend: thêm import PaymentStatus vào backend/main.py.
@@ -48,6 +62,31 @@
 ### Progress
 - Đã commit test E2E VNPay return.
 - Đã commit .gitignore mới, giảm ô nhiễm repo từ file tạm/log/DB.
+
+---
+
+## 💳 Payments: VNPay Webhook E2E (2025-09-25)
+
+### Specify
+- Mục tiêu: Viết test E2E cho POST /payments/webhook mô phỏng IPN từ VNPay.
+- Ràng buộc:
+  - Chữ ký chuẩn HMAC-SHA512 theo cách sort key tăng dần, quote_plus, loại trừ vnp_SecureHash/vnp_SecureHashType.
+  - Kiểm tra 2 trường hợp: chữ ký hợp lệ (200, RspCode="00"), chữ ký sai (400).
+
+### Plan
+1) Tạo file test E2E payments_webhook.spec.js (Playwright).
+2) Sinh chữ ký giống helper backend và gửi JSON body (hoặc form) tới /payments/webhook.
+3) Chạy test có grep để chỉ chạy bài mới.
+4) Ghi nhận kết quả vào agent.md và commit.
+
+### Tasks
+- [ ] Viết test E2E thành công (valid signature → 200, RspCode="00").
+- [ ] Viết test E2E thất bại (invalid signature → 400).
+- [ ] Chạy test và đảm bảo pass.
+- [ ] Commit test + cập nhật agent.md.
+
+### Progress
+- Đang thực hiện.
 
 ---
 
