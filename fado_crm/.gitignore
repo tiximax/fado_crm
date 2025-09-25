@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Databases
+*.db
+
+# Logs
+logs/
+backend/logs/
+
+# Uploads / generated media
+uploads/
+backend/uploads/
+
+# Node
+node_modules/
+e2e/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
