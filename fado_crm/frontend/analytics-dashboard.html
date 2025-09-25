@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FADO CRM - Advanced Analytics Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            background: white;
+            padding: 1rem;
+            margin: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-group select, .control-group button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .metric-card h3 {
+            color: #555;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-change {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .change-positive {
+            color: #28a745;
+        }
+
+        .change-negative {
+            color: #dc3545;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 1rem;
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            margin-bottom: 1rem;
+        }
+
+        .insights-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 1rem;
+        }
+
+        .insight-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .insight-item.positive {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .insight-item.warning {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+
+        .insight-item.info {
+            border-left-color: #17a2b8;
+            background: #d1ecf1;
+        }
+
+        .insight-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .insight-message {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .loading i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem;
+        }
+
+        .top-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .top-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .top-list li:last-child {
+            border-bottom: none;
+        }
+
+        .list-item-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .list-item-value {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .control-group {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-chart-line"></i> Advanced Analytics Dashboard</h1>
+        <p>Real-time business intelligence for FADO CRM</p>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label for="date-range">Date Range:</label>
+            <select id="date-range">
+                <option value="7">Last 7 days</option>
+                <option value="30" selected>Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="365">Last year</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <button class="btn" onclick="refreshData()">
+                <i class="fas fa-sync-alt"></i> Refresh Data
+            </button>
+            <button class="btn" onclick="exportReport()">
+                <i class="fas fa-download"></i> Export Report
+            </button>
+        </div>
+    </div>
+
+    <div id="loading" class="loading">
+        <i class="fas fa-spinner"></i>
+        <p>Loading analytics data...</p>
+    </div>
+
+    <div id="dashboard-content" style="display: none;">
+        <!-- Key Metrics -->
+        <div class="dashboard-grid">
+            <div class="metric-card">
+                <h3><i class="fas fa-dollar-sign"></i> Total Revenue</h3>
+                <div class="metric-value" id="total-revenue">$0</div>
+                <div class="metric-change" id="revenue-change">
+                    <i class="fas fa-arrow-up"></i> 0% vs previous period
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3><i class="fas fa-shopping-cart"></i> Total Orders</h3>
+                <div class="metric-value" id="total-orders">0</div>
+                <div class="metric-change" id="order-completion">
+                    Completion rate: <span id="completion-rate">0%</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3><i class="fas fa-users"></i> Customers</h3>
+                <div class="metric-value" id="total-customers">0</div>
+                <div class="metric-change" id="new-customers">
+                    <i class="fas fa-user-plus"></i> <span id="new-customers-count">0</span> new this month
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3><i class="fas fa-chart-bar"></i> Avg Order Value</h3>
+                <div class="metric-value" id="avg-order-value">$0</div>
+                <div class="metric-change">
+                    Per order average
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Trend Chart -->
+        <div class="chart-container">
+            <div class="chart-title">
+                <i class="fas fa-chart-area"></i> Revenue Trend
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Customer Analytics -->
+        <div class="chart-container">
+            <div class="chart-title">
+                <i class="fas fa-users"></i> Customer Segmentation
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: center;">
+                <div class="chart-wrapper" style="height: 300px;">
+                    <canvas id="customerSegmentChart"></canvas>
+                </div>
+                <div>
+                    <h4>Top Customers</h4>
+                    <ul class="top-list" id="top-customers">
+                        <!-- Will be populated by JavaScript -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Performance -->
+        <div class="chart-container">
+            <div class="chart-title">
+                <i class="fas fa-box"></i> Product Performance
+            </div>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: center;">
+                <div class="chart-wrapper">
+                    <canvas id="productChart"></canvas>
+                </div>
+                <div>
+                    <h4>Top Products</h4>
+                    <ul class="top-list" id="top-products">
+                        <!-- Will be populated by JavaScript -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Status -->
+        <div class="chart-container">
+            <div class="chart-title">
+                <i class="fas fa-tasks"></i> Order Status Distribution
+            </div>
+            <div class="chart-wrapper" style="height: 300px;">
+                <canvas id="orderStatusChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Business Insights -->
+        <div class="insights-container">
+            <div class="chart-title">
+                <i class="fas fa-lightbulb"></i> Business Insights
+            </div>
+            <div id="insights-content">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const ANALYTICS_API = 'http://localhost:8001';
+
+        // Chart instances
+        let charts = {};
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+
+            // Auto-refresh every 5 minutes
+            setInterval(loadDashboardData, 5 * 60 * 1000);
+
+            // Date range change handler
+            document.getElementById('date-range').addEventListener('change', function() {
+                loadDashboardData();
+            });
+        });
+
+        async function loadDashboardData() {
+            const dateRange = document.getElementById('date-range').value;
+            showLoading(true);
+
+            try {
+                // Load dashboard data
+                const response = await fetch(`${ANALYTICS_API}/analytics/dashboard?date_range=${dateRange}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    updateMetrics(data.data);
+                    updateCharts(data.data);
+                    loadInsights();
+                    showLoading(false);
+                } else {
+                    throw new Error('Failed to load analytics data');
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showError('Failed to load analytics data. Please try again.');
+                showLoading(false);
+            }
+        }
+
+        function updateMetrics(data) {
+            const { sales_overview, customer_analytics } = data;
+
+            // Update metric cards
+            document.getElementById('total-revenue').textContent =
+                formatCurrency(sales_overview.total_revenue);
+            document.getElementById('total-orders').textContent =
+                sales_overview.total_orders.toLocaleString();
+            document.getElementById('total-customers').textContent =
+                customer_analytics.total_customers.toLocaleString();
+            document.getElementById('avg-order-value').textContent =
+                formatCurrency(sales_overview.avg_order_value);
+
+            // Update revenue change
+            const revenueChange = document.getElementById('revenue-change');
+            const growth = sales_overview.revenue_growth;
+            const changeIcon = growth >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down';
+            const changeClass = growth >= 0 ? 'change-positive' : 'change-negative';
+
+            revenueChange.innerHTML = `
+                <i class="${changeIcon}"></i> ${Math.abs(growth).toFixed(1)}% vs previous period
+            `;
+            revenueChange.className = `metric-change ${changeClass}`;
+
+            // Update completion rate
+            document.getElementById('completion-rate').textContent =
+                `${sales_overview.completion_rate.toFixed(1)}%`;
+
+            // Update new customers
+            document.getElementById('new-customers-count').textContent =
+                customer_analytics.new_customers_this_month;
+        }
+
+        function updateCharts(data) {
+            // Revenue Trend Chart
+            updateRevenueChart(data.revenue_trend);
+
+            // Customer Segmentation Chart
+            updateCustomerSegmentChart(data.customer_analytics);
+
+            // Product Performance Chart
+            updateProductChart(data.product_performance);
+
+            // Order Status Chart
+            updateOrderStatusChart(data.order_status);
+
+            // Update lists
+            updateTopCustomersList(data.customer_analytics.top_customers);
+            updateTopProductsList(data.product_performance.top_products);
+        }
+
+        function updateRevenueChart(trendData) {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+
+            if (charts.revenue) {
+                charts.revenue.destroy();
+            }
+
+            const labels = trendData.map(item => new Date(item.date).toLocaleDateString());
+            const revenues = trendData.map(item => item.revenue);
+            const orders = trendData.map(item => item.orders);
+
+            charts.revenue = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Revenue (VND)',
+                            data: revenues,
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Orders',
+                            data: orders,
+                            borderColor: '#764ba2',
+                            backgroundColor: 'rgba(118, 75, 162, 0.1)',
+                            tension: 0.4,
+                            fill: false,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Revenue (VND)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrencyShort(value);
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Orders'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCustomerSegmentChart(customerData) {
+            const ctx = document.getElementById('customerSegmentChart').getContext('2d');
+
+            if (charts.customerSegment) {
+                charts.customerSegment.destroy();
+            }
+
+            const segments = customerData.segments;
+            const labels = Object.keys(segments).map(key => {
+                const labelMap = {
+                    'moi': 'New',
+                    'than_thiet': 'Loyal',
+                    'vip': 'VIP'
+                };
+                return labelMap[key] || key;
+            });
+            const data = Object.values(segments);
+
+            charts.customerSegment = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#667eea',
+                            '#764ba2',
+                            '#f093fb',
+                            '#f5576c',
+                            '#4facfe'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateProductChart(productData) {
+            const ctx = document.getElementById('productChart').getContext('2d');
+
+            if (charts.product) {
+                charts.product.destroy();
+            }
+
+            const products = productData.top_products.slice(0, 5); // Top 5
+            const labels = products.map(p => p.name);
+            const revenues = products.map(p => p.revenue);
+            const units = products.map(p => p.units_sold);
+
+            charts.product = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Revenue (VND)',
+                            data: revenues,
+                            backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                            borderColor: '#667eea',
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Units Sold',
+                            data: units,
+                            backgroundColor: 'rgba(118, 75, 162, 0.8)',
+                            borderColor: '#764ba2',
+                            borderWidth: 1,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Revenue (VND)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrencyShort(value);
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Units'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateOrderStatusChart(orderData) {
+            const ctx = document.getElementById('orderStatusChart').getContext('2d');
+
+            if (charts.orderStatus) {
+                charts.orderStatus.destroy();
+            }
+
+            const statusMap = {
+                'cho_xac_nhan': 'Waiting Confirmation',
+                'da_xac_nhan': 'Confirmed',
+                'dang_mua': 'Purchasing',
+                'da_mua': 'Purchased',
+                'dang_ship': 'Shipping',
+                'da_nhan': 'Delivered',
+                'huy': 'Cancelled'
+            };
+
+            const labels = Object.keys(orderData.counts).map(key => statusMap[key] || key);
+            const data = Object.values(orderData.counts);
+
+            charts.orderStatus = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#ffc107',
+                            '#28a745',
+                            '#17a2b8',
+                            '#6f42c1',
+                            '#fd7e14',
+                            '#20c997',
+                            '#dc3545'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateTopCustomersList(customers) {
+            const list = document.getElementById('top-customers');
+            list.innerHTML = '';
+
+            customers.slice(0, 5).forEach(customer => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="list-item-name">${customer.name}</div>
+                    <div class="list-item-value">${formatCurrencyShort(customer.total_spent)}</div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function updateTopProductsList(products) {
+            const list = document.getElementById('top-products');
+            list.innerHTML = '';
+
+            products.slice(0, 5).forEach(product => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="list-item-name">${product.name}</div>
+                    <div class="list-item-value">${product.units_sold} sold</div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        async function loadInsights() {
+            try {
+                const response = await fetch(`${ANALYTICS_API}/analytics/insights`);
+                const data = await response.json();
+
+                if (data.success) {
+                    updateInsights(data.insights);
+                }
+            } catch (error) {
+                console.error('Error loading insights:', error);
+            }
+        }
+
+        function updateInsights(insights) {
+            const container = document.getElementById('insights-content');
+            container.innerHTML = '';
+
+            if (insights.length === 0) {
+                container.innerHTML = '<p>No insights available at this time.</p>';
+                return;
+            }
+
+            insights.forEach(insight => {
+                const div = document.createElement('div');
+                div.className = `insight-item ${insight.type}`;
+                div.innerHTML = `
+                    <div class="insight-title">${insight.title}</div>
+                    <div class="insight-message">${insight.message}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            document.getElementById('dashboard-content').style.display = show ? 'none' : 'block';
+        }
+
+        function showError(message) {
+            const dashboard = document.getElementById('dashboard-content');
+            dashboard.innerHTML = `<div class="error">
+                <i class="fas fa-exclamation-triangle"></i> ${message}
+            </div>`;
+            dashboard.style.display = 'block';
+        }
+
+        function refreshData() {
+            loadDashboardData();
+        }
+
+        function exportReport() {
+            // This would integrate with a PDF generation service
+            alert('Export functionality will be implemented with PDF generation service');
+        }
+
+        // Utility functions
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(amount);
+        }
+
+        function formatCurrencyShort(amount) {
+            if (amount >= 1e9) return (amount / 1e9).toFixed(1) + 'B';
+            if (amount >= 1e6) return (amount / 1e6).toFixed(1) + 'M';
+            if (amount >= 1e3) return (amount / 1e3).toFixed(1) + 'K';
+            return amount.toFixed(0);
+        }
+    </script>
+</body>
+</html>

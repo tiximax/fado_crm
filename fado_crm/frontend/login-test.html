@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FADO CRM - Login Test</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .test-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .test-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .test-header h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .test-header p {
+            color: #666;
+        }
+
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .test-section h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .result-box {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            word-break: break-all;
+        }
+
+        .result-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .result-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .user-info {
+            background: #e7f3ff;
+            border: 1px solid #bee5eb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #28a745;
+        }
+
+        .status-offline {
+            background: #dc3545;
+        }
+
+        .test-credentials {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .credential-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .credential-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1><i class="fas fa-shield-alt"></i> FADO CRM Login Test</h1>
+            <p>Test authentication system end-to-end</p>
+        </div>
+
+        <!-- Server Status -->
+        <div class="test-section">
+            <h3><i class="fas fa-server"></i> Server Status</h3>
+            <p id="server-status">
+                <span class="status-indicator status-offline"></span>
+                Checking server...
+            </p>
+            <button class="btn btn-secondary" onclick="checkServerStatus()">Check Status</button>
+        </div>
+
+        <!-- Test Credentials -->
+        <div class="test-section">
+            <h3><i class="fas fa-users"></i> Available Test Accounts</h3>
+            <div class="test-credentials">
+                <div class="credential-item">
+                    <strong>Admin:</strong>
+                    <span>admin@fado.vn / admin123</span>
+                </div>
+                <div class="credential-item">
+                    <strong>Manager:</strong>
+                    <span>manager@fado.vn / manager123</span>
+                </div>
+                <div class="credential-item">
+                    <strong>Staff:</strong>
+                    <span>staff@fado.vn / staff123</span>
+                </div>
+                <div class="credential-item">
+                    <strong>Viewer:</strong>
+                    <span>viewer@fado.vn / viewer123</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Test -->
+        <div class="test-section">
+            <h3><i class="fas fa-sign-in-alt"></i> Login Test</h3>
+            <form class="login-form" onsubmit="testLogin(event)">
+                <div class="form-group">
+                    <label>Quick Test:</label>
+                    <select id="quick-user" onchange="fillCredentials()">
+                        <option value="">Select test user...</option>
+                        <option value="admin@fado.vn:admin123">Admin User</option>
+                        <option value="manager@fado.vn:manager123">Manager User</option>
+                        <option value="staff@fado.vn:staff123">Staff User</option>
+                        <option value="viewer@fado.vn:viewer123">Viewer User</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Test Login
+                </button>
+            </form>
+            <div id="login-result"></div>
+        </div>
+
+        <!-- User Info -->
+        <div class="test-section" id="user-section" style="display: none;">
+            <h3><i class="fas fa-user"></i> Current User</h3>
+            <div id="user-info" class="user-info"></div>
+            <button class="btn btn-danger" onclick="testLogout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
+        <!-- API Test -->
+        <div class="test-section">
+            <h3><i class="fas fa-database"></i> Protected API Test</h3>
+            <p>Test accessing protected endpoints with JWT token</p>
+            <button class="btn btn-success" onclick="testProtectedAPI()" id="api-test-btn">
+                <i class="fas fa-shield-alt"></i> Test Protected API
+            </button>
+            <div id="api-result"></div>
+        </div>
+    </div>
+
+    <!-- Include auth service -->
+    <script src="auth.js"></script>
+
+    <script>
+        // Configuration
+        const API_BASE = 'http://localhost:8000';
+
+        // Check server status
+        async function checkServerStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/`);
+                const data = await response.json();
+
+                document.getElementById('server-status').innerHTML = `
+                    <span class="status-indicator status-online"></span>
+                    Server Online: ${data.message} (v${data.version})
+                `;
+            } catch (error) {
+                document.getElementById('server-status').innerHTML = `
+                    <span class="status-indicator status-offline"></span>
+                    Server Offline: ${error.message}
+                `;
+            }
+        }
+
+        // Fill credentials from dropdown
+        function fillCredentials() {
+            const select = document.getElementById('quick-user');
+            const value = select.value;
+            if (value) {
+                const [email, password] = value.split(':');
+                document.getElementById('email').value = email;
+                document.getElementById('password').value = password;
+            }
+        }
+
+        // Test login
+        async function testLogin(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('login-result');
+
+            resultDiv.innerHTML = '<p>Testing login...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Store tokens (simulating auth service)
+                    localStorage.setItem('access_token', data.access_token);
+                    localStorage.setItem('refresh_token', data.refresh_token);
+                    localStorage.setItem('user_info', JSON.stringify(data.user));
+
+                    resultDiv.innerHTML = `
+                        <div class="result-box result-success">
+                            <h4><i class="fas fa-check-circle"></i> Login Successful!</h4>
+                            <p><strong>User:</strong> ${data.user.ho_ten}</p>
+                            <p><strong>Role:</strong> ${data.user.vai_tro}</p>
+                            <p><strong>Token:</strong> ${data.access_token.substring(0, 50)}...</p>
+                        </div>
+                    `;
+
+                    // Show user section
+                    showUserInfo(data.user);
+                } else {
+                    const error = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="result-box result-error">
+                            <h4><i class="fas fa-times-circle"></i> Login Failed</h4>
+                            <p>${error.detail || 'Unknown error'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result-box result-error">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Connection Error</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Show user info
+        function showUserInfo(user) {
+            const userSection = document.getElementById('user-section');
+            const userInfo = document.getElementById('user-info');
+
+            const roleIcons = {
+                'admin': '👑',
+                'manager': '👨‍💼',
+                'staff': '👨‍💻',
+                'viewer': '👁️'
+            };
+
+            userInfo.innerHTML = `
+                <p><strong>Name:</strong> ${user.ho_ten}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>Role:</strong> ${roleIcons[user.vai_tro] || ''} ${user.vai_tro}</p>
+                <p><strong>Status:</strong> ${user.is_active ? '✅ Active' : '❌ Inactive'}</p>
+                <p><strong>ID:</strong> ${user.id}</p>
+            `;
+
+            userSection.style.display = 'block';
+        }
+
+        // Test logout
+        function testLogout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user_info');
+
+            document.getElementById('user-section').style.display = 'none';
+            document.getElementById('login-result').innerHTML = `
+                <div class="result-box result-success">
+                    <h4><i class="fas fa-sign-out-alt"></i> Logged out successfully</h4>
+                </div>
+            `;
+        }
+
+        // Test protected API
+        async function testProtectedAPI() {
+            const token = localStorage.getItem('access_token');
+            const resultDiv = document.getElementById('api-result');
+
+            if (!token) {
+                resultDiv.innerHTML = `
+                    <div class="result-box result-error">
+                        <h4><i class="fas fa-exclamation-triangle"></i> No Token</h4>
+                        <p>Please login first to test protected API</p>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="result-box result-success">
+                            <h4><i class="fas fa-shield-alt"></i> Protected API Success</h4>
+                            <p><strong>Authenticated as:</strong> ${data.ho_ten}</p>
+                            <p><strong>Email:</strong> ${data.email}</p>
+                            <p><strong>Role:</strong> ${data.vai_tro}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result-box result-error">
+                            <h4><i class="fas fa-times-circle"></i> API Access Denied</h4>
+                            <p>Status: ${response.status} ${response.statusText}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result-box result-error">
+                        <h4><i class="fas fa-exclamation-triangle"></i> API Error</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Check server status on page load
+        checkServerStatus();
+    </script>
+</body>
+</html>

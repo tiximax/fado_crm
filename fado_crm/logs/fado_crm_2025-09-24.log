@@ -1,0 +1,954 @@
+2025-09-24 21:13:14 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 21:13:14 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 21:13:14 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 21:13:14 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 21:13:14 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 21:13:14 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 21:13:14 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 21:13:15 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 21:13:15 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 21:13:15 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 21:13:15 | INFO     | main:<module>:81 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 21:13:33 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 21:13:33 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 21:13:33 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 21:13:33 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 21:13:33 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 21:13:33 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 21:13:33 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 21:13:34 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 21:13:34 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 21:13:34 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 21:13:34 | INFO     | main:<module>:81 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 21:13:34 | INFO     | middleware:dispatch:172 | Incoming request: GET /health
+2025-09-24 21:13:34 | INFO     | logging_config:log_api_call:78 | GET /health - 200 - 0.001s
+2025-09-24 21:41:17 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 21:41:17 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 21:41:17 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 21:41:17 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 21:41:17 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 21:41:17 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 21:41:17 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 21:41:17 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 21:41:17 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 21:41:17 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 21:41:17 | INFO     | main:<module>:93 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 21:41:18 | INFO     | middleware:dispatch:172 | Incoming request: PUT /admin/system-settings/app_name
+2025-09-24 21:41:18 | INFO     | logging_config:log_error_with_context:98 | Exception details
+Traceback (most recent call last):
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    │    │       └ <function DefaultDialect.do_execute at 0x000002B6779E0B80>
+    │    └ <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x000002B677E4A270>
+    └ <sqlalchemy.engine.base.Connection object at 0x000002B618E69810>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    │      │       │          └ ('admin@test.local', 1, 0)
+    │      │       └ 'SELECT nguoi_dung.id AS nguoi_dung_id, nguoi_dung.email AS nguoi_dung_email, nguoi_dung.ho_ten AS nguoi_dung_ho_ten, nguoi_d...
+    │      └ <method 'execute' of 'sqlite3.Cursor' objects>
+    └ <sqlite3.Cursor object at 0x000002B618E7B940>
+
+sqlite3.OperationalError: no such table: nguoi_dung
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+    │    └ <function Thread._bootstrap_inner at 0x000002B6725D5300>
+    └ <Thread(asyncio-portal-2b618e80830, started daemon 15548)>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+    │    └ <function Thread.run at 0x000002B6725D5080>
+    └ <Thread(asyncio-portal-2b618e80830, started daemon 15548)>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {}
+    │    │        │    │        └ <Thread(asyncio-portal-2b618e80830, started daemon 15548)>
+    │    │        │    └ ()
+    │    │        └ <Thread(asyncio-portal-2b618e80830, started daemon 15548)>
+    │    └ <function start_blocking_portal.<locals>.run_blocking_portal at 0x000002B618DEF600>
+    └ <Thread(asyncio-portal-2b618e80830, started daemon 15548)>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\from_thread.py", line 489, in run_blocking_portal
+    _eventloop.run(
+    │          └ <function run at 0x000002B673080860>
+    └ <module 'anyio._core._eventloop' from 'C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\any...
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\_core\_eventloop.py", line 74, in run
+    return async_backend.run(func, args, {}, backend_options)
+           │             │   │     │         └ {}
+           │             │   │     └ ()
+           │             │   └ <function start_blocking_portal.<locals>.run_portal at 0x000002B618DEF560>
+           │             └ <classmethod(<function AsyncIOBackend.run at 0x000002B618EB8180>)>
+           └ <class 'anyio._backends._asyncio.AsyncIOBackend'>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\_backends\_asyncio.py", line 2316, in run
+    return runner.run(wrapper())
+           │      │   └ <function start_blocking_portal.<locals>.run_portal at 0x000002B618DEF7E0>
+           │      └ <function Runner.run at 0x000002B67580E2A0>
+           └ <asyncio.runners.Runner object at 0x000002B618D578C0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='anyio.from_thread.start_blocking_portal.<locals>.run_portal' coro=<start_blocking_portal.<locals>.run_por...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x000002B67580BCE0>
+           │    └ <ProactorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x000002B618D578C0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 706, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x000002B67580BC40>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 677, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x000002B67580DA80>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 2034, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x000002B675577420>
+    └ <Handle Task.task_wakeup()>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup()>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000002B618EBA5C0>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B618EBA480>
+          │    │   └ {'type': 'http', 'http_version': '1.1', 'method': 'PUT', 'path': '/admin/system-settings/app_name', 'raw_path': b'/admin/syst...
+          │    └ <middleware.ErrorHandlerMiddleware object at 0x000002B618E80AD0>
+          └ <middleware.RequestLoggingMiddleware object at 0x000002B618E80EC0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+                     │    │             │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next at 0x000002B618EBA700>
+                     │    │             └ <starlette.middleware.base._CachedRequest object at 0x000002B618E71090>
+                     │    └ <bound method ErrorHandlerMiddleware.dispatch of <middleware.ErrorHandlerMiddleware object at 0x000002B618E80AD0>>
+                     └ <middleware.ErrorHandlerMiddleware object at 0x000002B618E80AD0>
+
+> File "C:\Users\Admin\omnara-claude-20250923000733\fado_crm\backend\middleware.py", line 33, in dispatch
+    response = await call_next(request)
+                     │         └ <starlette.middleware.base._CachedRequest object at 0x000002B618E71090>
+                     └ <function BaseHTTPMiddleware.__call__.<locals>.call_next at 0x000002B618EBA700>
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 159, in call_next
+    raise app_exc
+          └ OperationalError('(sqlite3.OperationalError) no such table: nguoi_dung')
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000002B618EBA840>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B618EBA7A0>
+          │    │   └ {'type': 'http', 'http_version': '1.1', 'method': 'PUT', 'path': '/admin/system-settings/app_name', 'raw_path': b'/admin/syst...
+          │    └ <middleware.SecurityHeadersMiddleware object at 0x000002B618E80D70>
+          └ <middleware.ErrorHandlerMiddleware object at 0x000002B618E80AD0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+         │            │            └ <function collapse_excgroups at 0x000002B675E01300>
+         │            └ MemoryObjectSendStream(_state=MemoryObjectStreamState(max_buffer_size=0, buffer=deque([]), open_send_channels=0, open_receive...
+         └ MemoryObjectReceiveStream(_state=MemoryObjectStreamState(max_buffer_size=0, buffer=deque([]), open_send_channels=0, open_rece...
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    │    │   │     └ ExceptionGroup('unhandled errors in a TaskGroup', [OperationalError('(sqlite3.OperationalError) no such table: nguoi_dung')])
+    │    │   └ <method 'throw' of 'generator' objects>
+    │    └ <generator object collapse_excgroups at 0x000002B618D93ED0>
+    └ <contextlib._GeneratorContextManager object at 0x000002B618DC2DD0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+                     │    │             │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next at 0x000002B618EB9EE0>
+                     │    │             └ <starlette.middleware.base._CachedRequest object at 0x000002B618E71E50>
+                     │    └ <bound method SecurityHeadersMiddleware.dispatch of <middleware.SecurityHeadersMiddleware object at 0x000002B618E80D70>>
+                     └ <middleware.SecurityHeadersMiddleware object at 0x000002B618E80D70>
+
+  File "C:\Users\Admin\omnara-claude-20250923000733\fado_crm\backend\middleware.py", line 190, in dispatch
+    response = await call_next(request)
+                     │         └ <starlette.middleware.base._CachedRequest object at 0x000002B618E71E50>
+                     └ <function BaseHTTPMiddleware.__call__.<locals>.call_next at 0x000002B618EB9EE0>
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 159, in call_next
+    raise app_exc
+          └ OperationalError('(sqlite3.OperationalError) no such table: nguoi_dung')
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000002B618EBAC00>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B618EBAB60>
+          │    │   └ {'type': 'http', 'http_version': '1.1', 'method': 'PUT', 'path': '/admin/system-settings/app_name', 'raw_path': b'/admin/syst...
+          │    └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000002B618E80C20>
+          └ <middleware.SecurityHeadersMiddleware object at 0x000002B618E80D70>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+          │                            │    │    │     │      │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000002B618EBAC00>
+          │                            │    │    │     │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B618EBAB60>
+          │                            │    │    │     └ {'type': 'http', 'http_version': '1.1', 'method': 'PUT', 'path': '/admin/system-settings/app_name', 'raw_path': b'/admin/syst...
+          │                            │    │    └ <starlette.requests.Request object at 0x000002B618E81D30>
+          │                            │    └ <fastapi.routing.APIRouter object at 0x000002B618A4AAD0>
+          │                            └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000002B618E80C20>
+          └ <function wrap_app_handling_exceptions at 0x000002B675E9D440>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002B618EBAE80>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B618EBAB60>
+          │   └ {'type': 'http', 'http_version': '1.1', 'method': 'PUT', 'path': '/admin/system-settings/app_name', 'raw_path': b'/admin/syst...
+          └ <fastapi.routing.APIRouter object at 0x000002B618A4AAD0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+          │    │                │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002B618EBAE80>
+          │    │                │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B618EBAB60>
+          │    │                └ {'type': 'http', 'http_version': '1.1', 'method': 'PUT', 'path': '/admin/system-settings/app_name', 'raw_path': b'/admin/syst...
+          │    └ <bound method Router.app of <fastapi.routing.APIRouter object at 0x000002B618A4AAD0>>
+          └ <fastapi.routing.APIRouter object at 0x000002B618A4AAD0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+          │     │      │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002B618EBAE80>
+          │     │      │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B618EBAB60>
+          │     │      └ {'type': 'http', 'http_version': '1.1', 'method': 'PUT', 'path': '/admin/system-settings/app_name', 'raw_path': b'/admin/syst...
+          │     └ <function Route.handle at 0x000002B675E9EC00>
+          └ APIRoute(path='/admin/system-settings/{key}', name='upsert_setting', methods=['PUT'])
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002B618EBAE80>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B618EBAB60>
+          │    │   └ {'type': 'http', 'http_version': '1.1', 'method': 'PUT', 'path': '/admin/system-settings/app_name', 'raw_path': b'/admin/syst...
+          │    └ <function request_response.<locals>.app at 0x000002B618B74F40>
+          └ APIRoute(path='/admin/system-settings/{key}', name='upsert_setting', methods=['PUT'])
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+          │                            │    │        │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002B618EBAE80>
+          │                            │    │        │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B618EBAB60>
+          │                            │    │        └ {'type': 'http', 'http_version': '1.1', 'method': 'PUT', 'path': '/admin/system-settings/app_name', 'raw_path': b'/admin/syst...
+          │                            │    └ <starlette.requests.Request object at 0x000002B618E725D0>
+          │                            └ <function request_response.<locals>.app.<locals>.app at 0x000002B618EBAF20>
+          └ <function wrap_app_handling_exceptions at 0x000002B675E9D440>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002B618EBB060>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B618EBAB60>
+          │   └ {'type': 'http', 'http_version': '1.1', 'method': 'PUT', 'path': '/admin/system-settings/app_name', 'raw_path': b'/admin/syst...
+          └ <function request_response.<locals>.app.<locals>.app at 0x000002B618EBAF20>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 75, in app
+    response = await f(request)
+                     │ └ <starlette.requests.Request object at 0x000002B618E725D0>
+                     └ <function get_request_handler.<locals>.app at 0x000002B618B74E00>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\fastapi\routing.py", line 298, in app
+    solved_result = await solve_dependencies(
+                          └ <function solve_dependencies at 0x000002B675E86520>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\fastapi\dependencies\utils.py", line 648, in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+                   │                 │       │             └ {}
+                   │                 │       └ SolvedDependency(values={}, errors=[], background_tasks=None, response=<starlette.responses.Response object at 0x000002B618E8...
+                   │                 └ <function override_admin_dep at 0x000002B618D3A480>
+                   └ <function run_in_threadpool at 0x000002B675C7A8E0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\concurrency.py", line 38, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+                 │     │         │        └ functools.partial(<function override_admin_dep at 0x000002B618D3A480>)
+                 │     │         └ <function run_sync at 0x000002B673081C60>
+                 │     └ <module 'anyio.to_thread' from 'C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\anyio\\to_...
+                 └ <module 'anyio' from 'C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\anyio\\__init__.py'>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\to_thread.py", line 56, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+                 └ <function get_async_backend at 0x000002B673081260>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\_backends\_asyncio.py", line 2476, in run_sync_in_worker_thread
+    return await future
+                 └ <Future finished exception=OperationalError('(sqlite3.OperationalError) no such table: nguoi_dung')>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\_backends\_asyncio.py", line 967, in run
+    result = context.run(func, *args)
+
+  File "C:\Users\Admin\omnara-claude-20250923000733\fado_crm\backend\tests\unit\test_admin_features.py", line 13, in override_admin_dep
+    admin = db.query(NguoiDung).filter(NguoiDung.email == "admin@test.local").first()
+            │  │     │                 │         └ <sqlalchemy.orm.attributes.InstrumentedAttribute object at 0x000002B677DF2D40>
+            │  │     │                 └ <class 'models.NguoiDung'>
+            │  │     └ <class 'models.NguoiDung'>
+            │  └ <function Session.query at 0x000002B677C9D940>
+            └ <sqlalchemy.orm.session.Session object at 0x000002B618E82BA0>
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           │    └ <function Query.limit at 0x000002B677C1B880>
+           └ <sqlalchemy.orm.query.Query object at 0x000002B618E73B10>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+            │                  │    │      │      │    │       └ <function Session.execute at 0x000002B677C9C7C0>
+            │                  │    │      │      │    └ <sqlalchemy.orm.session.Session object at 0x000002B618E82BA0>
+            │                  │    │      │      └ <sqlalchemy.orm.query.Query object at 0x000002B618E73C50>
+            │                  │    │      └ ~_T
+            │                  │    └ <class 'sqlalchemy.engine.result.Result'>
+            │                  └ ~_T
+            └ typing.Union
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 2365, in execute
+    return self._execute_internal(
+           │    └ <function Session._execute_internal at 0x000002B677C9C4A0>
+           └ <sqlalchemy.orm.session.Session object at 0x000002B618E82BA0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                   │      │                 └ <classmethod(<function AbstractORMCompileState.orm_execute_statement at 0x000002B677B068E0>)>
+                   │      └ <class 'sqlalchemy.orm.context.ORMSelectCompileState'>
+                   └ typing.Any
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             │    └ <function Connection.execute at 0x000002B6779291C0>
+             └ <sqlalchemy.engine.base.Connection object at 0x000002B618E69810>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+           └ <bound method ClauseElement._execute_on_connection of <sqlalchemy.sql.selectable.Select object at 0x000002B618E82120>>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           │          └ <function Connection._execute_clauseelement at 0x000002B6779294E0>
+           └ <sqlalchemy.engine.base.Connection object at 0x000002B618E69810>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          │    └ <function Connection._execute_context at 0x000002B6779296C0>
+          └ <sqlalchemy.engine.base.Connection object at 0x000002B618E69810>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           │    └ <function Connection._exec_single_context at 0x000002B677929760>
+           └ <sqlalchemy.engine.base.Connection object at 0x000002B618E69810>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    │    └ <function Connection._handle_dbapi_exception at 0x000002B6779299E0>
+    └ <sqlalchemy.engine.base.Connection object at 0x000002B618E69810>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+          │                    │              │                 └ OperationalError('no such table: nguoi_dung')
+          │                    │              └ (<class 'sqlite3.OperationalError'>, OperationalError('no such table: nguoi_dung'), <traceback object at 0x000002B618F17740>)
+          │                    └ <method 'with_traceback' of 'BaseException' objects>
+          └ OperationalError('(sqlite3.OperationalError) no such table: nguoi_dung')
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    │    │       └ <function DefaultDialect.do_execute at 0x000002B6779E0B80>
+    │    └ <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x000002B677E4A270>
+    └ <sqlalchemy.engine.base.Connection object at 0x000002B618E69810>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    │      │       │          └ ('admin@test.local', 1, 0)
+    │      │       └ 'SELECT nguoi_dung.id AS nguoi_dung_id, nguoi_dung.email AS nguoi_dung_email, nguoi_dung.ho_ten AS nguoi_dung_ho_ten, nguoi_d...
+    │      └ <method 'execute' of 'sqlite3.Cursor' objects>
+    └ <sqlite3.Cursor object at 0x000002B618E7B940>
+
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: nguoi_dung
+[SQL: SELECT nguoi_dung.id AS nguoi_dung_id, nguoi_dung.email AS nguoi_dung_email, nguoi_dung.ho_ten AS nguoi_dung_ho_ten, nguoi_dung.mat_khau_hash AS nguoi_dung_mat_khau_hash, nguoi_dung.vai_tro AS nguoi_dung_vai_tro, nguoi_dung.is_active AS nguoi_dung_is_active, nguoi_dung.ngay_tao AS nguoi_dung_ngay_tao, nguoi_dung.lan_dang_nhap_cuoi AS nguoi_dung_lan_dang_nhap_cuoi, nguoi_dung.so_dien_thoai AS nguoi_dung_so_dien_thoai, nguoi_dung.ghi_chu AS nguoi_dung_ghi_chu 
+FROM nguoi_dung 
+WHERE nguoi_dung.email = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('admin@test.local', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-09-24 21:41:18 | ERROR    | logging_config:log_error_with_context:93 | Error occurred: (sqlite3.OperationalError) no such table: nguoi_dung
+[SQL: SELECT nguoi_dung.id AS nguoi_dung_id, nguoi_dung.email AS nguoi_dung_email, nguoi_dung.ho_ten AS nguoi_dung_ho_ten, nguoi_dung.mat_khau_hash AS nguoi_dung_mat_khau_hash, nguoi_dung.vai_tro AS nguoi_dung_vai_tro, nguoi_dung.is_active AS nguoi_dung_is_active, nguoi_dung.ngay_tao AS nguoi_dung_ngay_tao, nguoi_dung.lan_dang_nhap_cuoi AS nguoi_dung_lan_dang_nhap_cuoi, nguoi_dung.so_dien_thoai AS nguoi_dung_so_dien_thoai, nguoi_dung.ghi_chu AS nguoi_dung_ghi_chu 
+FROM nguoi_dung 
+WHERE nguoi_dung.email = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('admin@test.local', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-09-24 21:41:18 | INFO     | logging_config:log_api_call:78 | PUT /admin/system-settings/app_name - 500 - 0.012s
+2025-09-24 21:41:18 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/audit-logs
+2025-09-24 21:41:18 | INFO     | logging_config:log_error_with_context:98 | Exception details
+Traceback (most recent call last):
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    │    │       └ <function DefaultDialect.do_execute at 0x000002B6779E0B80>
+    │    └ <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x000002B677E4A270>
+    └ <sqlalchemy.engine.base.Connection object at 0x000002B618EC1E10>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    │      │       │          └ ('admin@test.local', 1, 0)
+    │      │       └ 'SELECT nguoi_dung.id AS nguoi_dung_id, nguoi_dung.email AS nguoi_dung_email, nguoi_dung.ho_ten AS nguoi_dung_ho_ten, nguoi_d...
+    │      └ <method 'execute' of 'sqlite3.Cursor' objects>
+    └ <sqlite3.Cursor object at 0x000002B6192A85C0>
+
+sqlite3.OperationalError: no such table: nguoi_dung
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+    │    └ <function Thread._bootstrap_inner at 0x000002B6725D5300>
+    └ <Thread(asyncio-portal-2b618f25e50, started daemon 27524)>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+    │    └ <function Thread.run at 0x000002B6725D5080>
+    └ <Thread(asyncio-portal-2b618f25e50, started daemon 27524)>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {}
+    │    │        │    │        └ <Thread(asyncio-portal-2b618f25e50, started daemon 27524)>
+    │    │        │    └ ()
+    │    │        └ <Thread(asyncio-portal-2b618f25e50, started daemon 27524)>
+    │    └ <function start_blocking_portal.<locals>.run_blocking_portal at 0x000002B619285260>
+    └ <Thread(asyncio-portal-2b618f25e50, started daemon 27524)>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\from_thread.py", line 489, in run_blocking_portal
+    _eventloop.run(
+    │          └ <function run at 0x000002B673080860>
+    └ <module 'anyio._core._eventloop' from 'C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\any...
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\_core\_eventloop.py", line 74, in run
+    return async_backend.run(func, args, {}, backend_options)
+           │             │   │     │         └ {}
+           │             │   │     └ ()
+           │             │   └ <function start_blocking_portal.<locals>.run_portal at 0x000002B619285300>
+           │             └ <classmethod(<function AsyncIOBackend.run at 0x000002B618EB8180>)>
+           └ <class 'anyio._backends._asyncio.AsyncIOBackend'>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\_backends\_asyncio.py", line 2316, in run
+    return runner.run(wrapper())
+           │      │   └ <function start_blocking_portal.<locals>.run_portal at 0x000002B619285760>
+           │      └ <function Runner.run at 0x000002B67580E2A0>
+           └ <asyncio.runners.Runner object at 0x000002B618F25A90>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='anyio.from_thread.start_blocking_portal.<locals>.run_portal' coro=<start_blocking_portal.<locals>.run_por...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x000002B67580BCE0>
+           │    └ <ProactorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x000002B618F25A90>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 706, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x000002B67580BC40>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 677, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x000002B67580DA80>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 2034, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x000002B675577420>
+    └ <Handle Task.task_wakeup()>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup()>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000002B6192867A0>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B619286700>
+          │    │   └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │    └ <middleware.ErrorHandlerMiddleware object at 0x000002B618E80AD0>
+          └ <middleware.RequestLoggingMiddleware object at 0x000002B618E80EC0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+                     │    │             │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next at 0x000002B619286980>
+                     │    │             └ <starlette.middleware.base._CachedRequest object at 0x000002B618E6BBB0>
+                     │    └ <bound method ErrorHandlerMiddleware.dispatch of <middleware.ErrorHandlerMiddleware object at 0x000002B618E80AD0>>
+                     └ <middleware.ErrorHandlerMiddleware object at 0x000002B618E80AD0>
+
+> File "C:\Users\Admin\omnara-claude-20250923000733\fado_crm\backend\middleware.py", line 33, in dispatch
+    response = await call_next(request)
+                     │         └ <starlette.middleware.base._CachedRequest object at 0x000002B618E6BBB0>
+                     └ <function BaseHTTPMiddleware.__call__.<locals>.call_next at 0x000002B619286980>
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 159, in call_next
+    raise app_exc
+          └ OperationalError('(sqlite3.OperationalError) no such table: nguoi_dung')
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000002B619286AC0>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B619286A20>
+          │    │   └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │    └ <middleware.SecurityHeadersMiddleware object at 0x000002B618E80D70>
+          └ <middleware.ErrorHandlerMiddleware object at 0x000002B618E80AD0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+         │            │            └ <function collapse_excgroups at 0x000002B675E01300>
+         │            └ MemoryObjectSendStream(_state=MemoryObjectStreamState(max_buffer_size=0, buffer=deque([]), open_send_channels=0, open_receive...
+         └ MemoryObjectReceiveStream(_state=MemoryObjectStreamState(max_buffer_size=0, buffer=deque([]), open_send_channels=0, open_rece...
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    │    │   │     └ ExceptionGroup('unhandled errors in a TaskGroup', [OperationalError('(sqlite3.OperationalError) no such table: nguoi_dung')])
+    │    │   └ <method 'throw' of 'generator' objects>
+    │    └ <generator object collapse_excgroups at 0x000002B618EC7D30>
+    └ <contextlib._GeneratorContextManager object at 0x000002B619265080>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+                     │    │             │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next at 0x000002B619285580>
+                     │    │             └ <starlette.middleware.base._CachedRequest object at 0x000002B618EA1B50>
+                     │    └ <bound method SecurityHeadersMiddleware.dispatch of <middleware.SecurityHeadersMiddleware object at 0x000002B618E80D70>>
+                     └ <middleware.SecurityHeadersMiddleware object at 0x000002B618E80D70>
+
+  File "C:\Users\Admin\omnara-claude-20250923000733\fado_crm\backend\middleware.py", line 190, in dispatch
+    response = await call_next(request)
+                     │         └ <starlette.middleware.base._CachedRequest object at 0x000002B618EA1B50>
+                     └ <function BaseHTTPMiddleware.__call__.<locals>.call_next at 0x000002B619285580>
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 159, in call_next
+    raise app_exc
+          └ OperationalError('(sqlite3.OperationalError) no such table: nguoi_dung')
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000002B619286E80>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B619286DE0>
+          │    │   └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │    └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000002B618E80C20>
+          └ <middleware.SecurityHeadersMiddleware object at 0x000002B618E80D70>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+          │                            │    │    │     │      │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000002B619286E80>
+          │                            │    │    │     │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B619286DE0>
+          │                            │    │    │     └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │                            │    │    └ <starlette.requests.Request object at 0x000002B618F26350>
+          │                            │    └ <fastapi.routing.APIRouter object at 0x000002B618A4AAD0>
+          │                            └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000002B618E80C20>
+          └ <function wrap_app_handling_exceptions at 0x000002B675E9D440>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002B6192871A0>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B619286DE0>
+          │   └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          └ <fastapi.routing.APIRouter object at 0x000002B618A4AAD0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+          │    │                │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002B6192871A0>
+          │    │                │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B619286DE0>
+          │    │                └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │    └ <bound method Router.app of <fastapi.routing.APIRouter object at 0x000002B618A4AAD0>>
+          └ <fastapi.routing.APIRouter object at 0x000002B618A4AAD0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+          │     │      │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002B6192871A0>
+          │     │      │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B619286DE0>
+          │     │      └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │     └ <function Route.handle at 0x000002B675E9EC00>
+          └ APIRoute(path='/admin/audit-logs', name='list_audit_logs', methods=['GET'])
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002B6192871A0>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B619286DE0>
+          │    │   └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │    └ <function request_response.<locals>.app at 0x000002B618B74720>
+          └ APIRoute(path='/admin/audit-logs', name='list_audit_logs', methods=['GET'])
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+          │                            │    │        │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002B6192871A0>
+          │                            │    │        │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B619286DE0>
+          │                            │    │        └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │                            │    └ <starlette.requests.Request object at 0x000002B619298510>
+          │                            └ <function request_response.<locals>.app.<locals>.app at 0x000002B619287240>
+          └ <function wrap_app_handling_exceptions at 0x000002B675E9D440>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002B619287380>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002B619286DE0>
+          │   └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          └ <function request_response.<locals>.app.<locals>.app at 0x000002B619287240>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 75, in app
+    response = await f(request)
+                     │ └ <starlette.requests.Request object at 0x000002B619298510>
+                     └ <function get_request_handler.<locals>.app at 0x000002B618B74860>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\fastapi\routing.py", line 298, in app
+    solved_result = await solve_dependencies(
+                          └ <function solve_dependencies at 0x000002B675E86520>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\fastapi\dependencies\utils.py", line 648, in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+                   │                 │       │             └ {}
+                   │                 │       └ SolvedDependency(values={}, errors=[], background_tasks=None, response=<starlette.responses.Response object at 0x000002B618F2...
+                   │                 └ <function override_admin_dep at 0x000002B618D3A480>
+                   └ <function run_in_threadpool at 0x000002B675C7A8E0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\concurrency.py", line 38, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+                 │     │         │        └ functools.partial(<function override_admin_dep at 0x000002B618D3A480>)
+                 │     │         └ <function run_sync at 0x000002B673081C60>
+                 │     └ <module 'anyio.to_thread' from 'C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\anyio\\to_...
+                 └ <module 'anyio' from 'C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\anyio\\__init__.py'>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\to_thread.py", line 56, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+                 └ <function get_async_backend at 0x000002B673081260>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\_backends\_asyncio.py", line 2476, in run_sync_in_worker_thread
+    return await future
+                 └ <Future finished exception=OperationalError('(sqlite3.OperationalError) no such table: nguoi_dung')>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\_backends\_asyncio.py", line 967, in run
+    result = context.run(func, *args)
+
+  File "C:\Users\Admin\omnara-claude-20250923000733\fado_crm\backend\tests\unit\test_admin_features.py", line 13, in override_admin_dep
+    admin = db.query(NguoiDung).filter(NguoiDung.email == "admin@test.local").first()
+            │  │     │                 │         └ <sqlalchemy.orm.attributes.InstrumentedAttribute object at 0x000002B677DF2D40>
+            │  │     │                 └ <class 'models.NguoiDung'>
+            │  │     └ <class 'models.NguoiDung'>
+            │  └ <function Session.query at 0x000002B677C9D940>
+            └ <sqlalchemy.orm.session.Session object at 0x000002B618F26E90>
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           │    └ <function Query.limit at 0x000002B677C1B880>
+           └ <sqlalchemy.orm.query.Query object at 0x000002B619298D60>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+            │                  │    │      │      │    │       └ <function Session.execute at 0x000002B677C9C7C0>
+            │                  │    │      │      │    └ <sqlalchemy.orm.session.Session object at 0x000002B618F26E90>
+            │                  │    │      │      └ <sqlalchemy.orm.query.Query object at 0x000002B618EA2450>
+            │                  │    │      └ ~_T
+            │                  │    └ <class 'sqlalchemy.engine.result.Result'>
+            │                  └ ~_T
+            └ typing.Union
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 2365, in execute
+    return self._execute_internal(
+           │    └ <function Session._execute_internal at 0x000002B677C9C4A0>
+           └ <sqlalchemy.orm.session.Session object at 0x000002B618F26E90>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                   │      │                 └ <classmethod(<function AbstractORMCompileState.orm_execute_statement at 0x000002B677B068E0>)>
+                   │      └ <class 'sqlalchemy.orm.context.ORMSelectCompileState'>
+                   └ typing.Any
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             │    └ <function Connection.execute at 0x000002B6779291C0>
+             └ <sqlalchemy.engine.base.Connection object at 0x000002B618EC1E10>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+           └ <bound method ClauseElement._execute_on_connection of <sqlalchemy.sql.selectable.Select object at 0x000002B618F27250>>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           │          └ <function Connection._execute_clauseelement at 0x000002B6779294E0>
+           └ <sqlalchemy.engine.base.Connection object at 0x000002B618EC1E10>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          │    └ <function Connection._execute_context at 0x000002B6779296C0>
+          └ <sqlalchemy.engine.base.Connection object at 0x000002B618EC1E10>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           │    └ <function Connection._exec_single_context at 0x000002B677929760>
+           └ <sqlalchemy.engine.base.Connection object at 0x000002B618EC1E10>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    │    └ <function Connection._handle_dbapi_exception at 0x000002B6779299E0>
+    └ <sqlalchemy.engine.base.Connection object at 0x000002B618EC1E10>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+          │                    │              │                 └ OperationalError('no such table: nguoi_dung')
+          │                    │              └ (<class 'sqlite3.OperationalError'>, OperationalError('no such table: nguoi_dung'), <traceback object at 0x000002B61928F700>)
+          │                    └ <method 'with_traceback' of 'BaseException' objects>
+          └ OperationalError('(sqlite3.OperationalError) no such table: nguoi_dung')
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    │    │       └ <function DefaultDialect.do_execute at 0x000002B6779E0B80>
+    │    └ <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x000002B677E4A270>
+    └ <sqlalchemy.engine.base.Connection object at 0x000002B618EC1E10>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    │      │       │          └ ('admin@test.local', 1, 0)
+    │      │       └ 'SELECT nguoi_dung.id AS nguoi_dung_id, nguoi_dung.email AS nguoi_dung_email, nguoi_dung.ho_ten AS nguoi_dung_ho_ten, nguoi_d...
+    │      └ <method 'execute' of 'sqlite3.Cursor' objects>
+    └ <sqlite3.Cursor object at 0x000002B6192A85C0>
+
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: nguoi_dung
+[SQL: SELECT nguoi_dung.id AS nguoi_dung_id, nguoi_dung.email AS nguoi_dung_email, nguoi_dung.ho_ten AS nguoi_dung_ho_ten, nguoi_dung.mat_khau_hash AS nguoi_dung_mat_khau_hash, nguoi_dung.vai_tro AS nguoi_dung_vai_tro, nguoi_dung.is_active AS nguoi_dung_is_active, nguoi_dung.ngay_tao AS nguoi_dung_ngay_tao, nguoi_dung.lan_dang_nhap_cuoi AS nguoi_dung_lan_dang_nhap_cuoi, nguoi_dung.so_dien_thoai AS nguoi_dung_so_dien_thoai, nguoi_dung.ghi_chu AS nguoi_dung_ghi_chu 
+FROM nguoi_dung 
+WHERE nguoi_dung.email = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('admin@test.local', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-09-24 21:41:18 | ERROR    | logging_config:log_error_with_context:93 | Error occurred: (sqlite3.OperationalError) no such table: nguoi_dung
+[SQL: SELECT nguoi_dung.id AS nguoi_dung_id, nguoi_dung.email AS nguoi_dung_email, nguoi_dung.ho_ten AS nguoi_dung_ho_ten, nguoi_dung.mat_khau_hash AS nguoi_dung_mat_khau_hash, nguoi_dung.vai_tro AS nguoi_dung_vai_tro, nguoi_dung.is_active AS nguoi_dung_is_active, nguoi_dung.ngay_tao AS nguoi_dung_ngay_tao, nguoi_dung.lan_dang_nhap_cuoi AS nguoi_dung_lan_dang_nhap_cuoi, nguoi_dung.so_dien_thoai AS nguoi_dung_so_dien_thoai, nguoi_dung.ghi_chu AS nguoi_dung_ghi_chu 
+FROM nguoi_dung 
+WHERE nguoi_dung.email = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('admin@test.local', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-09-24 21:41:18 | INFO     | logging_config:log_api_call:78 | GET /admin/audit-logs - 500 - 0.002s
+2025-09-24 21:41:53 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 21:41:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 21:41:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 21:41:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 21:41:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 21:41:53 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 21:41:53 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 21:41:53 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 21:41:53 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 21:41:53 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 21:41:53 | INFO     | main:<module>:93 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 21:41:54 | INFO     | middleware:dispatch:172 | Incoming request: PUT /admin/system-settings/app_name
+2025-09-24 21:41:54 | INFO     | logging_config:log_api_call:78 | PUT /admin/system-settings/app_name - 200 - 0.007s
+2025-09-24 21:41:54 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings/app_name
+2025-09-24 21:41:54 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings/app_name - 200 - 0.001s
+2025-09-24 21:41:54 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings
+2025-09-24 21:41:54 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings - 200 - 0.001s
+2025-09-24 21:41:54 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/audit-logs
+2025-09-24 21:41:54 | INFO     | logging_config:log_error_with_context:98 | Exception details
+Traceback (most recent call last):
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 151, in call_next
+    message = await recv_stream.receive()
+                    │           └ <function MemoryObjectReceiveStream.receive at 0x0000024007F81EE0>
+                    └ MemoryObjectReceiveStream(_state=MemoryObjectStreamState(max_buffer_size=0, buffer=deque([]), open_send_channels=0, open_rece...
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\streams\memory.py", line 126, in receive
+    raise EndOfStream from None
+          └ <class 'anyio.EndOfStream'>
+
+anyio.EndOfStream
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+    │    └ <function Thread._bootstrap_inner at 0x0000024005B85300>
+    └ <Thread(asyncio-portal-2402c37fa80, started daemon 18352)>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+    │    └ <function Thread.run at 0x0000024005B85080>
+    └ <Thread(asyncio-portal-2402c37fa80, started daemon 18352)>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {}
+    │    │        │    │        └ <Thread(asyncio-portal-2402c37fa80, started daemon 18352)>
+    │    │        │    └ ()
+    │    │        └ <Thread(asyncio-portal-2402c37fa80, started daemon 18352)>
+    │    └ <function start_blocking_portal.<locals>.run_blocking_portal at 0x000002402C41AAC0>
+    └ <Thread(asyncio-portal-2402c37fa80, started daemon 18352)>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\from_thread.py", line 489, in run_blocking_portal
+    _eventloop.run(
+    │          └ <function run at 0x0000024006644860>
+    └ <module 'anyio._core._eventloop' from 'C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\any...
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\_core\_eventloop.py", line 74, in run
+    return async_backend.run(func, args, {}, backend_options)
+           │             │   │     │         └ {}
+           │             │   │     └ ()
+           │             │   └ <function start_blocking_portal.<locals>.run_portal at 0x000002402C2D7240>
+           │             └ <classmethod(<function AsyncIOBackend.run at 0x000002402C418CC0>)>
+           └ <class 'anyio._backends._asyncio.AsyncIOBackend'>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\_backends\_asyncio.py", line 2316, in run
+    return runner.run(wrapper())
+           │      │   └ <function start_blocking_portal.<locals>.run_portal at 0x000002402C41AB60>
+           │      └ <function Runner.run at 0x0000024008DEE2A0>
+           └ <asyncio.runners.Runner object at 0x000002402C37F5C0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='anyio.from_thread.start_blocking_portal.<locals>.run_portal' coro=<start_blocking_portal.<locals>.run_por...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x0000024008DE7CE0>
+           │    └ <ProactorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x000002402C37F5C0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 706, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x0000024008DE7C40>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 677, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x0000024008DEDA80>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 2034, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x0000024008B57420>
+    └ <Handle Task.task_wakeup()>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup()>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000002402C426660>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002402C424400>
+          │    │   └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │    └ <middleware.ErrorHandlerMiddleware object at 0x000002402C3C1BE0>
+          └ <middleware.RequestLoggingMiddleware object at 0x000002402C3C1FD0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+                     │    │             │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next at 0x000002402C4268E0>
+                     │    │             └ <starlette.middleware.base._CachedRequest object at 0x000002402C3D4E60>
+                     │    └ <bound method ErrorHandlerMiddleware.dispatch of <middleware.ErrorHandlerMiddleware object at 0x000002402C3C1BE0>>
+                     └ <middleware.ErrorHandlerMiddleware object at 0x000002402C3C1BE0>
+
+> File "C:\Users\Admin\omnara-claude-20250923000733\fado_crm\backend\middleware.py", line 33, in dispatch
+    response = await call_next(request)
+                     │         └ <starlette.middleware.base._CachedRequest object at 0x000002402C3D4E60>
+                     └ <function BaseHTTPMiddleware.__call__.<locals>.call_next at 0x000002402C4268E0>
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 159, in call_next
+    raise app_exc
+          └ NameError("name 'admin' is not defined")
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000002402C426C00>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002402C426980>
+          │    │   └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │    └ <middleware.SecurityHeadersMiddleware object at 0x000002402C3C1E80>
+          └ <middleware.ErrorHandlerMiddleware object at 0x000002402C3C1BE0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+         │            │            └ <function collapse_excgroups at 0x00000240093E5300>
+         │            └ MemoryObjectSendStream(_state=MemoryObjectStreamState(max_buffer_size=0, buffer=deque([]), open_send_channels=0, open_receive...
+         └ MemoryObjectReceiveStream(_state=MemoryObjectStreamState(max_buffer_size=0, buffer=deque([]), open_send_channels=0, open_rece...
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    │    │   │     └ ExceptionGroup('unhandled errors in a TaskGroup', [NameError("name 'admin' is not defined")])
+    │    │   └ <method 'throw' of 'generator' objects>
+    │    └ <generator object collapse_excgroups at 0x000002402C2C9560>
+    └ <contextlib._GeneratorContextManager object at 0x000002402C4A3C40>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+                     │    │             │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next at 0x000002402C426E80>
+                     │    │             └ <starlette.middleware.base._CachedRequest object at 0x000002402C3D6E40>
+                     │    └ <bound method SecurityHeadersMiddleware.dispatch of <middleware.SecurityHeadersMiddleware object at 0x000002402C3C1E80>>
+                     └ <middleware.SecurityHeadersMiddleware object at 0x000002402C3C1E80>
+
+  File "C:\Users\Admin\omnara-claude-20250923000733\fado_crm\backend\middleware.py", line 190, in dispatch
+    response = await call_next(request)
+                     │         └ <starlette.middleware.base._CachedRequest object at 0x000002402C3D6E40>
+                     └ <function BaseHTTPMiddleware.__call__.<locals>.call_next at 0x000002402C426E80>
+
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 159, in call_next
+    raise app_exc
+          └ NameError("name 'admin' is not defined")
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000002402C426FC0>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002402C426F20>
+          │    │   └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │    └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000002402C3C1D30>
+          └ <middleware.SecurityHeadersMiddleware object at 0x000002402C3C1E80>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+          │                            │    │    │     │      │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000002402C426FC0>
+          │                            │    │    │     │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002402C426F20>
+          │                            │    │    │     └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │                            │    │    └ <starlette.requests.Request object at 0x000002402C3F45A0>
+          │                            │    └ <fastapi.routing.APIRouter object at 0x000002402BF2ED50>
+          │                            └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000002402C3C1D30>
+          └ <function wrap_app_handling_exceptions at 0x000002400947D440>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002402C4272E0>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002402C426F20>
+          │   └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          └ <fastapi.routing.APIRouter object at 0x000002402BF2ED50>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+          │    │                │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002402C4272E0>
+          │    │                │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002402C426F20>
+          │    │                └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │    └ <bound method Router.app of <fastapi.routing.APIRouter object at 0x000002402BF2ED50>>
+          └ <fastapi.routing.APIRouter object at 0x000002402BF2ED50>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+          │     │      │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002402C4272E0>
+          │     │      │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002402C426F20>
+          │     │      └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │     └ <function Route.handle at 0x000002400947EC00>
+          └ APIRoute(path='/admin/audit-logs', name='list_audit_logs', methods=['GET'])
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002402C4272E0>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002402C426F20>
+          │    │   └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │    └ <function request_response.<locals>.app at 0x000002402C05C720>
+          └ APIRoute(path='/admin/audit-logs', name='list_audit_logs', methods=['GET'])
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+          │                            │    │        │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002402C4272E0>
+          │                            │    │        │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002402C426F20>
+          │                            │    │        └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          │                            │    └ <starlette.requests.Request object at 0x000002402C3F4D10>
+          │                            └ <function request_response.<locals>.app.<locals>.app at 0x000002402C427380>
+          └ <function wrap_app_handling_exceptions at 0x000002400947D440>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000002402C4274C0>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000002402C426F20>
+          │   └ {'type': 'http', 'http_version': '1.1', 'method': 'GET', 'path': '/admin/audit-logs', 'raw_path': b'/admin/audit-logs', 'root...
+          └ <function request_response.<locals>.app.<locals>.app at 0x000002402C427380>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 75, in app
+    response = await f(request)
+                     │ └ <starlette.requests.Request object at 0x000002402C3F4D10>
+                     └ <function get_request_handler.<locals>.app at 0x000002402C05C860>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\fastapi\routing.py", line 298, in app
+    solved_result = await solve_dependencies(
+                          └ <function solve_dependencies at 0x0000024009466520>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\fastapi\dependencies\utils.py", line 648, in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+                   │                 │       │             └ {}
+                   │                 │       └ SolvedDependency(values={}, errors=[], background_tasks=None, response=<starlette.responses.Response object at 0x000002402C4C...
+                   │                 └ <function test_audit_logs_list.<locals>.<lambda> at 0x000002402C3B1EE0>
+                   └ <function run_in_threadpool at 0x000002400925A8E0>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\concurrency.py", line 38, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+                 │     │         │        └ functools.partial(<function test_audit_logs_list.<locals>.<lambda> at 0x000002402C3B1EE0>)
+                 │     │         └ <function run_sync at 0x0000024006645C60>
+                 │     └ <module 'anyio.to_thread' from 'C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\anyio\\to_...
+                 └ <module 'anyio' from 'C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\anyio\\__init__.py'>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\to_thread.py", line 56, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+                 └ <function get_async_backend at 0x0000024006645260>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\_backends\_asyncio.py", line 2476, in run_sync_in_worker_thread
+    return await future
+                 └ <Future finished exception=NameError("name 'admin' is not defined")>
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\anyio\_backends\_asyncio.py", line 967, in run
+    result = context.run(func, *args)
+
+  File "C:\Users\Admin\omnara-claude-20250923000733\fado_crm\backend\tests\unit\test_admin_features.py", line 63, in <lambda>
+    app.dependency_overrides[get_admin_user] = lambda: admin
+    │   └ {<function get_db at 0x000002400B4511C0>: <function db_session.<locals>.override_get_db at 0x000002402C3B3EC0>, <function get...
+    └ <fastapi.applications.FastAPI object at 0x000002402BFF9010>
+
+NameError: name 'admin' is not defined
+2025-09-24 21:41:54 | ERROR    | logging_config:log_error_with_context:93 | Error occurred: name 'admin' is not defined
+2025-09-24 21:41:54 | INFO     | logging_config:log_api_call:78 | GET /admin/audit-logs - 500 - 0.001s
+2025-09-24 21:42:17 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 21:42:17 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 21:42:17 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 21:42:17 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 21:42:17 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 21:42:17 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 21:42:17 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 21:42:17 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 21:42:17 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 21:42:17 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 21:42:17 | INFO     | main:<module>:93 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 21:42:17 | INFO     | middleware:dispatch:172 | Incoming request: PUT /admin/system-settings/app_name
+2025-09-24 21:42:17 | INFO     | logging_config:log_api_call:78 | PUT /admin/system-settings/app_name - 200 - 0.005s
+2025-09-24 21:42:17 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings/app_name
+2025-09-24 21:42:17 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings/app_name - 200 - 0.001s
+2025-09-24 21:42:17 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings
+2025-09-24 21:42:17 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings - 200 - 0.001s
+2025-09-24 21:42:17 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/audit-logs
+2025-09-24 21:42:17 | INFO     | logging_config:log_api_call:78 | GET /admin/audit-logs - 200 - 0.002s
+2025-09-24 22:31:24 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 22:31:24 | INFO     | file_service:setup_directories:55 | Directory ready: uploads
+2025-09-24 22:31:24 | INFO     | file_service:setup_directories:55 | Directory ready: uploads\product_images
+2025-09-24 22:31:24 | INFO     | file_service:setup_directories:55 | Directory ready: uploads\temp
+2025-09-24 22:31:24 | INFO     | file_service:setup_directories:55 | Directory ready: uploads\thumbnails
+2025-09-24 22:31:24 | INFO     | file_service:__init__:42 | File service initialized successfully
+2025-09-24 22:31:24 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 22:31:25 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 22:31:25 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 22:31:25 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 22:31:25 | INFO     | main:<module>:101 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 22:58:28 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 22:59:02 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 22:59:02 | INFO     | file_service:setup_directories:55 | Directory ready: uploads
+2025-09-24 22:59:02 | INFO     | file_service:setup_directories:55 | Directory ready: uploads\product_images
+2025-09-24 22:59:02 | INFO     | file_service:setup_directories:55 | Directory ready: uploads\temp
+2025-09-24 22:59:02 | INFO     | file_service:setup_directories:55 | Directory ready: uploads\thumbnails
+2025-09-24 22:59:02 | INFO     | file_service:__init__:42 | File service initialized successfully
+2025-09-24 22:59:02 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 22:59:03 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 22:59:03 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 22:59:03 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 22:59:03 | INFO     | main:<module>:101 | GraphQL not enabled (strawberry not installed or schema import failed)

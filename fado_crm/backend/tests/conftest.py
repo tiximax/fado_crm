@@ -1,0 +1,268 @@
+# 🧪 FADO CRM - Test Configuration & Fixtures
+# Shared testing setup và fixtures cho toàn bộ test suite
+
+import asyncio
+import pytest
+import pytest_asyncio
+from fastapi.testclient import TestClient
+from httpx import AsyncClient, ASGITransport
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from faker import Faker
+
+# Import application modules
+from main import app
+from database import get_db, Base
+from models import KhachHang, SanPham, DonHang, ChiTietDonHang
+import schemas
+
+# Create test database
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test_fado_crm.db"
+
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    connect_args={"check_same_thread": False}
+)
+
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+fake = Faker('vi_VN')  # Vietnamese locale for realistic test data
+
+# 🏗️ Database Setup Fixtures
+@pytest.fixture(scope="session")
+def test_engine():
+    """Create test database engine"""
+    Base.metadata.create_all(bind=engine)
+    yield engine
+    Base.metadata.drop_all(bind=engine)
+
+@pytest.fixture
+def db_session(test_engine):
+    """Create database session for each test"""
+    connection = test_engine.connect()
+    transaction = connection.begin()
+    session = TestingSessionLocal(bind=connection)
+
+    # Override dependency
+    def override_get_db():
+        try:
+            yield session
+        finally:
+            session.close()
+
+    app.dependency_overrides[get_db] = override_get_db
+
+    yield session
+
+    # Cleanup
+    session.close()
+    transaction.rollback()
+    connection.close()
+    app.dependency_overrides.clear()
+
+# 🌐 API Client Fixtures
+@pytest.fixture
+def client(db_session):
+    """FastAPI test client"""
+    return TestClient(app)
+
+@pytest_asyncio.fixture
+async def async_client(db_session):
+    """Async HTTP client for testing"""
+    async with AsyncClient(
+        transport=ASGITransport(app=app),
+        base_url="http://testserver"
+    ) as client:
+        yield client
+
+# 📊 Test Data Factories
+@pytest.fixture
+def sample_customer_data():
+    """Generate sample customer data"""
+    return {
+        "ho_ten": fake.name(),
+        "email": fake.email(),
+        "so_dien_thoai": fake.phone_number()[:20],  # Limit length
+        "dia_chi": fake.address(),
+        "loai_khach_hang": "vip",
+        "ghi_chu": fake.text(max_nb_chars=200)
+    }
+
+@pytest.fixture
+def sample_product_data():
+    """Generate sample product data"""
+    return {
+        "ten_san_pham": fake.catch_phrase(),
+        "link_goc": fake.url(),
+        "gia_goc": round(fake.random.uniform(10, 1000), 2),
+        "gia_ban": round(fake.random.uniform(200000, 50000000), 2),
+        "mo_ta": fake.text(max_nb_chars=500),
+        "danh_muc": fake.random_element(["Electronics", "Fashion", "Home", "Books"]),
+        "quoc_gia_nguon": fake.country(),
+        "trong_luong": round(fake.random.uniform(0.1, 10), 2)
+    }
+
+@pytest.fixture
+def sample_customer(db_session, sample_customer_data):
+    """Create sample customer in database"""
+    customer = KhachHang(**sample_customer_data)
+    db_session.add(customer)
+    db_session.commit()
+    db_session.refresh(customer)
+    return customer
+
+@pytest.fixture
+def sample_product(db_session, sample_product_data):
+    """Create sample product in database"""
+    product = SanPham(**sample_product_data)
+    db_session.add(product)
+    db_session.commit()
+    db_session.refresh(product)
+    return product
+
+@pytest.fixture
+def sample_order_data(sample_customer):
+    """Generate sample order data"""
+    return {
+        "khach_hang_id": sample_customer.id,
+        "trang_thai": "cho_xac_nhan",
+        "ghi_chu": fake.text(max_nb_chars=200)
+    }
+
+@pytest.fixture
+def sample_order(db_session, sample_customer, sample_product):
+    """Create sample order with order items"""
+    # Create order
+    order = DonHang(
+        khach_hang_id=sample_customer.id,
+        trang_thai="cho_xac_nhan",
+        ghi_chu="Test order"
+    )
+    db_session.add(order)
+    db_session.commit()
+    db_session.refresh(order)
+
+    # Create order item
+    order_item = ChiTietDonHang(
+        don_hang_id=order.id,
+        san_pham_id=sample_product.id,
+        so_luong=2,
+        gia_mua=sample_product.gia_goc
+    )
+    db_session.add(order_item)
+    db_session.commit()
+
+    # Refresh to get updated total
+    db_session.refresh(order)
+    return order
+
+# 📁 Multiple Test Data Fixtures
+@pytest.fixture
+def multiple_customers(db_session):
+    """Create multiple customers for testing pagination, filtering"""
+    customers = []
+    for _ in range(10):
+        customer = KhachHang(
+            ho_ten=fake.name(),
+            email=fake.unique.email(),
+            so_dien_thoai=fake.phone_number()[:20],
+            dia_chi=fake.address(),
+            loai_khach_hang=fake.random_element(["regular", "vip", "premium"]),
+            ghi_chu=fake.text(max_nb_chars=100)
+        )
+        customers.append(customer)
+        db_session.add(customer)
+
+    db_session.commit()
+    for customer in customers:
+        db_session.refresh(customer)
+
+    return customers
+
+@pytest.fixture
+def multiple_products(db_session):
+    """Create multiple products for testing"""
+    products = []
+    categories = ["Electronics", "Fashion", "Home", "Books", "Sports"]
+    countries = ["USA", "China", "Japan", "Germany", "Vietnam"]
+
+    for i in range(15):
+        product = SanPham(
+            ten_san_pham=f"Product {i+1} - {fake.catch_phrase()}",
+            link_goc=fake.url(),
+            gia_goc=round(fake.random.uniform(10, 500), 2),
+            gia_ban=round(fake.random.uniform(200000, 20000000), 2),
+            mo_ta=fake.text(max_nb_chars=300),
+            danh_muc=fake.random_element(categories),
+            quoc_gia_nguon=fake.random_element(countries),
+            trong_luong=round(fake.random.uniform(0.1, 5), 2)
+        )
+        products.append(product)
+        db_session.add(product)
+
+    db_session.commit()
+    for product in products:
+        db_session.refresh(product)
+
+    return products
+
+# 🔧 Utility Functions
+@pytest.fixture
+def auth_headers():
+    """Mock authentication headers for future auth implementation"""
+    return {"Authorization": "Bearer mock-token-for-testing"}
+
+@pytest.fixture
+def admin_headers():
+    """Mock admin authentication headers"""
+    return {"Authorization": "Bearer mock-admin-token"}
+
+# 🎭 Mock Data Generators
+def generate_customer_payload(**overrides):
+    """Generate customer creation payload"""
+    base = {
+        "ho_ten": fake.name(),
+        "email": fake.unique.email(),
+        "so_dien_thoai": fake.phone_number()[:20],
+        "dia_chi": fake.address(),
+        "loai_khach_hang": "regular"
+    }
+    base.update(overrides)
+    return base
+
+def generate_product_payload(**overrides):
+    """Generate product creation payload"""
+    base = {
+        "ten_san_pham": fake.catch_phrase(),
+        "link_goc": fake.url(),
+        "gia_goc": round(fake.random.uniform(10, 1000), 2),
+        "gia_ban": round(fake.random.uniform(200000, 50000000), 2),
+        "mo_ta": fake.text(max_nb_chars=500),
+        "danh_muc": fake.random_element(["Electronics", "Fashion", "Home"]),
+        "quoc_gia_nguon": fake.country()
+    }
+    base.update(overrides)
+    return base
+
+def generate_order_payload(khach_hang_id, san_pham_ids=None, **overrides):
+    """Generate order creation payload"""
+    if san_pham_ids is None:
+        san_pham_ids = [1]  # Default to first product
+
+    base = {
+        "khach_hang_id": khach_hang_id,
+        "trang_thai": "cho_xac_nhan",
+        "ghi_chu": fake.text(max_nb_chars=200),
+        "chi_tiet_don_hang": [
+            {
+                "san_pham_id": sp_id,
+                "so_luong": fake.random.randint(1, 5),
+                "gia_mua": round(fake.random.uniform(10, 500), 2)
+            }
+            for sp_id in san_pham_ids
+        ]
+    }
+    base.update(overrides)
+    return base
+
+# 🚀 Test configuration hoàn thành! Ready for comprehensive testing! ✨

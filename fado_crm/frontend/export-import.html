@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Xuất/Nhập Dữ Liệu - FADO CRM</title>
+
+    <!-- 🎨 CSS styling -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem 2rem;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .tab:last-child {
+            border-right: none;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 2px dashed #e2e8f0;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+
+        .section h3 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .export-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .export-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .export-card h4 {
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .export-card p {
+            color: #718096;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .filter-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.7rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+            margin: 0.25rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .file-upload {
+            border: 3px dashed #cbd5e0;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            background: #f7fafc;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .file-upload.dragover {
+            border-color: #667eea;
+            background: #e6fffa;
+            transform: scale(1.02);
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #a0aec0;
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            color: #4a5568;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtitle {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .result-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .result-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .result-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #718096;
+            margin-top: 0.5rem;
+        }
+
+        .format-list {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .format-tag {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.8rem 1.2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 600;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                grid-template-columns: 1fr;
+            }
+
+            .export-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 🔙 Back button -->
+    <a href="index.html" class="back-btn">← Quay lại Dashboard</a>
+
+    <div class="container">
+        <!-- 📋 Header -->
+        <div class="header">
+            <h1>📊 Xuất/Nhập Dữ Liệu</h1>
+            <p>Quản lý dữ liệu Excel & CSV một cách chuyên nghiệp</p>
+        </div>
+
+        <!-- 📑 Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('export')">📤 Xuất Dữ Liệu</button>
+            <button class="tab" onclick="showTab('import')">📥 Nhập Dữ Liệu</button>
+            <button class="tab" onclick="showTab('stats')">📊 Thống Kê</button>
+        </div>
+
+        <!-- 📤 Export Tab -->
+        <div id="export" class="tab-content active">
+            <!-- Customers Export -->
+            <div class="section">
+                <h3>👥 Xuất Dữ Liệu Khách Hàng</h3>
+                <div class="export-options">
+                    <div class="export-card">
+                        <h4>📊 Excel Format (.xlsx)</h4>
+                        <p>Xuất dữ liệu với định dạng và styling chuyên nghiệp</p>
+
+                        <div class="filter-group">
+                            <div class="form-group">
+                                <label>Loại khách hàng</label>
+                                <select id="customerType">
+                                    <option value="">Tất cả</option>
+                                    <option value="MOI">Mới</option>
+                                    <option value="THAN_THIET">Thân thiết</option>
+                                    <option value="VIP">VIP</option>
+                                    <option value="TIEM_NANG">Tiềm năng</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Từ ngày</label>
+                                <input type="date" id="customerFromDate">
+                            </div>
+                            <div class="form-group">
+                                <label>Đến ngày</label>
+                                <input type="date" id="customerToDate">
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="exportCustomersExcel()">
+                            📊 Xuất Excel
+                        </button>
+                    </div>
+
+                    <div class="export-card">
+                        <h4>📄 CSV Format (.csv)</h4>
+                        <p>Định dạng CSV cho việc import vào các hệ thống khác</p>
+                        <button class="btn btn-secondary" onclick="exportCustomersCSV()">
+                            📄 Xuất CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Export -->
+            <div class="section">
+                <h3>🛍️ Xuất Dữ Liệu Sản Phẩm</h3>
+                <div class="export-options">
+                    <div class="export-card">
+                        <h4>📊 Excel Format (.xlsx)</h4>
+                        <p>Xuất danh sách sản phẩm với thông tin chi tiết</p>
+
+                        <div class="filter-group">
+                            <div class="form-group">
+                                <label>Danh mục</label>
+                                <input type="text" id="productCategory" placeholder="Nhập danh mục...">
+                            </div>
+                            <div class="form-group">
+                                <label>Quốc gia</label>
+                                <input type="text" id="productCountry" placeholder="Nhập quốc gia...">
+                            </div>
+                            <div class="form-group">
+                                <label>Giá từ</label>
+                                <input type="number" id="productMinPrice" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Giá đến</label>
+                                <input type="number" id="productMaxPrice" placeholder="1000000">
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="exportProductsExcel()">
+                            📊 Xuất Excel
+                        </button>
+                    </div>
+
+                    <div class="export-card">
+                        <h4>📄 CSV Format (.csv)</h4>
+                        <p>Định dạng CSV cho việc quản lý sản phẩm</p>
+                        <button class="btn btn-secondary" onclick="exportProductsCSV()">
+                            📄 Xuất CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Export -->
+            <div class="section">
+                <h3>📋 Xuất Dữ Liệu Đơn Hàng</h3>
+                <div class="export-options">
+                    <div class="export-card">
+                        <h4>📊 Excel Format (.xlsx)</h4>
+                        <p>Xuất dữ liệu đơn hàng với thông tin giao hàng</p>
+
+                        <div class="filter-group">
+                            <div class="form-group">
+                                <label>Trạng thái</label>
+                                <select id="orderStatus">
+                                    <option value="">Tất cả</option>
+                                    <option value="CHO_XAC_NHAN">Chờ xác nhận</option>
+                                    <option value="DA_XAC_NHAN">Đã xác nhận</option>
+                                    <option value="DANG_GIAO">Đang giao</option>
+                                    <option value="DA_GIAO">Đã giao</option>
+                                    <option value="HUY">Hủy</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Từ ngày</label>
+                                <input type="date" id="orderFromDate">
+                            </div>
+                            <div class="form-group">
+                                <label>Đến ngày</label>
+                                <input type="date" id="orderToDate">
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="exportOrdersExcel()">
+                            📊 Xuất Excel
+                        </button>
+                    </div>
+
+                    <div class="export-card">
+                        <h4>📄 CSV Format (.csv)</h4>
+                        <p>Định dạng CSV cho báo cáo đơn hàng</p>
+                        <button class="btn btn-secondary" onclick="exportOrdersCSV()">
+                            📄 Xuất CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📥 Import Tab -->
+        <div id="import" class="tab-content">
+            <!-- Customers Import -->
+            <div class="section">
+                <h3>👥 Nhập Dữ Liệu Khách Hàng</h3>
+
+                <div class="file-upload" onclick="document.getElementById('customerFile').click()">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">Chọn file Excel để nhập khách hàng</div>
+                    <div class="upload-subtitle">Hỗ trợ: .xlsx, .xls (Tối đa 10MB)</div>
+                    <input type="file" id="customerFile" accept=".xlsx,.xls" onchange="handleFileSelect(this, 'customer')">
+                </div>
+
+                <div class="progress-bar" id="customerProgress">
+                    <div class="progress-fill"></div>
+                </div>
+
+                <div class="result-message" id="customerResult"></div>
+
+                <p style="margin-top: 1rem; color: #718096; font-size: 0.9rem;">
+                    <strong>Yêu cầu cột trong Excel:</strong> Họ tên, Email, Số điện thoai (bắt buộc).
+                    Địa chỉ (tùy chọn).
+                </p>
+            </div>
+
+            <!-- Products Import -->
+            <div class="section">
+                <h3>🛍️ Nhập Dữ Liệu Sản Phẩm</h3>
+
+                <div class="file-upload" onclick="document.getElementById('productFile').click()">
+                    <div class="upload-icon">📦</div>
+                    <div class="upload-text">Chọn file Excel để nhập sản phẩm</div>
+                    <div class="upload-subtitle">Hỗ trợ: .xlsx, .xls (Tối đa 10MB)</div>
+                    <input type="file" id="productFile" accept=".xlsx,.xls" onchange="handleFileSelect(this, 'product')">
+                </div>
+
+                <div class="progress-bar" id="productProgress">
+                    <div class="progress-fill"></div>
+                </div>
+
+                <div class="result-message" id="productResult"></div>
+
+                <p style="margin-top: 1rem; color: #718096; font-size: 0.9rem;">
+                    <strong>Yêu cầu cột trong Excel:</strong> Tên sản phẩm, Giá bán (bắt buộc).
+                    Mô tả, Danh mục, Trọng lượng, Quốc gia nguồn (tùy chọn).
+                </p>
+            </div>
+        </div>
+
+        <!-- 📊 Stats Tab -->
+        <div id="stats" class="tab-content">
+            <div class="loading" id="statsLoading">
+                <div class="spinner"></div>
+                <p>Đang tải thống kê...</p>
+            </div>
+
+            <div id="statsContent" style="display: none;">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalCustomers">0</div>
+                        <div class="stat-label">👥 Tổng khách hàng</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalProducts">0</div>
+                        <div class="stat-label">🛍️ Tổng sản phẩm</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalOrders">0</div>
+                        <div class="stat-label">📋 Tổng đơn hàng</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>📤 Định dạng xuất</h3>
+                    <div class="format-list" id="exportFormats"></div>
+                </div>
+
+                <div class="section">
+                    <h3>📥 Định dạng nhập</h3>
+                    <div class="format-list" id="importFormats"></div>
+                </div>
+
+                <div class="section">
+                    <h3>🕐 Thông tin cập nhật</h3>
+                    <p id="lastExport">Lần xuất cuối: Chưa có dữ liệu</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🚀 JavaScript -->
+    <script>
+        // 🔐 Authentication check
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('⚠️ Vui lòng đăng nhập để tiếp tục!');
+            window.location.href = 'login.html';
+        }
+
+        // 🌍 API base URL
+        const API_BASE = 'http://localhost:8000';
+
+        // 📑 Tab management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Load stats when stats tab is selected
+            if (tabName === 'stats') {
+                loadStats();
+            }
+        }
+
+        // 📊 Export functions
+        async function exportCustomersExcel() {
+            const params = new URLSearchParams();
+
+            const customerType = document.getElementById('customerType').value;
+            const fromDate = document.getElementById('customerFromDate').value;
+            const toDate = document.getElementById('customerToDate').value;
+
+            if (customerType) params.append('customer_type', customerType);
+            if (fromDate) params.append('created_from', fromDate);
+            if (toDate) params.append('created_to', toDate);
+
+            await downloadFile(`${API_BASE}/export/customers/excel?${params.toString()}`);
+        }
+
+        async function exportCustomersCSV() {
+            await downloadFile(`${API_BASE}/export/customers/csv`);
+        }
+
+        async function exportProductsExcel() {
+            const params = new URLSearchParams();
+
+            const category = document.getElementById('productCategory').value;
+            const country = document.getElementById('productCountry').value;
+            const minPrice = document.getElementById('productMinPrice').value;
+            const maxPrice = document.getElementById('productMaxPrice').value;
+
+            if (category) params.append('category', category);
+            if (country) params.append('country', country);
+            if (minPrice) params.append('min_price', minPrice);
+            if (maxPrice) params.append('max_price', maxPrice);
+
+            await downloadFile(`${API_BASE}/export/products/excel?${params.toString()}`);
+        }
+
+        async function exportProductsCSV() {
+            await downloadFile(`${API_BASE}/export/products/csv`);
+        }
+
+        async function exportOrdersExcel() {
+            const params = new URLSearchParams();
+
+            const status = document.getElementById('orderStatus').value;
+            const fromDate = document.getElementById('orderFromDate').value;
+            const toDate = document.getElementById('orderToDate').value;
+
+            if (status) params.append('status_filter', status);
+            if (fromDate) params.append('created_from', fromDate);
+            if (toDate) params.append('created_to', toDate);
+
+            await downloadFile(`${API_BASE}/export/orders/excel?${params.toString()}`);
+        }
+
+        async function exportOrdersCSV() {
+            await downloadFile(`${API_BASE}/export/orders/csv`);
+        }
+
+        // 📥 File download helper
+        async function downloadFile(url) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Export failed');
+                }
+
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+
+                const contentDisposition = response.headers.get('Content-Disposition');
+                const filename = contentDisposition
+                    ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+                    : 'export.file';
+
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(downloadUrl);
+
+                showMessage('success', '🎉 Xuất dữ liệu thành công!');
+            } catch (error) {
+                console.error('Export error:', error);
+                showMessage('error', '❌ Lỗi khi xuất dữ liệu. Vui lòng thử lại!');
+            }
+        }
+
+        // 📁 File upload handling
+        function handleFileSelect(input, type) {
+            const file = input.files[0];
+            if (file) {
+                uploadFile(file, type);
+            }
+        }
+
+        async function uploadFile(file, type) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const endpoint = type === 'customer'
+                ? `${API_BASE}/import/customers/excel`
+                : `${API_BASE}/import/products/excel`;
+
+            const progressBar = document.getElementById(`${type}Progress`);
+            const resultDiv = document.getElementById(`${type}Result`);
+
+            // Show progress bar
+            progressBar.style.display = 'block';
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                // Hide progress bar
+                progressBar.style.display = 'none';
+
+                // Show result
+                if (result.success) {
+                    showImportResult(resultDiv, 'success', `
+                        🎉 Import thành công! <br>
+                        ✅ Thành công: ${result.data.success_count} bản ghi <br>
+                        ❌ Lỗi: ${result.data.error_count} bản ghi
+                    `);
+                } else {
+                    showImportResult(resultDiv, 'error', `❌ ${result.message}`);
+                }
+
+            } catch (error) {
+                console.error('Import error:', error);
+                progressBar.style.display = 'none';
+                showImportResult(resultDiv, 'error', '❌ Lỗi khi import dữ liệu');
+            }
+        }
+
+        function showImportResult(element, type, message) {
+            element.className = `result-message ${type}`;
+            element.innerHTML = message;
+            element.style.display = 'block';
+
+            // Hide after 5 seconds
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        // 📊 Load statistics
+        async function loadStats() {
+            const loading = document.getElementById('statsLoading');
+            const content = document.getElementById('statsContent');
+
+            loading.classList.add('show');
+            content.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE}/export/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const stats = result.data;
+
+                    document.getElementById('totalCustomers').textContent = stats.total_customers.toLocaleString();
+                    document.getElementById('totalProducts').textContent = stats.total_products.toLocaleString();
+                    document.getElementById('totalOrders').textContent = stats.total_orders.toLocaleString();
+
+                    // Export formats
+                    const exportFormats = document.getElementById('exportFormats');
+                    exportFormats.innerHTML = stats.export_formats.map(format =>
+                        `<span class="format-tag">${format}</span>`
+                    ).join('');
+
+                    // Import formats
+                    const importFormats = document.getElementById('importFormats');
+                    importFormats.innerHTML = stats.import_formats.map(format =>
+                        `<span class="format-tag">${format}</span>`
+                    ).join('');
+
+                    document.getElementById('lastExport').textContent = `Lần xuất cuối: ${stats.last_export}`;
+                }
+
+                loading.classList.remove('show');
+                content.style.display = 'block';
+
+            } catch (error) {
+                console.error('Stats error:', error);
+                loading.classList.remove('show');
+                showMessage('error', '❌ Lỗi khi tải thống kê');
+            }
+        }
+
+        // 💬 Message helper
+        function showMessage(type, message) {
+            // Create temporary message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `result-message ${type}`;
+            messageDiv.innerHTML = message;
+            messageDiv.style.position = 'fixed';
+            messageDiv.style.top = '20px';
+            messageDiv.style.right = '20px';
+            messageDiv.style.zIndex = '9999';
+            messageDiv.style.display = 'block';
+
+            document.body.appendChild(messageDiv);
+
+            setTimeout(() => {
+                document.body.removeChild(messageDiv);
+            }, 3000);
+        }
+
+        // 🎬 Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            const monthAgo = new Date(Date.now() - 30*24*60*60*1000).toISOString().split('T')[0];
+
+            document.getElementById('customerFromDate').value = monthAgo;
+            document.getElementById('customerToDate').value = today;
+            document.getElementById('orderFromDate').value = monthAgo;
+            document.getElementById('orderToDate').value = today;
+        });
+
+        // 🎭 Drag and drop support
+        ['customerFile', 'productFile'].forEach(fileId => {
+            const fileInput = document.getElementById(fileId);
+            const uploadArea = fileInput.parentElement;
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            uploadArea.addEventListener('drop', handleDrop, false);
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function highlight(e) {
+                uploadArea.classList.add('dragover');
+            }
+
+            function unhighlight(e) {
+                uploadArea.classList.remove('dragover');
+            }
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    const type = fileId.includes('customer') ? 'customer' : 'product';
+                    handleFileSelect(fileInput, type);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

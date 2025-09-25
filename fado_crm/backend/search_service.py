@@ -1,0 +1,429 @@
+# 🔍 FADO CRM - Advanced Search Service
+# Tìm kiếm thông minh như Google Search! 🧠
+
+from sqlalchemy.orm import Session
+from sqlalchemy import or_, and_, func, text
+from typing import List, Dict, Any, Optional, Tuple
+from datetime import datetime, timedelta
+import re
+
+from models import KhachHang, SanPham, DonHang, ChiTietDonHang, LichSuLienHe, TrangThaiDonHang, LoaiKhachHang, VaiTro
+from logging_config import app_logger
+
+class AdvancedSearchService:
+    def __init__(self):
+        self.db_session = None
+        app_logger.info("🔍 Advanced Search service initialized")
+
+    def set_session(self, db: Session):
+        """🔌 Set database session"""
+        self.db_session = db
+
+    def universal_search(self, query: str, limit: int = 50) -> Dict[str, Any]:
+        """🌍 Universal search across all entities"""
+        try:
+            if not query or len(query.strip()) < 2:
+                return {"results": [], "total": 0}
+
+            search_term = f"%{query.strip()}%"
+            results = {
+                "customers": [],
+                "products": [],
+                "orders": [],
+                "contacts": [],
+                "total": 0
+            }
+
+            # Search customers
+            customers = self.db_session.query(KhachHang).filter(
+                or_(
+                    KhachHang.ho_ten.ilike(search_term),
+                    KhachHang.email.ilike(search_term),
+                    KhachHang.so_dien_thoai.ilike(search_term),
+                    KhachHang.dia_chi.ilike(search_term)
+                )
+            ).limit(10).all()
+
+            results["customers"] = [
+                {
+                    "id": c.id,
+                    "type": "customer",
+                    "title": c.ho_ten,
+                    "subtitle": c.email,
+                    "description": f"Loại: {c.loai_khach.value}, Tổng mua: {c.tong_tien_da_mua:,.0f} VND",
+                    "url": f"/customers/{c.id}",
+                    "highlight": self.highlight_text([c.ho_ten, c.email, c.so_dien_thoai], query)
+                }
+                for c in customers
+            ]
+
+            # Search products
+            products = self.db_session.query(SanPham).filter(
+                or_(
+                    SanPham.ten_san_pham.ilike(search_term),
+                    SanPham.mo_ta.ilike(search_term),
+                    SanPham.danh_muc.ilike(search_term),
+                    SanPham.quoc_gia_nguon.ilike(search_term)
+                )
+            ).limit(10).all()
+
+            results["products"] = [
+                {
+                    "id": p.id,
+                    "type": "product",
+                    "title": p.ten_san_pham,
+                    "subtitle": f"Danh mục: {p.danh_muc}",
+                    "description": f"Giá: {p.gia_ban:,.0f} VND, Xuất xứ: {p.quoc_gia_nguon}",
+                    "url": f"/products/{p.id}",
+                    "highlight": self.highlight_text([p.ten_san_pham, p.danh_muc, p.quoc_gia_nguon], query)
+                }
+                for p in products
+            ]
+
+            # Search orders
+            orders = self.db_session.query(DonHang).join(KhachHang).filter(
+                or_(
+                    DonHang.ma_don_hang.ilike(search_term),
+                    KhachHang.ho_ten.ilike(search_term),
+                    KhachHang.email.ilike(search_term)
+                )
+            ).limit(10).all()
+
+            results["orders"] = [
+                {
+                    "id": o.id,
+                    "type": "order",
+                    "title": f"Đơn hàng {o.ma_don_hang}",
+                    "subtitle": o.khach_hang.ho_ten if o.khach_hang else "Unknown",
+                    "description": f"Trạng thái: {o.trang_thai.value}, Tổng: {o.tong_tien:,.0f} VND",
+                    "url": f"/orders/{o.id}",
+                    "highlight": self.highlight_text([o.ma_don_hang], query)
+                }
+                for o in orders
+            ]
+
+            # Calculate total
+            results["total"] = len(results["customers"]) + len(results["products"]) + len(results["orders"])
+
+            return results
+
+        except Exception as e:
+            app_logger.error(f"❌ Error in universal search: {str(e)}")
+            return {"results": [], "total": 0, "error": str(e)}
+
+    def advanced_customer_search(self, filters: Dict[str, Any]) -> List[KhachHang]:
+        """👥 Advanced customer search with multiple filters"""
+        try:
+            query = self.db_session.query(KhachHang)
+
+            # Text search
+            if filters.get("search"):
+                search_term = f"%{filters['search']}%"
+                query = query.filter(
+                    or_(
+                        KhachHang.ho_ten.ilike(search_term),
+                        KhachHang.email.ilike(search_term),
+                        KhachHang.so_dien_thoai.ilike(search_term)
+                    )
+                )
+
+            # Customer type filter
+            if filters.get("customer_type"):
+                query = query.filter(KhachHang.loai_khach == filters["customer_type"])
+
+            # Spending range filter
+            if filters.get("min_spending"):
+                query = query.filter(KhachHang.tong_tien_da_mua >= filters["min_spending"])
+            if filters.get("max_spending"):
+                query = query.filter(KhachHang.tong_tien_da_mua <= filters["max_spending"])
+
+            # Date range filter
+            if filters.get("created_from"):
+                query = query.filter(KhachHang.ngay_tao >= filters["created_from"])
+            if filters.get("created_to"):
+                query = query.filter(KhachHang.ngay_tao <= filters["created_to"])
+
+            # Order count filter
+            if filters.get("min_orders"):
+                query = query.filter(KhachHang.so_don_thanh_cong >= filters["min_orders"])
+
+            # Sorting
+            sort_by = filters.get("sort_by", "ngay_tao")
+            sort_order = filters.get("sort_order", "desc")
+
+            if hasattr(KhachHang, sort_by):
+                sort_column = getattr(KhachHang, sort_by)
+                query = query.order_by(sort_column.desc() if sort_order == "desc" else sort_column.asc())
+
+            # Pagination
+            skip = filters.get("skip", 0)
+            limit = filters.get("limit", 50)
+
+            return query.offset(skip).limit(limit).all()
+
+        except Exception as e:
+            app_logger.error(f"❌ Error in advanced customer search: {str(e)}")
+            return []
+
+    def advanced_product_search(self, filters: Dict[str, Any]) -> List[SanPham]:
+        """🛍️ Advanced product search with filters"""
+        try:
+            query = self.db_session.query(SanPham)
+
+            # Text search
+            if filters.get("search"):
+                search_term = f"%{filters['search']}%"
+                query = query.filter(
+                    or_(
+                        SanPham.ten_san_pham.ilike(search_term),
+                        SanPham.mo_ta.ilike(search_term),
+                        SanPham.danh_muc.ilike(search_term)
+                    )
+                )
+
+            # Category filter
+            if filters.get("category"):
+                query = query.filter(SanPham.danh_muc.ilike(f"%{filters['category']}%"))
+
+            # Country filter
+            if filters.get("country"):
+                query = query.filter(SanPham.quoc_gia_nguon.ilike(f"%{filters['country']}%"))
+
+            # Price range filter
+            if filters.get("min_price"):
+                query = query.filter(SanPham.gia_ban >= filters["min_price"])
+            if filters.get("max_price"):
+                query = query.filter(SanPham.gia_ban <= filters["max_price"])
+
+            # Weight range filter
+            if filters.get("min_weight"):
+                query = query.filter(SanPham.trong_luong >= filters["min_weight"])
+            if filters.get("max_weight"):
+                query = query.filter(SanPham.trong_luong <= filters["max_weight"])
+
+            # Date range filter
+            if filters.get("created_from"):
+                query = query.filter(SanPham.ngay_tao >= filters["created_from"])
+            if filters.get("created_to"):
+                query = query.filter(SanPham.ngay_tao <= filters["created_to"])
+
+            # Sorting
+            sort_by = filters.get("sort_by", "ngay_tao")
+            sort_order = filters.get("sort_order", "desc")
+
+            if hasattr(SanPham, sort_by):
+                sort_column = getattr(SanPham, sort_by)
+                query = query.order_by(sort_column.desc() if sort_order == "desc" else sort_column.asc())
+
+            # Pagination
+            skip = filters.get("skip", 0)
+            limit = filters.get("limit", 50)
+
+            return query.offset(skip).limit(limit).all()
+
+        except Exception as e:
+            app_logger.error(f"❌ Error in advanced product search: {str(e)}")
+            return []
+
+    def advanced_order_search(self, filters: Dict[str, Any]) -> List[DonHang]:
+        """📋 Advanced order search with filters"""
+        try:
+            query = self.db_session.query(DonHang).join(KhachHang, isouter=True)
+
+            # Text search
+            if filters.get("search"):
+                search_term = f"%{filters['search']}%"
+                query = query.filter(
+                    or_(
+                        DonHang.ma_don_hang.ilike(search_term),
+                        KhachHang.ho_ten.ilike(search_term),
+                        KhachHang.email.ilike(search_term),
+                        DonHang.ma_van_don.ilike(search_term)
+                    )
+                )
+
+            # Status filter
+            if filters.get("status"):
+                if isinstance(filters["status"], list):
+                    query = query.filter(DonHang.trang_thai.in_(filters["status"]))
+                else:
+                    query = query.filter(DonHang.trang_thai == filters["status"])
+
+            # Customer filter
+            if filters.get("customer_id"):
+                query = query.filter(DonHang.khach_hang_id == filters["customer_id"])
+
+            # Amount range filter
+            if filters.get("min_amount"):
+                query = query.filter(DonHang.tong_tien >= filters["min_amount"])
+            if filters.get("max_amount"):
+                query = query.filter(DonHang.tong_tien <= filters["max_amount"])
+
+            # Date range filter
+            if filters.get("created_from"):
+                query = query.filter(DonHang.ngay_tao >= filters["created_from"])
+            if filters.get("created_to"):
+                query = query.filter(DonHang.ngay_tao <= filters["created_to"])
+
+            # Delivery date filter
+            if filters.get("delivery_from"):
+                query = query.filter(DonHang.ngay_giao_hang >= filters["delivery_from"])
+            if filters.get("delivery_to"):
+                query = query.filter(DonHang.ngay_giao_hang <= filters["delivery_to"])
+
+            # Sorting
+            sort_by = filters.get("sort_by", "ngay_tao")
+            sort_order = filters.get("sort_order", "desc")
+
+            if hasattr(DonHang, sort_by):
+                sort_column = getattr(DonHang, sort_by)
+                query = query.order_by(sort_column.desc() if sort_order == "desc" else sort_column.asc())
+
+            # Pagination
+            skip = filters.get("skip", 0)
+            limit = filters.get("limit", 50)
+
+            return query.offset(skip).limit(limit).all()
+
+        except Exception as e:
+            app_logger.error(f"❌ Error in advanced order search: {str(e)}")
+            return []
+
+    def get_search_suggestions(self, query: str, category: str = "all") -> List[str]:
+        """💡 Get search suggestions"""
+        try:
+            if not query or len(query.strip()) < 2:
+                return []
+
+            search_term = f"%{query.strip()}%"
+            suggestions = []
+
+            if category in ["all", "customers"]:
+                # Customer name suggestions
+                customer_names = self.db_session.query(KhachHang.ho_ten).filter(
+                    KhachHang.ho_ten.ilike(search_term)
+                ).distinct().limit(5).all()
+                suggestions.extend([name[0] for name in customer_names])
+
+            if category in ["all", "products"]:
+                # Product name suggestions
+                product_names = self.db_session.query(SanPham.ten_san_pham).filter(
+                    SanPham.ten_san_pham.ilike(search_term)
+                ).distinct().limit(5).all()
+                suggestions.extend([name[0] for name in product_names])
+
+                # Category suggestions
+                categories = self.db_session.query(SanPham.danh_muc).filter(
+                    SanPham.danh_muc.ilike(search_term),
+                    SanPham.danh_muc.isnot(None)
+                ).distinct().limit(3).all()
+                suggestions.extend([cat[0] for cat in categories])
+
+            if category in ["all", "orders"]:
+                # Order code suggestions
+                order_codes = self.db_session.query(DonHang.ma_don_hang).filter(
+                    DonHang.ma_don_hang.ilike(search_term)
+                ).distinct().limit(5).all()
+                suggestions.extend([code[0] for code in order_codes])
+
+            # Remove duplicates and limit
+            return list(set(suggestions))[:10]
+
+        except Exception as e:
+            app_logger.error(f"❌ Error getting search suggestions: {str(e)}")
+            return []
+
+    def highlight_text(self, texts: List[str], query: str) -> List[str]:
+        """🖍️ Highlight search terms in text"""
+        try:
+            highlighted = []
+            for text in texts:
+                if not text:
+                    continue
+
+                # Simple highlighting (in a real app, you'd use more sophisticated highlighting)
+                pattern = re.compile(re.escape(query), re.IGNORECASE)
+                highlighted_text = pattern.sub(f'<mark>{query}</mark>', text)
+                highlighted.append(highlighted_text)
+
+            return highlighted
+
+        except Exception as e:
+            app_logger.error(f"❌ Error highlighting text: {str(e)}")
+            return texts
+
+    def get_search_stats(self) -> Dict[str, Any]:
+        """📊 Get search statistics"""
+        try:
+            stats = {
+                "total_customers": self.db_session.query(KhachHang).count(),
+                "total_products": self.db_session.query(SanPham).count(),
+                "total_orders": self.db_session.query(DonHang).count(),
+                "popular_categories": [],
+                "popular_countries": []
+            }
+
+            # Popular categories
+            categories = self.db_session.query(
+                SanPham.danh_muc,
+                func.count(SanPham.id).label('count')
+            ).filter(
+                SanPham.danh_muc.isnot(None)
+            ).group_by(SanPham.danh_muc).order_by(
+                func.count(SanPham.id).desc()
+            ).limit(5).all()
+
+            stats["popular_categories"] = [
+                {"name": cat.danh_muc, "count": cat.count}
+                for cat in categories
+            ]
+
+            # Popular countries
+            countries = self.db_session.query(
+                SanPham.quoc_gia_nguon,
+                func.count(SanPham.id).label('count')
+            ).filter(
+                SanPham.quoc_gia_nguon.isnot(None)
+            ).group_by(SanPham.quoc_gia_nguon).order_by(
+                func.count(SanPham.id).desc()
+            ).limit(5).all()
+
+            stats["popular_countries"] = [
+                {"name": country.quoc_gia_nguon, "count": country.count}
+                for country in countries
+            ]
+
+            return stats
+
+        except Exception as e:
+            app_logger.error(f"❌ Error getting search stats: {str(e)}")
+            return {}
+
+# 🌟 Global search service
+search_service = AdvancedSearchService()
+
+# 🎯 Helper functions
+def universal_search(db: Session, query: str, limit: int = 50) -> Dict[str, Any]:
+    """🌍 Universal search helper"""
+    search_service.set_session(db)
+    return search_service.universal_search(query, limit)
+
+def advanced_search(db: Session, entity_type: str, filters: Dict[str, Any]) -> List[Any]:
+    """🔍 Advanced search helper"""
+    search_service.set_session(db)
+
+    if entity_type == "customers":
+        return search_service.advanced_customer_search(filters)
+    elif entity_type == "products":
+        return search_service.advanced_product_search(filters)
+    elif entity_type == "orders":
+        return search_service.advanced_order_search(filters)
+    else:
+        return []
+
+def get_search_suggestions(db: Session, query: str, category: str = "all") -> List[str]:
+    """💡 Search suggestions helper"""
+    search_service.set_session(db)
+    return search_service.get_search_suggestions(query, category)
+
+print("🔍 Advanced Search service loaded successfully!")

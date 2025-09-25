@@ -1,0 +1,42 @@
+2025-09-24 21:29:17 | ERROR    | main:login:192 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing | {}
+2025-09-24 21:50:34 | ERROR    | main:login:192 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing | {}
+2025-09-24 21:50:57 | ERROR    | main:login:192 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing | {}
+2025-09-24 21:51:41 | ERROR    | main:login:192 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing | {}
+2025-09-24 21:53:12 | ERROR    | main:login:192 | Login failed for admin@fado.vn: hash could not be identified | {}
+2025-09-24 21:55:09 | ERROR    | main:login:192 | Login failed for admin@fado.vn: hash could not be identified | {}
+2025-09-24 21:56:34 | ERROR    | main:login:281 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing | {}
+2025-09-24 21:57:06 | ERROR    | main:login:281 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing | {}
+2025-09-24 21:57:28 | ERROR    | main:login:281 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing | {}
+2025-09-24 22:05:06 | ERROR    | main:login:281 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing | {}
+2025-09-24 22:07:28 | ERROR    | main:login:281 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing | {}
+2025-09-24 22:45:48 | ERROR    | file_service:create_thumbnails:228 | ❌ Error creating thumbnails: broken data stream when reading image file | {}
+2025-09-24 22:59:12 | ERROR    | file_service:create_thumbnails:228 | ❌ Error creating thumbnails: broken data stream when reading image file | {}
+2025-09-24 23:00:11 | ERROR    | file_service:create_thumbnails:228 | ❌ Error creating thumbnails: broken data stream when reading image file | {}
+2025-09-24 23:01:11 | ERROR    | file_service:create_thumbnails:228 | ❌ Error creating thumbnails: broken data stream when reading image file | {}

@@ -1,0 +1,164 @@
+# -*- coding: utf-8 -*-
+# FADO CRM Simple Demo Data Creator
+# Tao du lieu demo don gian cho he thong
+
+import sys
+import random
+from datetime import datetime, timedelta
+from sqlalchemy.orm import sessionmaker
+from database import engine, create_tables
+from models import *
+
+# Tao session
+Session = sessionmaker(bind=engine)
+
+def create_simple_demo():
+    """Tao du lieu demo don gian"""
+    session = Session()
+
+    try:
+        # Tao khach hang
+        customers = [
+            KhachHang(
+                ho_ten="Nguyen Van A",
+                email="nguyenvana@gmail.com",
+                so_dien_thoai="0987654321",
+                dia_chi="123 ABC Street, Ho Chi Minh City",
+                loai_khach=LoaiKhachHang.VIP,
+                tong_tien_da_mua=50000000.0,
+                so_don_thanh_cong=10
+            ),
+            KhachHang(
+                ho_ten="Tran Thi B",
+                email="tranthib@gmail.com",
+                so_dien_thoai="0912345678",
+                dia_chi="456 XYZ Street, Ho Chi Minh City",
+                loai_khach=LoaiKhachHang.THAN_THIET,
+                tong_tien_da_mua=20000000.0,
+                so_don_thanh_cong=5
+            ),
+            KhachHang(
+                ho_ten="Le Van C",
+                email="levanc@gmail.com",
+                so_dien_thoai="0909123456",
+                dia_chi="789 DEF Street, Ho Chi Minh City",
+                loai_khach=LoaiKhachHang.MOI,
+                tong_tien_da_mua=2000000.0,
+                so_don_thanh_cong=1
+            )
+        ]
+
+        for customer in customers:
+            session.add(customer)
+        session.commit()
+        print(f"Created {len(customers)} customers")
+
+        # Tao san pham
+        products = [
+            SanPham(
+                ten_san_pham="iPhone 15 Pro Max",
+                link_goc="https://apple.com/iphone",
+                gia_goc=1200.0,
+                gia_ban=32000000.0,
+                mo_ta="Latest iPhone model",
+                danh_muc="Dien thoai",
+                quoc_gia_nguon="USA"
+            ),
+            SanPham(
+                ten_san_pham="Nike Air Jordan",
+                link_goc="https://nike.com/jordan",
+                gia_goc=170.0,
+                gia_ban=4500000.0,
+                mo_ta="Classic sneaker",
+                danh_muc="Giay dep",
+                quoc_gia_nguon="USA"
+            ),
+            SanPham(
+                ten_san_pham="MacBook Pro M3",
+                link_goc="https://apple.com/macbook",
+                gia_goc=2000.0,
+                gia_ban=52000000.0,
+                mo_ta="Professional laptop",
+                danh_muc="Laptop",
+                quoc_gia_nguon="USA"
+            )
+        ]
+
+        for product in products:
+            session.add(product)
+        session.commit()
+        print(f"Created {len(products)} products")
+
+        # Tao don hang
+        orders = []
+        for i in range(5):
+            customer = random.choice(customers)
+            product = random.choice(products)
+
+            ma_don_hang = f"FD{datetime.now().strftime('%y%m%d')}{i+1:03d}"
+
+            order = DonHang(
+                ma_don_hang=ma_don_hang,
+                khach_hang_id=customer.id,
+                tong_gia_san_pham=product.gia_ban,
+                phi_mua_ho=product.gia_ban * 0.05,
+                phi_van_chuyen=500000.0,
+                phi_khac=100000.0,
+                tong_tien=product.gia_ban * 1.05 + 600000.0,
+                trang_thai=random.choice(list(TrangThaiDonHang)),
+                ngay_tao=datetime.now() - timedelta(days=random.randint(0, 10))
+            )
+
+            session.add(order)
+            session.flush()
+
+            # Tao chi tiet don hang
+            chi_tiet = ChiTietDonHang(
+                don_hang_id=order.id,
+                san_pham_id=product.id,
+                so_luong=1,
+                gia_mua=product.gia_ban
+            )
+            session.add(chi_tiet)
+            orders.append(order)
+
+        session.commit()
+        print(f"Created {len(orders)} orders")
+
+        # Tao lich su lien he
+        contacts = []
+        for i in range(10):
+            customer = random.choice(customers)
+
+            contact = LichSuLienHe(
+                khach_hang_id=customer.id,
+                loai_lien_he=random.choice(["call", "email", "sms"]),
+                noi_dung="Demo contact content",
+                nhan_vien_xu_ly="Admin",
+                ket_qua="Success",
+                ngay_lien_he=datetime.now() - timedelta(days=random.randint(0, 5))
+            )
+            session.add(contact)
+            contacts.append(contact)
+
+        session.commit()
+        print(f"Created {len(contacts)} contact records")
+
+        print("\nDemo data created successfully!")
+        print("You can now start the server with: python run_server.py")
+
+    except Exception as e:
+        print(f"Error creating demo data: {e}")
+        session.rollback()
+    finally:
+        session.close()
+
+if __name__ == "__main__":
+    print("FADO CRM Demo Data Creator")
+    print("=" * 30)
+
+    # Tao database tables
+    create_tables()
+
+    # Tao demo data
+    create_simple_demo()

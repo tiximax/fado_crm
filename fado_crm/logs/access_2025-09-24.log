@@ -1,0 +1,11 @@
+2025-09-24 21:13:34 | ACCESS | GET /health - 200 - 0.001s
+2025-09-24 21:41:18 | ACCESS | PUT /admin/system-settings/app_name - 500 - 0.012s
+2025-09-24 21:41:18 | ACCESS | GET /admin/audit-logs - 500 - 0.002s
+2025-09-24 21:41:54 | ACCESS | PUT /admin/system-settings/app_name - 200 - 0.007s
+2025-09-24 21:41:54 | ACCESS | GET /admin/system-settings/app_name - 200 - 0.001s
+2025-09-24 21:41:54 | ACCESS | GET /admin/system-settings - 200 - 0.001s
+2025-09-24 21:41:54 | ACCESS | GET /admin/audit-logs - 500 - 0.001s
+2025-09-24 21:42:17 | ACCESS | PUT /admin/system-settings/app_name - 200 - 0.005s
+2025-09-24 21:42:17 | ACCESS | GET /admin/system-settings/app_name - 200 - 0.001s
+2025-09-24 21:42:17 | ACCESS | GET /admin/system-settings - 200 - 0.001s
+2025-09-24 21:42:17 | ACCESS | GET /admin/audit-logs - 200 - 0.002s

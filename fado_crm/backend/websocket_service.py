@@ -1,0 +1,385 @@
+# 🔔 FADO CRM - Real-time WebSocket Notifications
+# Thông báo thời gian thực như Facebook! 🚀
+
+from fastapi import WebSocket, WebSocketDisconnect, Depends
+from typing import List, Dict, Any, Optional
+import json
+import asyncio
+import uuid
+from datetime import datetime
+from sqlalchemy.orm import Session
+from enum import Enum
+
+from models import NguoiDung
+from auth import verify_websocket_token
+from logging_config import app_logger
+
+class NotificationType(Enum):
+    ORDER_NEW = "order_new"
+    ORDER_UPDATE = "order_update"
+    CUSTOMER_NEW = "customer_new"
+    CUSTOMER_UPDATE = "customer_update"
+    PRODUCT_NEW = "product_new"
+    PRODUCT_UPDATE = "product_update"
+    SYSTEM_ALERT = "system_alert"
+    USER_ACTION = "user_action"
+    ANALYTICS_ALERT = "analytics_alert"
+    PERFORMANCE_ALERT = "performance_alert"
+    BUSINESS_MILESTONE = "business_milestone"
+    AI_RECOMMENDATION = "ai_recommendation"
+
+class ConnectionManager:
+    def __init__(self):
+        # Store active connections by user_id
+        self.active_connections: Dict[int, List[WebSocket]] = {}
+        # Store connection metadata
+        self.connection_meta: Dict[WebSocket, Dict[str, Any]] = {}
+        app_logger.info("🔔 WebSocket Connection Manager initialized")
+
+    async def connect(self, websocket: WebSocket, user_id: int, user_role: str):
+        """🔌 Connect new WebSocket client"""
+        await websocket.accept()
+
+        # Initialize user connections list if not exists
+        if user_id not in self.active_connections:
+            self.active_connections[user_id] = []
+
+        # Add connection
+        self.active_connections[user_id].append(websocket)
+
+        # Store metadata
+        self.connection_meta[websocket] = {
+            "user_id": user_id,
+            "user_role": user_role,
+            "connected_at": datetime.utcnow().isoformat(),
+            "connection_id": str(uuid.uuid4())
+        }
+
+        app_logger.info(f"🔌 WebSocket connected: User {user_id} ({user_role})")
+
+        # Send welcome message
+        await self.send_to_user(user_id, {
+            "type": "system",
+            "event": "connected",
+            "message": "🎉 Kết nối WebSocket thành công!",
+            "timestamp": datetime.utcnow().isoformat()
+        })
+
+    def disconnect(self, websocket: WebSocket):
+        """🔌 Disconnect WebSocket client"""
+        if websocket in self.connection_meta:
+            user_id = self.connection_meta[websocket]["user_id"]
+
+            # Remove from active connections
+            if user_id in self.active_connections:
+                if websocket in self.active_connections[user_id]:
+                    self.active_connections[user_id].remove(websocket)
+
+                # Clean up empty lists
+                if not self.active_connections[user_id]:
+                    del self.active_connections[user_id]
+
+            # Remove metadata
+            del self.connection_meta[websocket]
+
+            app_logger.info(f"🔌 WebSocket disconnected: User {user_id}")
+
+    async def send_to_user(self, user_id: int, data: dict):
+        """📤 Send message to specific user"""
+        if user_id in self.active_connections:
+            # Create list copy to avoid modification during iteration
+            connections = self.active_connections[user_id].copy()
+
+            for connection in connections:
+                try:
+                    await connection.send_text(json.dumps(data, ensure_ascii=False))
+                except Exception as e:
+                    app_logger.error(f"❌ Failed to send to user {user_id}: {str(e)}")
+                    # Remove broken connection
+                    self.disconnect(connection)
+
+    async def send_to_role(self, role: str, data: dict, exclude_user_id: Optional[int] = None):
+        """👥 Send message to all users with specific role"""
+        sent_count = 0
+
+        for websocket, meta in self.connection_meta.copy().items():
+            if meta["user_role"] == role and meta["user_id"] != exclude_user_id:
+                try:
+                    await websocket.send_text(json.dumps(data, ensure_ascii=False))
+                    sent_count += 1
+                except Exception as e:
+                    app_logger.error(f"❌ Failed to send to role {role}: {str(e)}")
+                    self.disconnect(websocket)
+
+        app_logger.info(f"📤 Sent notification to {sent_count} users with role {role}")
+
+    async def broadcast(self, data: dict, exclude_user_id: Optional[int] = None):
+        """📡 Broadcast message to all connected users"""
+        sent_count = 0
+
+        for websocket, meta in self.connection_meta.copy().items():
+            if meta["user_id"] != exclude_user_id:
+                try:
+                    await websocket.send_text(json.dumps(data, ensure_ascii=False))
+                    sent_count += 1
+                except Exception as e:
+                    app_logger.error(f"❌ Failed to broadcast: {str(e)}")
+                    self.disconnect(websocket)
+
+        app_logger.info(f"📡 Broadcasted to {sent_count} connected users")
+
+    def get_connection_stats(self) -> Dict[str, Any]:
+        """📊 Get connection statistics"""
+        stats = {
+            "total_connections": len(self.connection_meta),
+            "unique_users": len(self.active_connections),
+            "connections_by_role": {},
+            "active_users": []
+        }
+
+        # Count by role
+        for meta in self.connection_meta.values():
+            role = meta["user_role"]
+            stats["connections_by_role"][role] = stats["connections_by_role"].get(role, 0) + 1
+
+            # Add to active users (deduplicated)
+            if meta["user_id"] not in [u["user_id"] for u in stats["active_users"]]:
+                stats["active_users"].append({
+                    "user_id": meta["user_id"],
+                    "role": role,
+                    "connected_at": meta["connected_at"]
+                })
+
+        return stats
+
+# Global connection manager
+manager = ConnectionManager()
+
+class NotificationService:
+    def __init__(self):
+        self.manager = manager
+        app_logger.info("🔔 Notification Service initialized")
+
+    async def notify_order_created(self, order_data: dict, created_by_user_id: int):
+        """📋 Notify about new order"""
+        notification = {
+            "type": NotificationType.ORDER_NEW.value,
+            "event": "order_created",
+            "title": "📋 Đơn hàng mới",
+            "message": f"Đơn hàng {order_data.get('ma_don_hang', 'N/A')} đã được tạo",
+            "data": order_data,
+            "timestamp": datetime.utcnow().isoformat(),
+            "priority": "high"
+        }
+
+        # Notify admins and managers
+        await self.manager.send_to_role("ADMIN", notification, exclude_user_id=created_by_user_id)
+        await self.manager.send_to_role("MANAGER", notification, exclude_user_id=created_by_user_id)
+
+        app_logger.info(f"🔔 Order creation notification sent for order {order_data.get('ma_don_hang')}")
+
+    async def notify_order_updated(self, order_data: dict, updated_by_user_id: int):
+        """📋 Notify about order update"""
+        notification = {
+            "type": NotificationType.ORDER_UPDATE.value,
+            "event": "order_updated",
+            "title": "📋 Cập nhật đơn hàng",
+            "message": f"Đơn hàng {order_data.get('ma_don_hang')} đã được cập nhật",
+            "data": order_data,
+            "timestamp": datetime.utcnow().isoformat(),
+            "priority": "medium"
+        }
+
+        # Notify all users except the one who made the update
+        await self.manager.broadcast(notification, exclude_user_id=updated_by_user_id)
+
+        app_logger.info(f"🔔 Order update notification sent for order {order_data.get('ma_don_hang')}")
+
+    async def notify_customer_created(self, customer_data: dict, created_by_user_id: int):
+        """👥 Notify about new customer"""
+        notification = {
+            "type": NotificationType.CUSTOMER_NEW.value,
+            "event": "customer_created",
+            "title": "👥 Khách hàng mới",
+            "message": f"Khách hàng {customer_data.get('ho_ten', 'N/A')} đã được thêm",
+            "data": customer_data,
+            "timestamp": datetime.utcnow().isoformat(),
+            "priority": "medium"
+        }
+
+        # Notify admins and managers
+        await self.manager.send_to_role("ADMIN", notification, exclude_user_id=created_by_user_id)
+        await self.manager.send_to_role("MANAGER", notification, exclude_user_id=created_by_user_id)
+
+        app_logger.info(f"🔔 Customer creation notification sent for {customer_data.get('ho_ten')}")
+
+    async def notify_product_created(self, product_data: dict, created_by_user_id: int):
+        """🛍️ Notify about new product"""
+        notification = {
+            "type": NotificationType.PRODUCT_NEW.value,
+            "event": "product_created",
+            "title": "🛍️ Sản phẩm mới",
+            "message": f"Sản phẩm {product_data.get('ten_san_pham', 'N/A')} đã được thêm",
+            "data": product_data,
+            "timestamp": datetime.utcnow().isoformat(),
+            "priority": "low"
+        }
+
+        # Notify all users except creator
+        await self.manager.broadcast(notification, exclude_user_id=created_by_user_id)
+
+        app_logger.info(f"🔔 Product creation notification sent for {product_data.get('ten_san_pham')}")
+
+    async def notify_system_alert(self, alert_type: str, message: str, priority: str = "medium"):
+        """🚨 Send system alert to all users"""
+        notification = {
+            "type": NotificationType.SYSTEM_ALERT.value,
+            "event": "system_alert",
+            "title": f"🚨 Cảnh báo hệ thống",
+            "message": message,
+            "alert_type": alert_type,
+            "timestamp": datetime.utcnow().isoformat(),
+            "priority": priority
+        }
+
+        await self.manager.broadcast(notification)
+
+        app_logger.info(f"🔔 System alert sent: {alert_type} - {message}")
+
+    async def notify_user_action(self, action: str, resource: str, user_name: str, target_user_id: Optional[int] = None):
+        """👤 Notify about user actions"""
+        notification = {
+            "type": NotificationType.USER_ACTION.value,
+            "event": "user_action",
+            "title": "👤 Hoạt động người dùng",
+            "message": f"{user_name} đã {action} {resource}",
+            "action": action,
+            "resource": resource,
+            "user_name": user_name,
+            "timestamp": datetime.utcnow().isoformat(),
+            "priority": "low"
+        }
+
+        if target_user_id:
+            # Send to specific user
+            await self.manager.send_to_user(target_user_id, notification)
+        else:
+            # Send to admins only
+            await self.manager.send_to_role("ADMIN", notification)
+
+        app_logger.info(f"🔔 User action notification sent: {user_name} {action} {resource}")
+
+    async def send_custom_notification(self, user_id: int, title: str, message: str, data: Optional[dict] = None):
+        """💌 Send custom notification to specific user"""
+        notification = {
+            "type": "custom",
+            "event": "custom_notification",
+            "title": title,
+            "message": message,
+            "data": data or {},
+            "timestamp": datetime.utcnow().isoformat(),
+            "priority": "medium"
+        }
+
+        await self.manager.send_to_user(user_id, notification)
+
+        app_logger.info(f"🔔 Custom notification sent to user {user_id}: {title}")
+
+    def get_stats(self) -> Dict[str, Any]:
+        """📊 Get notification service statistics"""
+        return self.manager.get_connection_stats()
+
+# Global notification service
+notification_service = NotificationService()
+
+# Helper functions for easy usage
+async def notify_order_created(order_data: dict, created_by_user_id: int):
+    await notification_service.notify_order_created(order_data, created_by_user_id)
+
+async def notify_order_updated(order_data: dict, updated_by_user_id: int):
+    await notification_service.notify_order_updated(order_data, updated_by_user_id)
+
+async def notify_customer_created(customer_data: dict, created_by_user_id: int):
+    await notification_service.notify_customer_created(customer_data, created_by_user_id)
+
+async def notify_product_created(product_data: dict, created_by_user_id: int):
+    await notification_service.notify_product_created(product_data, created_by_user_id)
+
+async def notify_system_alert(alert_type: str, message: str, priority: str = "medium"):
+    await notification_service.notify_system_alert(alert_type, message, priority)
+
+async def notify_user_action(action: str, resource: str, user_name: str, target_user_id: Optional[int] = None):
+    await notification_service.notify_user_action(action, resource, user_name, target_user_id)
+
+async def send_custom_notification(user_id: int, title: str, message: str, data: Optional[dict] = None):
+    await notification_service.send_custom_notification(user_id, title, message, data)
+
+# 📊 PHASE 5 - Advanced WebSocket Functions
+
+async def notify_analytics_alert(alert_type: str, metric_name: str, current_value: float, threshold: float, severity: str = "medium"):
+    """📈 Thông báo cảnh báo analytics"""
+    await notification_service.send_notification_to_role(
+        ["ADMIN", "MANAGER"],
+        NotificationType.ANALYTICS_ALERT.value,
+        f"📊 Cảnh báo {metric_name}",
+        f"Giá trị hiện tại: {current_value}, ngưỡng: {threshold}",
+        {
+            "alert_type": alert_type,
+            "metric_name": metric_name,
+            "current_value": current_value,
+            "threshold": threshold,
+            "severity": severity,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    )
+
+async def notify_business_milestone(milestone_type: str, description: str, value: Any, achievement_data: dict):
+    """🎯 Thông báo milestone kinh doanh"""
+    await notification_service.send_notification_to_role(
+        ["ADMIN", "MANAGER", "STAFF"],
+        NotificationType.BUSINESS_MILESTONE.value,
+        f"🎉 Milestone đạt được: {milestone_type}",
+        description,
+        {
+            "milestone_type": milestone_type,
+            "value": str(value),
+            "achievement_data": achievement_data,
+            "achieved_at": datetime.utcnow().isoformat()
+        }
+    )
+
+async def notify_ai_recommendation(recommendation_type: str, title: str, description: str, confidence: float, target_user_id: Optional[int] = None):
+    """🤖 Thông báo gợi ý AI"""
+    target_roles = ["ADMIN", "MANAGER"] if target_user_id is None else None
+
+    await notification_service.send_notification_to_user_or_role(
+        target_user_id,
+        target_roles,
+        NotificationType.AI_RECOMMENDATION.value,
+        f"🤖 AI Gợi ý: {title}",
+        description,
+        {
+            "recommendation_type": recommendation_type,
+            "confidence": confidence,
+            "generated_at": datetime.utcnow().isoformat()
+        }
+    )
+
+async def notify_performance_alert(component: str, metric: str, current_value: float, threshold: float, severity: str = "warning"):
+    """⚠️ Thông báo cảnh báo hiệu suất hệ thống"""
+    await notification_service.send_notification_to_role(
+        ["ADMIN"],
+        NotificationType.PERFORMANCE_ALERT.value,
+        f"⚠️ Cảnh báo hiệu suất: {component}",
+        f"{metric}: {current_value} (ngưỡng: {threshold})",
+        {
+            "component": component,
+            "metric": metric,
+            "current_value": current_value,
+            "threshold": threshold,
+            "severity": severity,
+            "alert_time": datetime.utcnow().isoformat()
+        }
+    )
+
+print("🔔 WebSocket Notification service loaded successfully!")

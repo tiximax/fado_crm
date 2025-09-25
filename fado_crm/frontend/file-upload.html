@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📁 FADO CRM - File Upload System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="auth.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .upload-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .upload-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .upload-tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .upload-tab.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+        }
+
+        .upload-tab:hover {
+            background: #f8f9fa;
+        }
+
+        .upload-content {
+            display: none;
+        }
+
+        .upload-content.active {
+            display: block;
+        }
+
+        .drag-drop-area {
+            border: 3px dashed #dee2e6;
+            border-radius: 15px;
+            padding: 60px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            background: #fafbfc;
+        }
+
+        .drag-drop-area.dragover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: scale(1.02);
+        }
+
+        .drag-drop-area:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+
+        .drag-drop-area.dragover .upload-icon {
+            color: #667eea;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .upload-hint {
+            font-size: 0.9rem;
+            color: #adb5bd;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .browse-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 15px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .browse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .product-selector {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .product-selector label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+
+        .product-selector select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .upload-queue {
+            margin-top: 30px;
+        }
+
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .queue-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .clear-all-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .upload-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-preview {
+            width: 60px;
+            height: 60px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+            color: #6c757d;
+        }
+
+        .file-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .file-size {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .upload-progress {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .upload-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .status-waiting {
+            background: #ffc107;
+            color: white;
+        }
+
+        .status-uploading {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .status-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-error {
+            background: #dc3545;
+            color: white;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            background: #f8d7da;
+        }
+
+        .upload-actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .upload-all-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .upload-all-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .upload-all-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .gallery-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .gallery-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .gallery-info {
+            padding: 15px;
+            background: white;
+        }
+
+        .gallery-filename {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .gallery-size {
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+
+        .gallery-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-actions {
+            opacity: 1;
+        }
+
+        .gallery-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn {
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+        }
+
+        .delete-btn {
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #dc3545, #e74c3c);
+        }
+
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .upload-section {
+                padding: 20px;
+            }
+
+            .drag-drop-area {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-cloud-upload-alt"></i> File Upload System</h1>
+            <p>Upload và quản lý hình ảnh sản phẩm chuyên nghiệp</p>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <!-- Tabs -->
+            <div class="upload-tabs">
+                <button class="upload-tab active" data-tab="single">
+                    <i class="fas fa-image"></i> Upload đơn
+                </button>
+                <button class="upload-tab" data-tab="multiple">
+                    <i class="fas fa-images"></i> Upload nhiều file
+                </button>
+            </div>
+
+            <!-- Single Upload -->
+            <div class="upload-content active" id="single">
+                <div class="product-selector">
+                    <label for="singleProductSelect">🛍️ Chọn sản phẩm (optional):</label>
+                    <select id="singleProductSelect">
+                        <option value="">-- Không liên kết với sản phẩm --</option>
+                        <!-- Products will be loaded here -->
+                    </select>
+                </div>
+
+                <div class="drag-drop-area" id="singleDropArea">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <div class="upload-text">Kéo thả file vào đây hoặc click để chọn</div>
+                    <div class="upload-hint">Hỗ trợ: JPG, PNG, WebP (tối đa 5MB)</div>
+                    <button class="browse-btn" onclick="document.getElementById('singleFileInput').click()">
+                        <i class="fas fa-folder-open"></i> Chọn file
+                    </button>
+                    <input type="file" id="singleFileInput" class="file-input" accept="image/*">
+                </div>
+            </div>
+
+            <!-- Multiple Upload -->
+            <div class="upload-content" id="multiple">
+                <div class="product-selector">
+                    <label for="multipleProductSelect">🛍️ Chọn sản phẩm (optional):</label>
+                    <select id="multipleProductSelect">
+                        <option value="">-- Không liên kết với sản phẩm --</option>
+                        <!-- Products will be loaded here -->
+                    </select>
+                </div>
+
+                <div class="drag-drop-area" id="multipleDropArea">
+                    <i class="fas fa-images upload-icon"></i>
+                    <div class="upload-text">Kéo thả nhiều file vào đây hoặc click để chọn</div>
+                    <div class="upload-hint">Hỗ trợ: JPG, PNG, WebP (tối đa 10 file, mỗi file 5MB)</div>
+                    <button class="browse-btn" onclick="document.getElementById('multipleFileInput').click()">
+                        <i class="fas fa-folder-open"></i> Chọn nhiều file
+                    </button>
+                    <input type="file" id="multipleFileInput" class="file-input" accept="image/*" multiple>
+                </div>
+            </div>
+
+            <!-- Upload Queue -->
+            <div class="upload-queue" id="uploadQueue" style="display: none;">
+                <div class="queue-header">
+                    <div class="queue-title">📋 Danh sách upload</div>
+                    <button class="clear-all-btn" id="clearAllBtn">
+                        <i class="fas fa-trash"></i> Xóa tất cả
+                    </button>
+                </div>
+                <div id="uploadItems"></div>
+                <div class="upload-actions">
+                    <button class="upload-all-btn" id="uploadAllBtn" disabled>
+                        <i class="fas fa-rocket"></i> Upload tất cả
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gallery Section -->
+        <div class="gallery-section">
+            <div class="gallery-header">
+                <div class="gallery-title">
+                    <i class="fas fa-images"></i> Thư viện hình ảnh
+                </div>
+                <button class="browse-btn" id="refreshGalleryBtn">
+                    <i class="fas fa-sync-alt"></i> Làm mới
+                </button>
+            </div>
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Gallery items will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeImageModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <img class="modal-img" id="modalImage" src="" alt="">
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // 📁 File Upload Manager
+        class FileUploadManager {
+            constructor() {
+                this.API_BASE = 'http://localhost:8000';
+                // Queue of items (avoid name clash with DOM element #uploadQueue)
+                this.queue = [];
+                this.isUploading = false;
+
+                this.initializeElements();
+                this.setupEventListeners();
+                this.loadProducts();
+                this.loadGallery();
+            }
+
+            initializeElements() {
+                // Tabs
+                this.tabs = document.querySelectorAll('.upload-tab');
+                this.contents = document.querySelectorAll('.upload-content');
+
+                // Drop areas
+                this.singleDropArea = document.getElementById('singleDropArea');
+                this.multipleDropArea = document.getElementById('multipleDropArea');
+
+                // File inputs
+                this.singleFileInput = document.getElementById('singleFileInput');
+                this.multipleFileInput = document.getElementById('multipleFileInput');
+
+                // Product selectors
+                this.singleProductSelect = document.getElementById('singleProductSelect');
+                this.multipleProductSelect = document.getElementById('multipleProductSelect');
+
+                // Queue
+                this.uploadQueueEl = document.getElementById('uploadQueue');
+                this.uploadItems = document.getElementById('uploadItems');
+                this.uploadAllBtn = document.getElementById('uploadAllBtn');
+                this.clearAllBtn = document.getElementById('clearAllBtn');
+
+                // Gallery
+                this.galleryGrid = document.getElementById('galleryGrid');
+                this.refreshGalleryBtn = document.getElementById('refreshGalleryBtn');
+            }
+
+            setupEventListeners() {
+                // Tab switching
+                this.tabs.forEach(tab => {
+                    tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
+                });
+
+                // Drag and drop
+                this.setupDragDrop(this.singleDropArea, false);
+                this.setupDragDrop(this.multipleDropArea, true);
+
+                // File inputs
+                this.singleFileInput.addEventListener('change', (e) => this.handleFiles(e.target.files, false));
+                this.multipleFileInput.addEventListener('change', (e) => this.handleFiles(e.target.files, true));
+
+                // Buttons
+                this.uploadAllBtn.addEventListener('click', () => this.uploadAll());
+                this.clearAllBtn.addEventListener('click', () => this.clearQueue());
+                this.refreshGalleryBtn.addEventListener('click', () => this.loadGallery());
+            }
+
+            switchTab(tabName) {
+                // Update tab buttons
+                this.tabs.forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.tab === tabName);
+                });
+
+                // Update content
+                this.contents.forEach(content => {
+                    content.classList.toggle('active', content.id === tabName);
+                });
+
+                // Clear queue when switching tabs
+                this.clearQueue();
+            }
+
+            setupDragDrop(dropArea, multiple) {
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropArea.addEventListener(eventName, this.preventDefaults, false);
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropArea.addEventListener(eventName, () => dropArea.classList.add('dragover'));
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropArea.addEventListener(eventName, () => dropArea.classList.remove('dragover'));
+                });
+
+                dropArea.addEventListener('drop', (e) => {
+                    const files = e.dataTransfer.files;
+                    this.handleFiles(files, multiple);
+                });
+            }
+
+            preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            handleFiles(files, multiple) {
+                const fileArray = Array.from(files);
+
+                // Validate file count for multiple upload
+                if (multiple && fileArray.length > 10) {
+                    this.showToast('Tối đa 10 file mỗi lần upload', 'error');
+                    return;
+                }
+
+                // Add files to queue
+                fileArray.forEach(file => {
+                    if (this.validateFile(file)) {
+                        this.addToQueue(file, multiple);
+                    }
+                });
+
+                this.updateQueueDisplay();
+            }
+
+            validateFile(file) {
+                // Check file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+                if (!allowedTypes.includes(file.type)) {
+                    this.showToast(`File ${file.name} không được hỗ trợ`, 'error');
+                    return false;
+                }
+
+                // Check file size (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    this.showToast(`File ${file.name} quá lớn (tối đa 5MB)`, 'error');
+                    return false;
+                }
+
+                return true;
+            }
+
+            addToQueue(file, multiple) {
+                const queueItem = {
+                    id: Date.now() + Math.random(),
+                    file: file,
+                    productId: multiple ? this.multipleProductSelect.value : this.singleProductSelect.value,
+                    status: 'waiting', // waiting, uploading, success, error
+                    progress: 0,
+                    error: null
+                };
+
+                this.queue.push(queueItem);
+            }
+
+            updateQueueDisplay() {
+                if (this.queue.length === 0) {
+                    this.uploadQueueEl.style.display = 'none';
+                    return;
+                }
+
+                this.uploadQueueEl.style.display = 'block';
+
+                this.uploadItems.innerHTML = this.queue.map(item => `
+                    <div class="upload-item" data-id="${item.id}">
+                        <div class="file-preview">
+                            ${item.file.type.startsWith('image/')
+                                ? `<img src="${URL.createObjectURL(item.file)}" alt="${item.file.name}">`
+                                : '<i class="fas fa-file"></i>'
+                            }
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name">${item.file.name}</div>
+                            <div class="file-size">${this.formatFileSize(item.file.size)}</div>
+                            <div class="upload-progress">
+                                <div class="progress-bar" style="width: ${item.progress}%"></div>
+                            </div>
+                        </div>
+                        <div class="upload-status">
+                            <div class="status-icon ${this.getStatusClass(item.status)}">
+                                ${this.getStatusIcon(item.status)}
+                            </div>
+                        </div>
+                        <button class="remove-btn" onclick="fileUploader.removeFromQueue('${item.id}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `).join('');
+
+                this.uploadAllBtn.disabled = this.queue.length === 0 || this.isUploading;
+            }
+
+            getStatusClass(status) {
+                const classes = {
+                    waiting: 'status-waiting',
+                    uploading: 'status-uploading',
+                    success: 'status-success',
+                    error: 'status-error'
+                };
+                return classes[status] || '';
+            }
+
+            getStatusIcon(status) {
+                const icons = {
+                    waiting: '<i class="fas fa-clock"></i>',
+                    uploading: '<i class="fas fa-spinner fa-spin"></i>',
+                    success: '<i class="fas fa-check"></i>',
+                    error: '<i class="fas fa-times"></i>'
+                };
+                return icons[status] || '';
+            }
+
+            removeFromQueue(itemId) {
+                this.queue = this.queue.filter(item => item.id !== itemId);
+                this.updateQueueDisplay();
+            }
+
+            clearQueue() {
+                this.queue = [];
+                this.updateQueueDisplay();
+            }
+
+            async uploadAll() {
+                if (this.isUploading || this.queue.length === 0) return;
+
+                if (!window.requireAuth()) return;
+
+                this.isUploading = true;
+                this.uploadAllBtn.disabled = true;
+
+                for (let i = 0; i < this.queue.length; i++) {
+                    const item = this.queue[i];
+                    if (item.status === 'waiting') {
+                        await this.uploadSingleFile(item);
+                    }
+                }
+
+                this.isUploading = false;
+                this.updateQueueDisplay();
+
+                // Show summary
+                const successful = this.queue.filter(item => item.status === 'success').length;
+                const failed = this.queue.filter(item => item.status === 'error').length;
+
+                this.showToast(`Upload hoàn thành: ${successful} thành công, ${failed} thất bại`,
+                              failed === 0 ? 'success' : 'error');
+
+                // Reload gallery
+                this.loadGallery();
+            }
+
+            async uploadSingleFile(item) {
+                item.status = 'uploading';
+                this.updateQueueDisplay();
+
+                try {
+                    const formData = new FormData();
+                    formData.append('file', item.file);
+                    if (item.productId) {
+                        formData.append('product_id', item.productId);
+                    }
+
+                    const response = await window.authService.apiCall('/upload/product-image', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {} // Don't set Content-Type, let browser set it with boundary
+                    });
+
+                    if (response.ok) {
+                        item.status = 'success';
+                        item.progress = 100;
+                    } else {
+                        const error = await response.json();
+                        throw new Error(error.detail || 'Upload failed');
+                    }
+
+                } catch (error) {
+                    item.status = 'error';
+                    item.error = error.message;
+                }
+
+                this.updateQueueDisplay();
+            }
+
+            async loadProducts() {
+                try {
+                    const response = await window.authService.apiCall('/san-pham/?limit=1000');
+                    if (response.ok) {
+                        const products = await response.json();
+                        const options = products.map(product =>
+                            `<option value="${product.id}">${product.ten_san_pham}</option>`
+                        ).join('');
+
+                        this.singleProductSelect.innerHTML =
+                            '<option value="">-- Không liên kết với sản phẩm --</option>' + options;
+                        this.multipleProductSelect.innerHTML =
+                            '<option value="">-- Không liên kết với sản phẩm --</option>' + options;
+                    }
+                } catch (error) {
+                    console.warn('Could not load products:', error);
+                }
+            }
+
+            async loadGallery() {
+                try {
+                    const res = await window.authService.apiCall(`/upload/list?category=product_images&limit=50`);
+                    if (!res.ok) throw new Error('List files failed');
+                    const data = await res.json();
+                    const items = data.items || [];
+
+                    if (items.length === 0) {
+                        this.galleryGrid.innerHTML = `
+                            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #6c757d;">
+                                <i class="fas fa-images" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.3;"></i>
+                                <p>Chưa có ảnh nào. Hãy upload để xem trong thư viện.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    this.galleryGrid.innerHTML = items.map(it => `
+                        <div class="gallery-item">
+                            <div class="gallery-actions">
+                                <button class="gallery-btn view-btn" title="Xem" onclick="(function(url){
+                                    const modal = document.getElementById('imageModal');
+                                    const img = document.getElementById('modalImage');
+                                    img.src = url; modal.classList.add('active');
+                                })('${it.url}')"><i class="fas fa-eye"></i></button>
+                                <button class="gallery-btn delete-btn" title="Xóa" onclick="deleteMedia('product_images','${it.filename}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                            <img class="gallery-img" src="${it.url}" alt="${it.filename}" />
+                            <div class="gallery-info">
+                                <div class="gallery-filename">${it.filename}</div>
+                                <div class="gallery-size">${(it.size||0)/1024>1 ? ((it.size/1024).toFixed(1)+' KB') : (it.size+' B')}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                } catch (error) {
+                    console.error('Error loading gallery:', error);
+                    this.galleryGrid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #dc3545;">
+                            <p>Không thể tải thư viện ảnh.</p>
+                        </div>
+                    `;
+                }
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toastMessage');
+
+                toastMessage.textContent = message;
+                toast.className = `toast ${type}`;
+                toast.classList.add('show');
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // Global functions
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        async function deleteMedia(category, filename) {
+            try {
+                if (!confirm(`Bạn có chắc muốn xóa ${filename}?`)) return;
+                const res = await window.authService.apiCall(`/upload/file?category=${encodeURIComponent(category)}&filename=${encodeURIComponent(filename)}`, {
+                    method: 'DELETE'
+                });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err.detail || 'Xóa file thất bại');
+                }
+                if (window.fileUploader) {
+                    await window.fileUploader.loadGallery();
+                }
+                if (window.showToast) window.showToast('Đã xóa file thành công', 'success');
+                else alert('Đã xóa file thành công');
+            } catch (e) {
+                if (window.showToast) window.showToast(e.message || 'Xóa file thất bại', 'error');
+                else alert(e.message || 'Xóa file thất bại');
+            }
+        }
+
+        // Initialize when page loads
+        let fileUploader;
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.requireAuth()) return;
+            fileUploader = new FileUploadManager();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('imageModal').addEventListener('click', (e) => {
+            if (e.target.id === 'imageModal') {
+                closeImageModal();
+            }
+        });
+    </script>
+</body>
+</html>

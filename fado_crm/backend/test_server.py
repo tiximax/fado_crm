@@ -1,0 +1,19 @@
+# -*- coding: utf-8 -*-
+# Simple test server for FADO CRM
+
+from fastapi import FastAPI
+
+app = FastAPI(title="FADO CRM Test")
+
+@app.get("/")
+async def root():
+    return {"message": "FADO CRM is running!", "success": True}
+
+@app.get("/test")
+async def test():
+    return {"test": "API working!", "data": [1, 2, 3]}
+
+if __name__ == "__main__":
+    import uvicorn
+    print("Starting FADO CRM Test Server...")
+    uvicorn.run(app, host="127.0.0.1", port=8000)

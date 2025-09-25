@@ -1,0 +1,400 @@
+# FADO CRM Analytics Server for Phase 3
+# Advanced Analytics & Reporting System
+
+from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+from sqlalchemy import func, extract, case, and_
+from datetime import datetime, timedelta
+from typing import Dict, List, Any, Optional
+import json
+
+# Basic imports
+from database import get_db, create_tables
+from models import (
+    KhachHang, SanPham, DonHang, ChiTietDonHang,
+    TrangThaiDonHang, LoaiKhachHang, NguoiDung
+)
+import schemas
+
+# Auth imports
+try:
+    from auth import get_current_user, get_current_active_user
+except ImportError as e:
+    print(f"Warning: Could not import auth module: {e}")
+
+# Create FastAPI app
+app = FastAPI(
+    title="FADO CRM Analytics API",
+    description="Advanced Analytics & Reporting System",
+    version="3.0.0"
+)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Create database tables
+create_tables()
+
+@app.get("/")
+async def root():
+    return {"message": "FADO CRM Analytics API", "version": "3.0.0", "phase": "Phase 3 - Advanced Analytics"}
+
+# Advanced Analytics Endpoints
+
+@app.get("/analytics/dashboard")
+async def get_analytics_dashboard(
+    date_range: int = Query(30, description="Days to analyze"),
+    db: Session = Depends(get_db)
+):
+    """Advanced dashboard analytics with comprehensive metrics"""
+    try:
+        end_date = datetime.utcnow()
+        start_date = end_date - timedelta(days=date_range)
+
+        # Sales Overview
+        sales_data = await get_sales_analytics(date_range, db)
+
+        # Customer Analytics
+        customer_data = await get_customer_analytics_data(db)
+
+        # Product Performance
+        product_data = await get_product_performance(db)
+
+        # Order Status Distribution
+        order_status = await get_order_status_distribution(db)
+
+        # Revenue Trend
+        revenue_trend = await get_revenue_trend(date_range, db)
+
+        return {
+            "success": True,
+            "message": "Analytics dashboard data retrieved successfully",
+            "timestamp": datetime.utcnow().isoformat(),
+            "date_range_days": date_range,
+            "data": {
+                "sales_overview": sales_data,
+                "customer_analytics": customer_data,
+                "product_performance": product_data,
+                "order_status": order_status,
+                "revenue_trend": revenue_trend
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Analytics error: {str(e)}")
+
+async def get_sales_analytics(date_range: int, db: Session) -> Dict[str, Any]:
+    """Get comprehensive sales analytics"""
+    end_date = datetime.utcnow()
+    start_date = end_date - timedelta(days=date_range)
+
+    # Total revenue
+    total_revenue = db.query(func.sum(DonHang.tong_tien)).filter(
+        DonHang.ngay_tao >= start_date,
+        DonHang.trang_thai != TrangThaiDonHang.HUY
+    ).scalar() or 0
+
+    # Total orders
+    total_orders = db.query(DonHang).filter(DonHang.ngay_tao >= start_date).count()
+
+    # Completed orders
+    completed_orders = db.query(DonHang).filter(
+        DonHang.ngay_tao >= start_date,
+        DonHang.trang_thai == TrangThaiDonHang.DA_NHAN
+    ).count()
+
+    # Average order value
+    avg_order_value = total_revenue / total_orders if total_orders > 0 else 0
+
+    # Previous period comparison
+    prev_start = start_date - timedelta(days=date_range)
+    prev_revenue = db.query(func.sum(DonHang.tong_tien)).filter(
+        DonHang.ngay_tao >= prev_start,
+        DonHang.ngay_tao < start_date,
+        DonHang.trang_thai != TrangThaiDonHang.HUY
+    ).scalar() or 0
+
+    revenue_growth = ((total_revenue - prev_revenue) / prev_revenue * 100) if prev_revenue > 0 else 0
+
+    return {
+        "total_revenue": float(total_revenue),
+        "total_orders": total_orders,
+        "completed_orders": completed_orders,
+        "avg_order_value": float(avg_order_value),
+        "completion_rate": round((completed_orders / total_orders * 100) if total_orders > 0 else 0, 2),
+        "revenue_growth": round(revenue_growth, 2)
+    }
+
+async def get_customer_analytics_data(db: Session) -> Dict[str, Any]:
+    """Get customer segmentation and analytics"""
+    # Total customers
+    total_customers = db.query(KhachHang).count()
+
+    # Customer segmentation by type
+    customer_segments = db.query(
+        KhachHang.loai_khach,
+        func.count(KhachHang.id).label('count')
+    ).group_by(KhachHang.loai_khach).all()
+
+    segments = {}
+    for segment, count in customer_segments:
+        segments[segment.value if segment else 'unknown'] = count
+
+    # Top customers by revenue
+    top_customers = db.query(
+        KhachHang.ho_ten,
+        KhachHang.email,
+        KhachHang.tong_tien_da_mua,
+        KhachHang.so_don_thanh_cong
+    ).order_by(KhachHang.tong_tien_da_mua.desc()).limit(10).all()
+
+    top_customers_data = []
+    for customer in top_customers:
+        top_customers_data.append({
+            "name": customer.ho_ten,
+            "email": customer.email,
+            "total_spent": float(customer.tong_tien_da_mua or 0),
+            "orders_count": customer.so_don_thanh_cong or 0
+        })
+
+    # New customers this month
+    start_of_month = datetime.utcnow().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    new_customers = db.query(KhachHang).filter(KhachHang.ngay_tao >= start_of_month).count()
+
+    return {
+        "total_customers": total_customers,
+        "segments": segments,
+        "top_customers": top_customers_data,
+        "new_customers_this_month": new_customers
+    }
+
+async def get_product_performance(db: Session) -> Dict[str, Any]:
+    """Get product performance analytics"""
+    # Total products
+    total_products = db.query(SanPham).count()
+
+    # Top selling products
+    top_products = db.query(
+        SanPham.ten_san_pham,
+        SanPham.gia_ban,
+        func.sum(ChiTietDonHang.so_luong).label('total_sold'),
+        func.sum(ChiTietDonHang.so_luong * ChiTietDonHang.gia_mua).label('total_revenue')
+    ).join(
+        ChiTietDonHang, SanPham.id == ChiTietDonHang.san_pham_id
+    ).group_by(
+        SanPham.id, SanPham.ten_san_pham, SanPham.gia_ban
+    ).order_by(
+        func.sum(ChiTietDonHang.so_luong).desc()
+    ).limit(10).all()
+
+    products_data = []
+    for product in top_products:
+        products_data.append({
+            "name": product.ten_san_pham,
+            "price": float(product.gia_ban or 0),
+            "units_sold": int(product.total_sold or 0),
+            "revenue": float(product.total_revenue or 0)
+        })
+
+    # Product categories performance
+    categories = db.query(
+        SanPham.danh_muc,
+        func.count(SanPham.id).label('product_count'),
+        func.avg(SanPham.gia_ban).label('avg_price')
+    ).filter(
+        SanPham.danh_muc.isnot(None)
+    ).group_by(SanPham.danh_muc).all()
+
+    categories_data = []
+    for category in categories:
+        categories_data.append({
+            "category": category.danh_muc,
+            "product_count": category.product_count,
+            "avg_price": float(category.avg_price or 0)
+        })
+
+    return {
+        "total_products": total_products,
+        "top_products": products_data,
+        "categories": categories_data
+    }
+
+async def get_order_status_distribution(db: Session) -> Dict[str, Any]:
+    """Get order status distribution"""
+    status_counts = db.query(
+        DonHang.trang_thai,
+        func.count(DonHang.id).label('count')
+    ).group_by(DonHang.trang_thai).all()
+
+    distribution = {}
+    total_orders = 0
+
+    for status, count in status_counts:
+        status_key = status.value if status else 'unknown'
+        distribution[status_key] = count
+        total_orders += count
+
+    # Convert to percentages
+    percentages = {}
+    for status, count in distribution.items():
+        percentages[status] = round((count / total_orders * 100) if total_orders > 0 else 0, 2)
+
+    return {
+        "counts": distribution,
+        "percentages": percentages,
+        "total_orders": total_orders
+    }
+
+async def get_revenue_trend(days: int, db: Session) -> List[Dict[str, Any]]:
+    """Get daily revenue trend"""
+    end_date = datetime.utcnow().date()
+    start_date = end_date - timedelta(days=days)
+
+    # Query daily revenue
+    daily_data = db.query(
+        func.date(DonHang.ngay_tao).label('date'),
+        func.sum(DonHang.tong_tien).label('revenue'),
+        func.count(DonHang.id).label('orders')
+    ).filter(
+        func.date(DonHang.ngay_tao) >= start_date,
+        DonHang.trang_thai != TrangThaiDonHang.HUY
+    ).group_by(
+        func.date(DonHang.ngay_tao)
+    ).order_by(
+        func.date(DonHang.ngay_tao)
+    ).all()
+
+    # Create complete date range with zero values for missing dates
+    trend_data = []
+    current_date = start_date
+
+    # Convert query results to dict for easy lookup
+    data_dict = {row.date: (float(row.revenue or 0), row.orders) for row in daily_data}
+
+    while current_date <= end_date:
+        revenue, orders = data_dict.get(current_date, (0, 0))
+        trend_data.append({
+            "date": current_date.isoformat(),
+            "revenue": revenue,
+            "orders": orders
+        })
+        current_date += timedelta(days=1)
+
+    return trend_data
+
+@app.get("/analytics/revenue-trend")
+async def get_revenue_trend_endpoint(
+    days: int = Query(30, description="Number of days"),
+    db: Session = Depends(get_db)
+):
+    """Get revenue trend data for charts"""
+    trend_data = await get_revenue_trend(days, db)
+    return {
+        "success": True,
+        "data": trend_data,
+        "total_days": days
+    }
+
+@app.get("/analytics/customers")
+async def get_customer_analytics_endpoint(db: Session = Depends(get_db)):
+    """Get customer analytics data"""
+    customer_data = await get_customer_analytics_data(db)
+    return {
+        "success": True,
+        "data": customer_data
+    }
+
+@app.get("/analytics/products")
+async def get_product_analytics_endpoint(db: Session = Depends(get_db)):
+    """Get product performance analytics"""
+    product_data = await get_product_performance(db)
+    return {
+        "success": True,
+        "data": product_data
+    }
+
+@app.get("/analytics/insights")
+async def get_business_insights(db: Session = Depends(get_db)):
+    """Get AI-powered business insights"""
+    try:
+        # Get various analytics data
+        sales_data = await get_sales_analytics(30, db)
+        customer_data = await get_customer_analytics_data(db)
+        product_data = await get_product_performance(db)
+
+        insights = []
+
+        # Revenue insights
+        if sales_data["revenue_growth"] > 10:
+            insights.append({
+                "type": "positive",
+                "title": "Strong Revenue Growth",
+                "message": f"Revenue has grown {sales_data['revenue_growth']:.1f}% compared to the previous period",
+                "metric": sales_data["revenue_growth"]
+            })
+        elif sales_data["revenue_growth"] < -5:
+            insights.append({
+                "type": "warning",
+                "title": "Revenue Decline",
+                "message": f"Revenue has declined {abs(sales_data['revenue_growth']):.1f}% compared to the previous period",
+                "metric": sales_data["revenue_growth"]
+            })
+
+        # Order completion insights
+        completion_rate = sales_data["completion_rate"]
+        if completion_rate < 70:
+            insights.append({
+                "type": "warning",
+                "title": "Low Order Completion Rate",
+                "message": f"Only {completion_rate:.1f}% of orders are being completed",
+                "metric": completion_rate
+            })
+        elif completion_rate > 90:
+            insights.append({
+                "type": "positive",
+                "title": "Excellent Order Completion",
+                "message": f"High completion rate of {completion_rate:.1f}%",
+                "metric": completion_rate
+            })
+
+        # Customer insights
+        vip_customers = customer_data["segments"].get("VIP", 0)
+        total_customers = customer_data["total_customers"]
+        vip_percentage = (vip_customers / total_customers * 100) if total_customers > 0 else 0
+
+        if vip_percentage > 20:
+            insights.append({
+                "type": "positive",
+                "title": "Strong VIP Customer Base",
+                "message": f"{vip_percentage:.1f}% of customers are VIP status",
+                "metric": vip_percentage
+            })
+
+        # Product insights
+        if len(product_data["top_products"]) > 0:
+            top_product = product_data["top_products"][0]
+            insights.append({
+                "type": "info",
+                "title": "Best Selling Product",
+                "message": f"'{top_product['name']}' has sold {top_product['units_sold']} units",
+                "metric": top_product['units_sold']
+            })
+
+        return {
+            "success": True,
+            "insights": insights,
+            "generated_at": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Insights generation error: {str(e)}")
+
+if __name__ == "__main__":
+    import uvicorn
+    print("Starting FADO CRM Analytics Server...")
+    uvicorn.run(app, host="127.0.0.1", port=8001, reload=True)

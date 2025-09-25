@@ -1,0 +1,618 @@
+2025-09-24 20:35:29 | INFO     | analytics_service:__init__:19 | 📊 Advanced Analytics service initialized
+2025-09-24 20:36:05 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 20:36:05 | INFO     | file_service:setup_directories:50 | 📂 Directory ready: uploads
+2025-09-24 20:36:05 | INFO     | file_service:setup_directories:50 | 📂 Directory ready: uploads\product_images
+2025-09-24 20:36:05 | INFO     | file_service:setup_directories:50 | 📂 Directory ready: uploads\temp
+2025-09-24 20:36:05 | INFO     | file_service:setup_directories:50 | 📂 Directory ready: uploads\thumbnails
+2025-09-24 20:36:05 | INFO     | file_service:__init__:37 | 📁 File service initialized successfully
+2025-09-24 21:26:13 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 21:26:13 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 21:26:13 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 21:26:13 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 21:26:13 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 21:26:13 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 21:26:13 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 21:26:13 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 21:26:13 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 21:26:13 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 21:26:13 | INFO     | main:<module>:81 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 21:26:13 | INFO     | main:startup_event:103 | 🚀 Starting FADO CRM API...
+2025-09-24 21:26:13 | SUCCESS  | main:startup_event:106 | ✅ Database tables created successfully
+2025-09-24 21:26:13 | INFO     | main:startup_event:107 | 🎉 FADO CRM API is ready to serve!
+2025-09-24 21:26:13 | INFO     | logging_config:log_business_event:117 | Business event: API_STARTUP
+2025-09-24 21:26:38 | INFO     | middleware:dispatch:172 | Incoming request: GET /health
+2025-09-24 21:26:38 | INFO     | logging_config:log_api_call:78 | GET /health - 200 - 0.001s
+2025-09-24 21:29:14 | INFO     | middleware:dispatch:172 | Incoming request: GET /health
+2025-09-24 21:29:14 | INFO     | logging_config:log_api_call:78 | GET /health - 200 - 0.000s
+2025-09-24 21:29:16 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 21:29:17 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 21:29:17 | ERROR    | main:login:192 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2025-09-24 21:29:17 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 401 - 0.266s
+2025-09-24 21:32:47 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 21:32:47 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 21:32:47 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 21:32:47 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 21:32:47 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 21:32:47 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 21:32:47 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 21:32:48 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 21:32:48 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 21:32:48 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 21:32:48 | INFO     | main:<module>:81 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 21:32:48 | INFO     | main:startup_event:103 | 🚀 Starting FADO CRM API...
+2025-09-24 21:32:48 | SUCCESS  | main:startup_event:106 | ✅ Database tables created successfully
+2025-09-24 21:32:48 | INFO     | main:startup_event:107 | 🎉 FADO CRM API is ready to serve!
+2025-09-24 21:32:48 | INFO     | logging_config:log_business_event:117 | Business event: API_STARTUP
+2025-09-24 21:32:59 | INFO     | middleware:dispatch:172 | Incoming request: GET /health
+2025-09-24 21:32:59 | INFO     | logging_config:log_api_call:78 | GET /health - 200 - 0.001s
+2025-09-24 21:49:49 | INFO     | middleware:dispatch:172 | Incoming request: GET /health
+2025-09-24 21:49:49 | INFO     | logging_config:log_api_call:78 | GET /health - 200 - 0.001s
+2025-09-24 21:50:34 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 21:50:34 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 21:50:34 | ERROR    | main:login:192 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2025-09-24 21:50:34 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 401 - 0.269s
+2025-09-24 21:50:56 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 21:50:57 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 21:50:57 | ERROR    | main:login:192 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2025-09-24 21:50:57 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 401 - 0.225s
+2025-09-24 21:51:41 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 21:51:41 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 21:51:41 | ERROR    | main:login:192 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2025-09-24 21:51:41 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 401 - 0.210s
+2025-09-24 21:53:12 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 21:53:12 | ERROR    | main:login:192 | Login failed for admin@fado.vn: hash could not be identified
+2025-09-24 21:53:12 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 401 - 0.003s
+2025-09-24 21:55:09 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 21:55:09 | ERROR    | main:login:192 | Login failed for admin@fado.vn: hash could not be identified
+2025-09-24 21:55:09 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 401 - 0.003s
+2025-09-24 21:55:10 | INFO     | middleware:dispatch:172 | Incoming request: GET /dashboard
+2025-09-24 21:55:10 | INFO     | middleware:dispatch:172 | Incoming request: GET /
+2025-09-24 21:55:10 | INFO     | logging_config:log_api_call:78 | GET / - 200 - 0.001s
+2025-09-24 21:55:10 | INFO     | logging_config:log_api_call:78 | GET /dashboard - 200 - 0.063s
+2025-09-24 21:55:10 | INFO     | middleware:dispatch:172 | Incoming request: GET /dashboard
+2025-09-24 21:55:10 | INFO     | logging_config:log_api_call:78 | GET /dashboard - 200 - 0.005s
+2025-09-24 21:55:10 | INFO     | middleware:dispatch:172 | Incoming request: GET /don-hang/
+2025-09-24 21:55:10 | INFO     | middleware:dispatch:172 | Incoming request: GET /khach-hang/
+2025-09-24 21:55:10 | INFO     | logging_config:log_api_call:78 | GET /khach-hang/ - 403 - 0.001s
+2025-09-24 21:55:10 | INFO     | logging_config:log_api_call:78 | GET /don-hang/ - 200 - 0.012s
+2025-09-24 21:55:10 | INFO     | middleware:dispatch:172 | Incoming request: GET /khach-hang/
+2025-09-24 21:55:10 | INFO     | logging_config:log_api_call:78 | GET /khach-hang/ - 403 - 0.002s
+2025-09-24 21:55:10 | INFO     | middleware:dispatch:172 | Incoming request: GET /don-hang/
+2025-09-24 21:55:10 | INFO     | logging_config:log_api_call:78 | GET /don-hang/ - 200 - 0.006s
+2025-09-24 21:55:10 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings
+2025-09-24 21:55:10 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings - 404 - 0.000s
+2025-09-24 21:55:11 | INFO     | middleware:dispatch:172 | Incoming request: PUT /admin/system-settings/app_name
+2025-09-24 21:55:11 | INFO     | logging_config:log_api_call:78 | PUT /admin/system-settings/app_name - 404 - 0.000s
+2025-09-24 21:55:56 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings
+2025-09-24 21:55:56 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings - 404 - 0.001s
+2025-09-24 21:56:10 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 21:56:10 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 21:56:10 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 21:56:10 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 21:56:10 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 21:56:10 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 21:56:10 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 21:56:11 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 21:56:11 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 21:56:11 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 21:56:11 | INFO     | main:<module>:93 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 21:56:11 | INFO     | main:startup_event:121 | 🚀 Starting FADO CRM API...
+2025-09-24 21:56:11 | SUCCESS  | main:startup_event:124 | ✅ Database tables created successfully
+2025-09-24 21:56:11 | INFO     | main:startup_event:125 | 🎉 FADO CRM API is ready to serve!
+2025-09-24 21:56:11 | INFO     | logging_config:log_business_event:117 | Business event: API_STARTUP
+2025-09-24 21:56:20 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings
+2025-09-24 21:56:20 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings - 200 - 0.019s
+2025-09-24 21:56:34 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 21:56:34 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 21:56:34 | ERROR    | main:login:281 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2025-09-24 21:56:34 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 401 - 0.076s
+2025-09-24 21:56:35 | INFO     | middleware:dispatch:172 | Incoming request: GET /dashboard
+2025-09-24 21:56:35 | INFO     | middleware:dispatch:172 | Incoming request: GET /
+2025-09-24 21:56:35 | INFO     | logging_config:log_api_call:78 | GET / - 200 - 0.001s
+2025-09-24 21:56:35 | INFO     | logging_config:log_api_call:78 | GET /dashboard - 200 - 0.013s
+2025-09-24 21:56:35 | INFO     | middleware:dispatch:172 | Incoming request: GET /dashboard
+2025-09-24 21:56:35 | INFO     | logging_config:log_api_call:78 | GET /dashboard - 200 - 0.004s
+2025-09-24 21:56:35 | INFO     | middleware:dispatch:172 | Incoming request: GET /don-hang/
+2025-09-24 21:56:35 | INFO     | middleware:dispatch:172 | Incoming request: GET /khach-hang/
+2025-09-24 21:56:35 | INFO     | logging_config:log_api_call:78 | GET /khach-hang/ - 403 - 0.000s
+2025-09-24 21:56:35 | INFO     | middleware:dispatch:172 | Incoming request: GET /khach-hang/
+2025-09-24 21:56:35 | INFO     | logging_config:log_api_call:78 | GET /don-hang/ - 200 - 0.015s
+2025-09-24 21:56:35 | INFO     | logging_config:log_api_call:78 | GET /khach-hang/ - 403 - 0.002s
+2025-09-24 21:56:35 | INFO     | middleware:dispatch:172 | Incoming request: GET /don-hang/
+2025-09-24 21:56:35 | INFO     | logging_config:log_api_call:78 | GET /don-hang/ - 200 - 0.006s
+2025-09-24 21:56:35 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings
+2025-09-24 21:56:35 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings - 200 - 0.002s
+2025-09-24 21:56:36 | INFO     | middleware:dispatch:172 | Incoming request: PUT /admin/system-settings/app_name
+2025-09-24 21:56:36 | INFO     | logging_config:log_api_call:78 | PUT /admin/system-settings/app_name - 200 - 0.014s
+2025-09-24 21:56:36 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings
+2025-09-24 21:56:36 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings - 200 - 0.002s
+2025-09-24 21:56:36 | INFO     | middleware:dispatch:172 | Incoming request: PUT /admin/system-settings/app_name
+2025-09-24 21:56:36 | INFO     | logging_config:log_api_call:78 | PUT /admin/system-settings/app_name - 200 - 0.007s
+2025-09-24 21:56:37 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings
+2025-09-24 21:56:37 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings - 200 - 0.005s
+2025-09-24 21:57:05 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 21:57:06 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 21:57:06 | ERROR    | main:login:281 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2025-09-24 21:57:06 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 401 - 0.029s
+2025-09-24 21:57:06 | INFO     | middleware:dispatch:172 | Incoming request: GET /dashboard
+2025-09-24 21:57:06 | INFO     | middleware:dispatch:172 | Incoming request: GET /
+2025-09-24 21:57:06 | INFO     | logging_config:log_api_call:78 | GET / - 200 - 0.001s
+2025-09-24 21:57:06 | INFO     | logging_config:log_api_call:78 | GET /dashboard - 200 - 0.006s
+2025-09-24 21:57:06 | INFO     | middleware:dispatch:172 | Incoming request: GET /dashboard
+2025-09-24 21:57:06 | INFO     | logging_config:log_api_call:78 | GET /dashboard - 200 - 0.003s
+2025-09-24 21:57:06 | INFO     | middleware:dispatch:172 | Incoming request: GET /don-hang/
+2025-09-24 21:57:06 | INFO     | middleware:dispatch:172 | Incoming request: GET /khach-hang/
+2025-09-24 21:57:06 | INFO     | logging_config:log_api_call:78 | GET /khach-hang/ - 403 - 0.000s
+2025-09-24 21:57:06 | INFO     | middleware:dispatch:172 | Incoming request: GET /khach-hang/
+2025-09-24 21:57:06 | INFO     | logging_config:log_api_call:78 | GET /don-hang/ - 200 - 0.007s
+2025-09-24 21:57:06 | INFO     | logging_config:log_api_call:78 | GET /khach-hang/ - 403 - 0.001s
+2025-09-24 21:57:06 | INFO     | middleware:dispatch:172 | Incoming request: GET /don-hang/
+2025-09-24 21:57:06 | INFO     | logging_config:log_api_call:78 | GET /don-hang/ - 200 - 0.006s
+2025-09-24 21:57:09 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings
+2025-09-24 21:57:09 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings - 200 - 0.003s
+2025-09-24 21:57:10 | INFO     | middleware:dispatch:172 | Incoming request: PUT /admin/system-settings/app_name
+2025-09-24 21:57:10 | INFO     | logging_config:log_api_call:78 | PUT /admin/system-settings/app_name - 200 - 0.006s
+2025-09-24 21:57:10 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings
+2025-09-24 21:57:10 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings - 200 - 0.003s
+2025-09-24 21:57:10 | INFO     | middleware:dispatch:172 | Incoming request: PUT /admin/system-settings/app_name
+2025-09-24 21:57:10 | INFO     | logging_config:log_api_call:78 | PUT /admin/system-settings/app_name - 200 - 0.013s
+2025-09-24 21:57:10 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings
+2025-09-24 21:57:10 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings - 200 - 0.003s
+2025-09-24 21:57:28 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 21:57:28 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 21:57:28 | ERROR    | main:login:281 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2025-09-24 21:57:28 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 401 - 0.025s
+2025-09-24 21:57:28 | INFO     | middleware:dispatch:172 | Incoming request: GET /dashboard
+2025-09-24 21:57:28 | INFO     | middleware:dispatch:172 | Incoming request: GET /
+2025-09-24 21:57:28 | INFO     | logging_config:log_api_call:78 | GET / - 200 - 0.001s
+2025-09-24 21:57:28 | INFO     | logging_config:log_api_call:78 | GET /dashboard - 200 - 0.005s
+2025-09-24 21:57:28 | INFO     | middleware:dispatch:172 | Incoming request: GET /dashboard
+2025-09-24 21:57:28 | INFO     | logging_config:log_api_call:78 | GET /dashboard - 200 - 0.003s
+2025-09-24 21:57:28 | INFO     | middleware:dispatch:172 | Incoming request: GET /don-hang/
+2025-09-24 21:57:28 | INFO     | middleware:dispatch:172 | Incoming request: GET /khach-hang/
+2025-09-24 21:57:28 | INFO     | logging_config:log_api_call:78 | GET /khach-hang/ - 403 - 0.000s
+2025-09-24 21:57:28 | INFO     | middleware:dispatch:172 | Incoming request: GET /khach-hang/
+2025-09-24 21:57:28 | INFO     | logging_config:log_api_call:78 | GET /don-hang/ - 200 - 0.007s
+2025-09-24 21:57:28 | INFO     | logging_config:log_api_call:78 | GET /khach-hang/ - 403 - 0.001s
+2025-09-24 21:57:28 | INFO     | middleware:dispatch:172 | Incoming request: GET /don-hang/
+2025-09-24 21:57:28 | INFO     | logging_config:log_api_call:78 | GET /don-hang/ - 200 - 0.005s
+2025-09-24 21:57:29 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings
+2025-09-24 21:57:29 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings - 200 - 0.002s
+2025-09-24 21:57:30 | INFO     | middleware:dispatch:172 | Incoming request: PUT /admin/system-settings/app_name
+2025-09-24 21:57:30 | INFO     | logging_config:log_api_call:78 | PUT /admin/system-settings/app_name - 200 - 0.006s
+2025-09-24 21:57:30 | INFO     | middleware:dispatch:172 | Incoming request: GET /admin/system-settings
+2025-09-24 21:57:30 | INFO     | logging_config:log_api_call:78 | GET /admin/system-settings - 200 - 0.003s
+2025-09-24 21:57:30 | INFO     | middleware:dispatch:172 | Incoming request: PUT /admin/system-settings/app_name
+2025-09-24 21:57:30 | INFO     | logging_config:log_api_call:78 | PUT /admin/system-settings/app_name - 200 - 0.007s
+2025-09-24 21:58:15 | INFO     | middleware:dispatch:172 | Incoming request: PUT /admin/system-settings/app_name
+2025-09-24 21:58:15 | INFO     | logging_config:log_api_call:78 | PUT /admin/system-settings/app_name - 400 - 0.001s
+2025-09-24 21:58:27 | INFO     | middleware:dispatch:172 | Incoming request: PUT /admin/system-settings/app_name
+2025-09-24 21:58:27 | INFO     | logging_config:log_api_call:78 | PUT /admin/system-settings/app_name - 400 - 0.001s
+2025-09-24 21:58:56 | INFO     | middleware:dispatch:172 | Incoming request: PUT /admin/system-settings/app_name
+2025-09-24 21:58:56 | INFO     | logging_config:log_api_call:78 | PUT /admin/system-settings/app_name - 200 - 0.013s
+2025-09-24 22:04:53 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 22:04:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 22:04:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 22:04:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 22:04:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 22:04:53 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 22:04:53 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 22:04:53 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 22:04:53 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 22:04:53 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 22:04:53 | INFO     | main:<module>:93 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 22:04:53 | INFO     | main:startup_event:121 | 🚀 Starting FADO CRM API...
+2025-09-24 22:04:53 | SUCCESS  | main:startup_event:124 | ✅ Database tables created successfully
+2025-09-24 22:04:53 | INFO     | main:startup_event:125 | 🎉 FADO CRM API is ready to serve!
+2025-09-24 22:04:53 | INFO     | logging_config:log_business_event:117 | Business event: API_STARTUP
+2025-09-24 22:05:06 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:05:06 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:05:06 | ERROR    | main:login:281 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2025-09-24 22:05:06 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 401 - 0.083s
+2025-09-24 22:07:28 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:07:28 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:07:28 | ERROR    | main:login:281 | Login failed for admin@fado.vn: 1 validation error for LoginResponse
+user.ngay_tao
+  Field required [type=missing, input_value={'id': 1, 'email': 'admin...min', 'is_active': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2025-09-24 22:07:28 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 401 - 0.031s
+2025-09-24 22:07:53 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 22:07:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 22:07:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 22:07:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 22:07:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 22:07:53 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 22:07:53 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 22:07:54 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 22:07:54 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 22:07:54 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 22:07:54 | INFO     | main:<module>:93 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 22:07:54 | INFO     | main:startup_event:121 | 🚀 Starting FADO CRM API...
+2025-09-24 22:07:54 | SUCCESS  | main:startup_event:124 | ✅ Database tables created successfully
+2025-09-24 22:07:54 | INFO     | main:startup_event:125 | 🎉 FADO CRM API is ready to serve!
+2025-09-24 22:07:54 | INFO     | logging_config:log_business_event:117 | Business event: API_STARTUP
+2025-09-24 22:08:02 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:08:02 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:08:02 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.083s
+2025-09-24 22:09:17 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 22:09:17 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 22:09:17 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 22:09:17 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 22:09:17 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 22:09:17 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 22:09:17 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 22:09:17 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 22:09:17 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 22:09:17 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 22:09:17 | INFO     | main:<module>:93 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 22:09:17 | INFO     | main:startup_event:121 | 🚀 Starting FADO CRM API...
+2025-09-24 22:09:17 | SUCCESS  | main:startup_event:124 | ✅ Database tables created successfully
+2025-09-24 22:09:17 | INFO     | main:startup_event:125 | 🎉 FADO CRM API is ready to serve!
+2025-09-24 22:09:17 | INFO     | logging_config:log_business_event:117 | Business event: API_STARTUP
+2025-09-24 22:09:18 | INFO     | middleware:dispatch:172 | Incoming request: GET /health
+2025-09-24 22:09:18 | INFO     | logging_config:log_api_call:78 | GET /health - 200 - 0.001s
+2025-09-24 22:09:18 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:09:18 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:09:18 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.031s
+2025-09-24 22:13:36 | INFO     | middleware:dispatch:172 | Incoming request: GET /settings/public
+2025-09-24 22:13:36 | INFO     | logging_config:log_api_call:78 | GET /settings/public - 404 - 0.000s
+2025-09-24 22:13:53 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 22:13:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 22:13:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 22:13:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 22:13:53 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 22:13:53 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 22:13:53 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 22:13:53 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 22:13:53 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 22:13:53 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 22:13:53 | INFO     | main:<module>:93 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 22:13:53 | INFO     | main:startup_event:121 | 🚀 Starting FADO CRM API...
+2025-09-24 22:13:53 | SUCCESS  | main:startup_event:124 | ✅ Database tables created successfully
+2025-09-24 22:13:53 | INFO     | main:startup_event:125 | 🎉 FADO CRM API is ready to serve!
+2025-09-24 22:13:53 | INFO     | logging_config:log_business_event:117 | Business event: API_STARTUP
+2025-09-24 22:13:54 | INFO     | middleware:dispatch:172 | Incoming request: GET /settings/public
+2025-09-24 22:13:54 | INFO     | logging_config:log_api_call:78 | GET /settings/public - 200 - 0.011s
+2025-09-24 22:15:43 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:15:43 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:15:43 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.039s
+2025-09-24 22:15:43 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:15:43 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:15:43 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.029s
+2025-09-24 22:15:43 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:15:43 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:15:43 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:15:43 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:15:43 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:15:43 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.024s
+2025-09-24 22:15:43 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:15:43 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:15:43 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:15:43 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:15:43 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:15:43 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:15:43 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:15:43 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:15:43 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.025s
+2025-09-24 22:15:43 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:15:43 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:15:43 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.022s
+2025-09-24 22:15:43 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:15:43 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:15:43 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.024s
+2025-09-24 22:15:43 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:15:43 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:15:43 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:15:43 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:15:43 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:15:43 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.071s
+2025-09-24 22:16:37 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 22:16:37 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 22:16:37 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 22:16:37 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 22:16:37 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 22:16:37 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 22:16:37 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 22:16:37 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 22:16:37 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 22:16:37 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 22:16:37 | INFO     | main:<module>:101 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 22:16:37 | INFO     | main:startup_event:129 | 🚀 Starting FADO CRM API...
+2025-09-24 22:16:37 | SUCCESS  | main:startup_event:132 | ✅ Database tables created successfully
+2025-09-24 22:16:37 | INFO     | main:startup_event:133 | 🎉 FADO CRM API is ready to serve!
+2025-09-24 22:16:37 | INFO     | logging_config:log_business_event:117 | Business event: API_STARTUP
+2025-09-24 22:16:50 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:16:50 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:16:50 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.045s
+2025-09-24 22:16:50 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:16:50 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:16:50 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:16:50 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:16:50 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:16:50 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:16:50 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:16:50 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:16:50 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.022s
+2025-09-24 22:16:50 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:16:50 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:16:50 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.024s
+2025-09-24 22:16:50 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:16:50 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:16:50 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:16:50 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:16:50 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:16:50 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.061s
+2025-09-24 22:16:50 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:16:50 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:16:50 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:16:50 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:16:50 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:16:50 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.022s
+2025-09-24 22:16:50 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:16:50 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:16:50 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.021s
+2025-09-24 22:16:50 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:16:50 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:16:50 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.022s
+2025-09-24 22:17:57 | INFO     | analytics_service:__init__:19 | Advanced Analytics service initialized
+2025-09-24 22:17:57 | INFO     | file_service:setup_directories:50 | Directory ready: uploads
+2025-09-24 22:17:57 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\product_images
+2025-09-24 22:17:57 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\temp
+2025-09-24 22:17:57 | INFO     | file_service:setup_directories:50 | Directory ready: uploads\thumbnails
+2025-09-24 22:17:57 | INFO     | file_service:__init__:37 | File service initialized successfully
+2025-09-24 22:17:57 | INFO     | search_service:__init__:16 | 🔍 Advanced Search service initialized
+2025-09-24 22:17:57 | INFO     | export_service:__init__:21 | 📊 Export/Import service initialized
+2025-09-24 22:17:57 | INFO     | websocket_service:__init__:33 | 🔔 WebSocket Connection Manager initialized
+2025-09-24 22:17:57 | INFO     | websocket_service:__init__:157 | 🔔 Notification Service initialized
+2025-09-24 22:17:57 | INFO     | main:<module>:101 | GraphQL not enabled (strawberry not installed or schema import failed)
+2025-09-24 22:17:57 | INFO     | main:startup_event:129 | 🚀 Starting FADO CRM API...
+2025-09-24 22:17:57 | SUCCESS  | main:startup_event:132 | ✅ Database tables created successfully
+2025-09-24 22:17:57 | INFO     | main:startup_event:133 | 🎉 FADO CRM API is ready to serve!
+2025-09-24 22:17:57 | INFO     | logging_config:log_business_event:117 | Business event: API_STARTUP
+2025-09-24 22:17:58 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:17:58 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:17:58 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.022s
+2025-09-24 22:17:58 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:17:58 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:17:58 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.022s
+2025-09-24 22:17:58 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:17:58 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:17:58 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.024s
+2025-09-24 22:17:58 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:17:58 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:17:58 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.021s
+2025-09-24 22:17:58 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:17:58 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:17:58 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.024s
+2025-09-24 22:17:58 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:17:58 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:17:58 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.022s
+2025-09-24 22:17:58 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:17:58 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:17:58 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:17:58 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:17:58 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:17:58 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:17:58 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:17:58 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:17:58 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:17:58 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:17:58 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:17:58 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.024s
+2025-09-24 22:17:58 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:17:58 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:17:58 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.024s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.027s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.029s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.025s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.024s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.027s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.024s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.028s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.027s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.024s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.025s
+2025-09-24 22:18:40 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:40 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:40 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.024s
+2025-09-24 22:18:41 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:41 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:41 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.027s
+2025-09-24 22:18:41 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:41 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:41 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.025s
+2025-09-24 22:18:41 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:41 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:41 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.027s
+2025-09-24 22:18:41 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:41 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:41 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.022s
+2025-09-24 22:18:41 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:41 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:41 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.024s
+2025-09-24 22:18:41 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:41 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:41 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.023s
+2025-09-24 22:18:41 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:41 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:41 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.024s
+2025-09-24 22:18:41 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:41 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:41 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.031s
+2025-09-24 22:18:41 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:18:41 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:18:41 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.028s
+2025-09-24 22:19:06 | INFO     | middleware:dispatch:172 | Incoming request: GET /health
+2025-09-24 22:19:06 | INFO     | logging_config:log_api_call:78 | GET /health - 200 - 0.001s
+2025-09-24 22:38:46 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:38:46 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:38:46 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.031s
+2025-09-24 22:38:46 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 22:38:46 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.005s
+2025-09-24 22:39:39 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:39:39 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:39:39 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.037s
+2025-09-24 22:39:40 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 22:39:40 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.002s
+2025-09-24 22:40:52 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:40:52 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:40:52 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.036s
+2025-09-24 22:40:53 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 22:40:53 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.004s
+2025-09-24 22:42:19 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:42:19 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:42:19 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.031s
+2025-09-24 22:42:19 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 22:42:19 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.002s
+2025-09-24 22:42:19 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 22:42:19 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.002s
+2025-09-24 22:43:01 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:43:01 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:43:01 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.029s
+2025-09-24 22:43:02 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 22:43:02 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.002s
+2025-09-24 22:43:02 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 22:43:02 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.002s
+2025-09-24 22:43:59 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:43:59 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:43:59 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.043s
+2025-09-24 22:45:01 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:45:01 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:45:01 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.030s
+2025-09-24 22:45:01 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 22:45:01 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.004s
+2025-09-24 22:45:01 | INFO     | middleware:dispatch:172 | Incoming request: POST /upload/product-image
+2025-09-24 22:45:01 | INFO     | logging_config:log_api_call:78 | POST /upload/product-image - 422 - 0.005s
+2025-09-24 22:45:01 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 22:45:01 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.002s
+2025-09-24 22:45:47 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:45:48 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:45:48 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.041s
+2025-09-24 22:45:48 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 22:45:48 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.002s
+2025-09-24 22:45:48 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 22:45:48 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.002s
+2025-09-24 22:45:48 | INFO     | middleware:dispatch:172 | Incoming request: POST /upload/product-image
+2025-09-24 22:45:48 | ERROR    | file_service:create_thumbnails:228 | ❌ Error creating thumbnails: broken data stream when reading image file
+2025-09-24 22:45:48 | SUCCESS  | file_service:save_product_image:173 | 📸 Product image uploaded successfully: user_1_20250924_154548_dd11a22d.png by user 1
+2025-09-24 22:45:48 | INFO     | logging_config:log_user_action:104 | User 1 performed upload on product_image (ID: new)
+2025-09-24 22:45:48 | INFO     | logging_config:log_business_event:117 | Business event: IMAGE_UPLOADED
+2025-09-24 22:45:48 | INFO     | logging_config:log_api_call:78 | POST /upload/product-image - 200 - 0.035s
+2025-09-24 22:59:11 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 22:59:11 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 22:59:11 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.036s
+2025-09-24 22:59:12 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 22:59:12 | INFO     | middleware:dispatch:172 | Incoming request: GET /upload/list
+2025-09-24 22:59:12 | INFO     | logging_config:log_api_call:78 | GET /upload/list - 404 - 0.000s
+2025-09-24 22:59:12 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.004s
+2025-09-24 22:59:12 | INFO     | middleware:dispatch:172 | Incoming request: POST /upload/product-image
+2025-09-24 22:59:12 | INFO     | middleware:dispatch:172 | Incoming request: GET /upload/list
+2025-09-24 22:59:12 | INFO     | logging_config:log_api_call:78 | GET /upload/list - 404 - 0.001s
+2025-09-24 22:59:12 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 22:59:12 | ERROR    | file_service:create_thumbnails:228 | ❌ Error creating thumbnails: broken data stream when reading image file
+2025-09-24 22:59:12 | SUCCESS  | file_service:save_product_image:173 | 📸 Product image uploaded successfully: user_1_20250924_155912_77f1b3ba.png by user 1
+2025-09-24 22:59:12 | INFO     | logging_config:log_user_action:104 | User 1 performed upload on product_image (ID: new)
+2025-09-24 22:59:12 | INFO     | logging_config:log_business_event:117 | Business event: IMAGE_UPLOADED
+2025-09-24 22:59:12 | INFO     | logging_config:log_api_call:78 | POST /upload/product-image - 200 - 0.016s
+2025-09-24 22:59:12 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.012s
+2025-09-24 22:59:12 | INFO     | middleware:dispatch:172 | Incoming request: GET /upload/list
+2025-09-24 22:59:12 | INFO     | logging_config:log_api_call:78 | GET /upload/list - 404 - 0.000s
+2025-09-24 23:00:10 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 23:00:10 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 23:00:10 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.031s
+2025-09-24 23:00:11 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 23:00:11 | INFO     | middleware:dispatch:172 | Incoming request: GET /upload/list
+2025-09-24 23:00:11 | INFO     | logging_config:log_api_call:78 | GET /upload/list - 404 - 0.000s
+2025-09-24 23:00:11 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.003s
+2025-09-24 23:00:11 | INFO     | middleware:dispatch:172 | Incoming request: POST /upload/product-image
+2025-09-24 23:00:11 | INFO     | middleware:dispatch:172 | Incoming request: GET /upload/list
+2025-09-24 23:00:11 | INFO     | logging_config:log_api_call:78 | GET /upload/list - 404 - 0.001s
+2025-09-24 23:00:11 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 23:00:11 | ERROR    | file_service:create_thumbnails:228 | ❌ Error creating thumbnails: broken data stream when reading image file
+2025-09-24 23:00:11 | SUCCESS  | file_service:save_product_image:173 | 📸 Product image uploaded successfully: user_1_20250924_160011_ca7b15cd.png by user 1
+2025-09-24 23:00:11 | INFO     | logging_config:log_user_action:104 | User 1 performed upload on product_image (ID: new)
+2025-09-24 23:00:11 | INFO     | logging_config:log_business_event:117 | Business event: IMAGE_UPLOADED
+2025-09-24 23:00:11 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.009s
+2025-09-24 23:00:11 | INFO     | logging_config:log_api_call:78 | POST /upload/product-image - 200 - 0.013s
+2025-09-24 23:00:11 | INFO     | middleware:dispatch:172 | Incoming request: GET /upload/list
+2025-09-24 23:00:11 | INFO     | logging_config:log_api_call:78 | GET /upload/list - 404 - 0.000s
+2025-09-24 23:00:11 | INFO     | middleware:dispatch:172 | Incoming request: GET /upload/list
+2025-09-24 23:00:11 | INFO     | logging_config:log_api_call:78 | GET /upload/list - 404 - 0.000s
+2025-09-24 23:01:10 | INFO     | middleware:dispatch:172 | Incoming request: POST /auth/login
+2025-09-24 23:01:10 | INFO     | logging_config:log_user_action:104 | User 1 performed login on auth (ID: login)
+2025-09-24 23:01:10 | INFO     | logging_config:log_api_call:78 | POST /auth/login - 200 - 0.033s
+2025-09-24 23:01:11 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 23:01:11 | INFO     | middleware:dispatch:172 | Incoming request: GET /upload/list
+2025-09-24 23:01:11 | INFO     | logging_config:log_api_call:78 | GET /upload/list - 404 - 0.000s
+2025-09-24 23:01:11 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.007s
+2025-09-24 23:01:11 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/
+2025-09-24 23:01:11 | INFO     | middleware:dispatch:172 | Incoming request: GET /upload/list
+2025-09-24 23:01:11 | INFO     | logging_config:log_api_call:78 | GET /upload/list - 404 - 0.003s
+2025-09-24 23:01:11 | INFO     | logging_config:log_api_call:78 | GET /san-pham/ - 200 - 0.006s
+2025-09-24 23:01:11 | INFO     | middleware:dispatch:172 | Incoming request: POST /upload/product-image
+2025-09-24 23:01:11 | ERROR    | file_service:create_thumbnails:228 | ❌ Error creating thumbnails: broken data stream when reading image file
+2025-09-24 23:01:11 | SUCCESS  | file_service:save_product_image:173 | 📸 Product image uploaded successfully: user_1_20250924_160111_8f147c67.png by user 1
+2025-09-24 23:01:11 | INFO     | logging_config:log_user_action:104 | User 1 performed upload on product_image (ID: new)
+2025-09-24 23:01:11 | INFO     | logging_config:log_business_event:117 | Business event: IMAGE_UPLOADED
+2025-09-24 23:01:11 | INFO     | logging_config:log_api_call:78 | POST /upload/product-image - 200 - 0.009s
+2025-09-24 23:01:11 | INFO     | middleware:dispatch:172 | Incoming request: GET /upload/list
+2025-09-24 23:01:11 | INFO     | logging_config:log_api_call:78 | GET /upload/list - 404 - 0.000s

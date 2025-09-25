@@ -1,0 +1,15 @@
+2025-09-24 21:41:18 | ERROR    | logging_config:log_error_with_context:93 | Error occurred: (sqlite3.OperationalError) no such table: nguoi_dung
+[SQL: SELECT nguoi_dung.id AS nguoi_dung_id, nguoi_dung.email AS nguoi_dung_email, nguoi_dung.ho_ten AS nguoi_dung_ho_ten, nguoi_dung.mat_khau_hash AS nguoi_dung_mat_khau_hash, nguoi_dung.vai_tro AS nguoi_dung_vai_tro, nguoi_dung.is_active AS nguoi_dung_is_active, nguoi_dung.ngay_tao AS nguoi_dung_ngay_tao, nguoi_dung.lan_dang_nhap_cuoi AS nguoi_dung_lan_dang_nhap_cuoi, nguoi_dung.so_dien_thoai AS nguoi_dung_so_dien_thoai, nguoi_dung.ghi_chu AS nguoi_dung_ghi_chu 
+FROM nguoi_dung 
+WHERE nguoi_dung.email = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('admin@test.local', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8) | {'extra': {'error_type': 'OperationalError', 'context': {'request_id': '53f80a64', 'path': '/admin/system-settings/app_name', 'method': 'PUT', 'query_params': {}, 'headers': {'host': 'testserver', 'accept': '*/*', 'accept-encoding': 'gzip, deflate', 'connection': 'keep-alive', 'user-agent': 'testclient', 'content-length': '71', 'content-type': 'application/json'}}, 'traceback': None}}
+2025-09-24 21:41:18 | ERROR    | logging_config:log_error_with_context:93 | Error occurred: (sqlite3.OperationalError) no such table: nguoi_dung
+[SQL: SELECT nguoi_dung.id AS nguoi_dung_id, nguoi_dung.email AS nguoi_dung_email, nguoi_dung.ho_ten AS nguoi_dung_ho_ten, nguoi_dung.mat_khau_hash AS nguoi_dung_mat_khau_hash, nguoi_dung.vai_tro AS nguoi_dung_vai_tro, nguoi_dung.is_active AS nguoi_dung_is_active, nguoi_dung.ngay_tao AS nguoi_dung_ngay_tao, nguoi_dung.lan_dang_nhap_cuoi AS nguoi_dung_lan_dang_nhap_cuoi, nguoi_dung.so_dien_thoai AS nguoi_dung_so_dien_thoai, nguoi_dung.ghi_chu AS nguoi_dung_ghi_chu 
+FROM nguoi_dung 
+WHERE nguoi_dung.email = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('admin@test.local', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8) | {'extra': {'error_type': 'OperationalError', 'context': {'request_id': '860af800', 'path': '/admin/audit-logs', 'method': 'GET', 'query_params': {}, 'headers': {'host': 'testserver', 'accept': '*/*', 'accept-encoding': 'gzip, deflate', 'connection': 'keep-alive', 'user-agent': 'testclient'}}, 'traceback': None}}
+2025-09-24 21:41:54 | ERROR    | logging_config:log_error_with_context:93 | Error occurred: name 'admin' is not defined | {'extra': {'error_type': 'NameError', 'context': {'request_id': 'bd3fe264', 'path': '/admin/audit-logs', 'method': 'GET', 'query_params': {}, 'headers': {'host': 'testserver', 'accept': '*/*', 'accept-encoding': 'gzip, deflate', 'connection': 'keep-alive', 'user-agent': 'testclient'}}, 'traceback': None}}

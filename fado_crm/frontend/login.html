@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 FADO.VN CRM - Đăng Nhập</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: #ffe6e6;
+            color: #d63031;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .loading-spinner {
+            display: none;
+            margin: 0 auto 1rem;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .demo-accounts {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 0.85rem;
+        }
+
+        .demo-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-account {
+            margin: 0.3rem 0;
+            color: #666;
+        }
+
+        .demo-account strong {
+            color: #667eea;
+        }
+
+        .version-info {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-logo">
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+        <h1 class="login-title">FADO.VN CRM</h1>
+        <p class="login-subtitle">Hệ thống quản lý mua hộ chuyên nghiệp</p>
+
+        <div class="error-message" id="errorMessage">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorText"></span>
+        </div>
+
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label" for="email">
+                    <i class="fas fa-envelope"></i> Email
+                </label>
+                <input
+                    type="email"
+                    class="form-input"
+                    id="email"
+                    name="email"
+                    required
+                    autocomplete="email"
+                    placeholder="admin@fado.vn"
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">
+                    <i class="fas fa-lock"></i> Mật khẩu
+                </label>
+                <input
+                    type="password"
+                    class="form-input"
+                    id="password"
+                    name="password"
+                    required
+                    autocomplete="current-password"
+                    placeholder="Nhập mật khẩu"
+                >
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Đăng Nhập
+            </button>
+        </form>
+
+        <div class="demo-accounts">
+            <div class="demo-title">🎭 Tài khoản demo:</div>
+            <div class="demo-account">👑 <strong>Admin:</strong> admin@fado.vn</div>
+            <div class="demo-account">👨‍💼 <strong>Manager:</strong> manager@fado.vn / manager123</div>
+            <div class="demo-account">👨‍💻 <strong>Staff:</strong> staff@fado.vn / staff123</div>
+            <div class="demo-account">👁️ <strong>Viewer:</strong> viewer@fado.vn / viewer123</div>
+        </div>
+    </div>
+
+    <div class="version-info">
+        🚀 FADO CRM Phase 2 - Authentication System
+    </div>
+
+    <script>
+        // 🔐 Authentication Manager
+        class AuthManager {
+            constructor() {
+                this.API_BASE = 'http://localhost:8000';
+                this.initializeElements();
+                this.setupEventListeners();
+                this.checkExistingAuth();
+            }
+
+            initializeElements() {
+                this.form = document.getElementById('loginForm');
+                this.emailInput = document.getElementById('email');
+                this.passwordInput = document.getElementById('password');
+                this.loginBtn = document.getElementById('loginBtn');
+                this.errorMessage = document.getElementById('errorMessage');
+                this.errorText = document.getElementById('errorText');
+                this.loadingSpinner = document.getElementById('loadingSpinner');
+            }
+
+            setupEventListeners() {
+                this.form.addEventListener('submit', (e) => this.handleLogin(e));
+
+                // Enter key on password field
+                this.passwordInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.handleLogin(e);
+                    }
+                });
+            }
+
+            checkExistingAuth() {
+                const token = localStorage.getItem('access_token');
+                if (token) {
+                    // Try to validate token
+                    this.validateToken(token);
+                }
+            }
+
+            async validateToken(token) {
+                try {
+                    const response = await fetch(`${this.API_BASE}/auth/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        // Token is valid, redirect to main app
+                        window.location.href = 'index.html';
+                    } else {
+                        // Token is invalid, remove it
+                        localStorage.removeItem('access_token');
+                        localStorage.removeItem('refresh_token');
+                    }
+                } catch (error) {
+                    console.log('Token validation failed:', error);
+                    localStorage.removeItem('access_token');
+                    localStorage.removeItem('refresh_token');
+                }
+            }
+
+            showError(message) {
+                this.errorText.textContent = message;
+                this.errorMessage.style.display = 'block';
+                setTimeout(() => {
+                    this.errorMessage.style.display = 'none';
+                }, 5000);
+            }
+
+            showLoading(show) {
+                this.loadingSpinner.style.display = show ? 'block' : 'none';
+                this.loginBtn.disabled = show;
+                this.loginBtn.innerHTML = show ?
+                    '<i class="fas fa-spinner fa-spin"></i> Đang đăng nhập...' :
+                    '<i class="fas fa-sign-in-alt"></i> Đăng Nhập';
+            }
+
+            async handleLogin(e) {
+                e.preventDefault();
+
+                const email = this.emailInput.value.trim();
+                const password = this.passwordInput.value;
+
+                if (!email || !password) {
+                    this.showError('Vui lòng nhập đầy đủ email và mật khẩu');
+                    return;
+                }
+
+                this.showLoading(true);
+
+                try {
+                    const response = await fetch(`${this.API_BASE}/auth/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Login successful
+                        localStorage.setItem('access_token', data.access_token);
+                        localStorage.setItem('refresh_token', data.refresh_token);
+                        localStorage.setItem('user_info', JSON.stringify(data.user));
+
+                        // Redirect to main application
+                        window.location.href = 'index.html';
+                    } else {
+                        // Login failed
+                        this.showError(data.detail || 'Đăng nhập thất bại');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    this.showError('Lỗi kết nối. Vui lòng kiểm tra server backend.');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+        }
+
+        // Initialize auth manager when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new AuthManager();
+        });
+
+        // 🎨 Add some visual effects
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.login-container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                container.style.transition = 'all 0.5s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

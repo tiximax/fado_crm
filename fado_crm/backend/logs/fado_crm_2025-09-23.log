@@ -1,0 +1,26 @@
+2025-09-23 21:30:43 | INFO     | main:startup_event:51 | 🚀 Starting FADO CRM API...
+2025-09-23 21:30:43 | SUCCESS  | main:startup_event:54 | ✅ Database tables created successfully
+2025-09-23 21:30:43 | INFO     | main:startup_event:55 | 🎉 FADO CRM API is ready to serve!
+2025-09-23 21:30:43 | INFO     | logging_config:log_business_event:116 | Business event: API_STARTUP
+2025-09-23 21:30:52 | INFO     | main:startup_event:51 | 🚀 Starting FADO CRM API...
+2025-09-23 21:30:52 | SUCCESS  | main:startup_event:54 | ✅ Database tables created successfully
+2025-09-23 21:30:52 | INFO     | main:startup_event:55 | 🎉 FADO CRM API is ready to serve!
+2025-09-23 21:30:52 | INFO     | logging_config:log_business_event:116 | Business event: API_STARTUP
+2025-09-23 21:32:17 | INFO     | main:startup_event:51 | 🚀 Starting FADO CRM API...
+2025-09-23 21:32:17 | SUCCESS  | main:startup_event:54 | ✅ Database tables created successfully
+2025-09-23 21:32:17 | INFO     | main:startup_event:55 | 🎉 FADO CRM API is ready to serve!
+2025-09-23 21:32:17 | INFO     | logging_config:log_business_event:117 | Business event: API_STARTUP
+2025-09-23 21:33:19 | INFO     | main:startup_event:51 | 🚀 Starting FADO CRM API...
+2025-09-23 21:33:19 | SUCCESS  | main:startup_event:54 | ✅ Database tables created successfully
+2025-09-23 21:33:19 | INFO     | main:startup_event:55 | 🎉 FADO CRM API is ready to serve!
+2025-09-23 21:33:19 | INFO     | logging_config:log_business_event:117 | Business event: API_STARTUP
+2025-09-23 21:33:35 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/999
+2025-09-23 21:33:35 | WARNING  | middleware:dispatch:55 | FADO Exception: NOT_FOUND - Không tìm thấy sản phẩm với ID: 999
+2025-09-23 21:33:35 | INFO     | logging_config:log_api_call:78 | GET /san-pham/999 - 404 - 0.010s
+2025-09-23 21:34:04 | INFO     | middleware:dispatch:172 | Incoming request: GET /san-pham/1
+2025-09-23 21:34:04 | INFO     | logging_config:log_user_action:104 | User system performed view on product (ID: 1)
+2025-09-23 21:34:04 | INFO     | logging_config:log_api_call:78 | GET /san-pham/1 - 200 - 0.002s
+2025-09-23 21:49:31 | INFO     | middleware:dispatch:172 | Incoming request: GET /
+2025-09-23 21:49:31 | INFO     | logging_config:log_api_call:78 | GET / - 200 - 0.000s
+2025-09-23 21:58:20 | INFO     | middleware:dispatch:172 | Incoming request: GET /
+2025-09-23 21:58:20 | INFO     | logging_config:log_api_call:78 | GET / - 200 - 0.001s

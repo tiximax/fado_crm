@@ -1,0 +1,35 @@
+# 💬 WhatsApp Business Integration (Stub)
+# Outline a minimal sender using Meta WhatsApp Cloud API
+
+import os
+from typing import Dict
+import json
+import urllib.request
+
+class WhatsAppClient:
+    def __init__(self):
+        self.token = os.getenv("WHATSAPP_API_TOKEN")
+        self.phone_number_id = os.getenv("WHATSAPP_PHONE_NUMBER_ID")
+        self.base_url = f"https://graph.facebook.com/v18.0/{self.phone_number_id}/messages" if self.phone_number_id else None
+
+    def enabled(self) -> bool:
+        return bool(self.token and self.phone_number_id)
+
+    def send_text(self, to_phone: str, text: str) -> Dict:
+        if not self.enabled():
+            return {"status": "disabled"}
+        payload = {
+            "messaging_product": "whatsapp",
+            "to": to_phone,
+            "type": "text",
+            "text": {"body": text}
+        }
+        req = urllib.request.Request(self.base_url)
+        req.add_header("Authorization", f"Bearer {self.token}")
+        req.add_header("Content-Type", "application/json")
+        data = json.dumps(payload).encode("utf-8")
+        try:
+            with urllib.request.urlopen(req, data=data, timeout=10) as resp:
+                return {"status": "sent", "code": resp.status}
+        except Exception as e:
+            return {"status": "error", "error": str(e)}

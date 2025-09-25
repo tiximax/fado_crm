@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1b2b">
+    <link rel="manifest" href="manifest.webmanifest">
+    <title>🛍️ FADO.VN CRM - Quản Lý Mua Hộ Siêu Đỉnh!</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="auth.js"></script>
+</head>
+<body>
+    <!-- 🎨 Header Navigation siêu ngầu -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="appName">FADO.VN CRM</span>
+            </div>
+            <div class="nav-menu">
+                <button class="nav-item active" data-tab="dashboard">
+                    <i class="fas fa-chart-pie"></i> Dashboard
+                </button>
+                <button class="nav-item" data-tab="customers">
+                    <i class="fas fa-users"></i> Khách Hàng
+                </button>
+                <button class="nav-item" data-tab="products">
+                    <i class="fas fa-box"></i> Sản Phẩm
+                </button>
+                <button class="nav-item" data-tab="orders">
+                    <i class="fas fa-clipboard-list"></i> Đơn Hàng
+                </button>
+                <button class="nav-item" data-tab="contact-history">
+                    <i class="fas fa-phone"></i> Liên Hệ
+                </button>
+                <a href="analytics.html" class="nav-item">
+                    <i class="fas fa-chart-bar"></i> Analytics
+                </a>
+                <a href="file-upload.html" class="nav-item">
+                    <i class="fas fa-upload"></i> Upload
+                </a>
+                <a href="export-import.html" class="nav-item">
+                    <i class="fas fa-file-export"></i> Export/Import
+                </a>
+                <button class="nav-item admin-only" data-tab="users" style="display: none;">
+                    <i class="fas fa-user-cog"></i> Người Dùng
+                </button>
+                <button class="nav-item admin-only" data-tab="system-settings" style="display: none;">
+                    <i class="fas fa-cog"></i> Cấu hình
+                </button>
+            </div>
+            <div class="nav-links">
+                <a href="advanced-dashboard.html" class="nav-link" title="Advanced Analytics">
+                    <i class="fas fa-chart-bar"></i> Analytics
+                </a>
+                <a href="file-upload.html" class="nav-link staff-only" title="File Upload" style="display: none;">
+                    <i class="fas fa-cloud-upload-alt"></i> Upload
+                </a>
+            </div>
+            <div class="nav-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Loading...</span>
+                    <span class="user-role" id="userRole"></span>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 🏠 Main Container -->
+    <div class="main-container">
+        <!-- 📊 DASHBOARD TAB - Thống kê siêu cool! -->
+        <div id="dashboard" class="tab-content active">
+            <div class="page-header">
+                <h1><i class="fas fa-chart-pie"></i> Dashboard Tổng Quan</h1>
+                <p>Thống kê realtime cho FADO.VN CRM 🚀</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-customers">0</h3>
+                        <p>Tổng Khách Hàng</p>
+                    </div>
+                </div>
+
+                <div class="stat-card green">
+                    <div class="stat-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-orders">0</h3>
+                        <p>Tổng Đơn Hàng</p>
+                    </div>
+                </div>
+
+                <div class="stat-card orange">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="monthly-revenue">0₫</h3>
+                        <p>Doanh Thu Tháng</p>
+                    </div>
+                </div>
+
+                <div class="stat-card red">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="pending-orders">0</h3>
+                        <p>Đơn Chờ Xử Lý</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-clock"></i> Đơn Hàng Gần Đây</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="recent-orders">
+                            <div class="loading">Đang tải dữ liệu... ⏳</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-plus"></i> Khách Hàng Mới</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="new-customers">
+                            <div class="loading">Đang tải dữ liệu... ⏳</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 👥 CUSTOMERS TAB -->
+        <div id="customers" class="tab-content">
+            <div class="page-header">
+                <h1><i class="fas fa-users"></i> Quản Lý Khách Hàng</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddCustomerModal()">
+                        <i class="fas fa-plus"></i> Thêm Khách Hàng
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="search-filters">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="customer-search" placeholder="🔍 Tìm kiếm khách hàng...">
+                </div>
+                <select id="customer-type-filter">
+                    <option value="">🏷️ Tất cả loại khách</option>
+                    <option value="moi">🆕 Khách mới</option>
+                    <option value="than_thiet">💎 Khách thân thiết</option>
+                    <option value="vip">👑 Khách VIP</option>
+                    <option value="blacklist">🚫 Blacklist</option>
+                </select>
+            </div>
+
+            <!-- Customer Table -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="table-container">
+                        <table id="customers-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>👤 Họ Tên</th>
+                                    <th>📧 Email</th>
+                                    <th>📱 Điện Thoại</th>
+                                    <th>🏷️ Loại Khách</th>
+                                    <th>💰 Tổng Chi</th>
+                                    <th>📅 Ngày Tạo</th>
+                                    <th>⚙️ Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customers-tbody">
+                                <tr>
+                                    <td colspan="8" class="loading">Đang tải dữ liệu... ⏳</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📦 PRODUCTS TAB -->
+        <div id="products" class="tab-content">
+            <div class="page-header">
+                <h1><i class="fas fa-box"></i> Quản Lý Sản Phẩm</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddProductModal()">
+                        <i class="fas fa-plus"></i> Thêm Sản Phẩm
+                    </button>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="search-filters">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="product-search" placeholder="🔍 Tìm kiếm sản phẩm...">
+                </div>
+            </div>
+
+            <div id="products-grid" class="products-grid">
+                <div class="loading-card">Đang tải sản phẩm... ⏳</div>
+            </div>
+        </div>
+
+        <!-- 📋 ORDERS TAB -->
+        <div id="orders" class="tab-content">
+            <div class="page-header">
+                <h1><i class="fas fa-clipboard-list"></i> Quản Lý Đơn Hàng</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddOrderModal()">
+                        <i class="fas fa-plus"></i> Tạo Đơn Hàng
+                    </button>
+                </div>
+            </div>
+
+            <!-- Order Filters -->
+            <div class="search-filters">
+                <select id="order-status-filter">
+                    <option value="">📊 Tất cả trạng thái</option>
+                    <option value="cho_xac_nhan">📋 Chờ xác nhận</option>
+                    <option value="da_xac_nhan">✅ Đã xác nhận</option>
+                    <option value="dang_mua">🛒 Đang mua</option>
+                    <option value="da_mua">💰 Đã mua</option>
+                    <option value="dang_ship">🚚 Đang ship</option>
+                    <option value="da_nhan">📦 Đã nhận</option>
+                    <option value="huy">❌ Đã hủy</option>
+                </select>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="table-container">
+                        <table id="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>📋 Mã Đơn</th>
+                                    <th>👤 Khách Hàng</th>
+                                    <th>💰 Tổng Tiền</th>
+                                    <th>📊 Trạng Thái</th>
+                                    <th>📅 Ngày Tạo</th>
+                                    <th>⚙️ Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-tbody">
+                                <tr>
+                                    <td colspan="6" class="loading">Đang tải dữ liệu... ⏳</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📞 CONTACT HISTORY TAB -->
+        <div id="contact-history" class="tab-content">
+            <div class="page-header">
+                <h1><i class="fas fa-phone"></i> Lịch Sử Liên Hệ</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddContactModal()">
+                        <i class="fas fa-plus"></i> Ghi Nhận Liên Hệ
+                    </button>
+                </div>
+            </div>
+
+            <div id="contact-history-list" class="contact-list">
+                <div class="loading">Đang tải lịch sử... ⏳</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🎭 MODALS - Popup windows siêu đẹp -->
+
+    <!-- Add Customer Modal -->
+    <div id="addCustomerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> Thêm Khách Hàng Mới</h2>
+                <span class="close" onclick="closeModal('addCustomerModal')">&times;</span>
+            </div>
+            <form id="addCustomerForm">
+                <div class="form-group">
+                    <label>📛 Họ Tên *</label>
+                    <input type="text" name="ho_ten" required>
+                </div>
+                <div class="form-group">
+                    <label>📧 Email *</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>📱 Số Điện Thoại</label>
+                    <input type="tel" name="so_dien_thoai">
+                </div>
+                <div class="form-group">
+                    <label>🏠 Địa Chỉ</label>
+                    <textarea name="dia_chi" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>🏷️ Loại Khách Hàng</label>
+                    <select name="loai_khach">
+                        <option value="moi">🆕 Khách mới</option>
+                        <option value="than_thiet">💎 Khách thân thiết</option>
+                        <option value="vip">👑 Khách VIP</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>📝 Ghi Chú</label>
+                    <textarea name="ghi_chu" rows="2"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addCustomerModal')">Hủy</button>
+                    <button type="submit" class="btn btn-primary">💾 Lưu Khách Hàng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-box"></i> Thêm Sản Phẩm Mới</h2>
+                <span class="close" onclick="closeModal('addProductModal')">&times;</span>
+            </div>
+            <form id="addProductForm">
+                <div class="form-group">
+                    <label>🏷️ Tên Sản Phẩm *</label>
+                    <input type="text" name="ten_san_pham" required>
+                </div>
+                <div class="form-group">
+                    <label>🔗 Link Gốc</label>
+                    <input type="url" name="link_goc">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>💵 Giá Gốc (USD)</label>
+                        <input type="number" name="gia_goc" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>💰 Giá Bán (VND)</label>
+                        <input type="number" name="gia_ban" min="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>📋 Mô Tả</label>
+                    <textarea name="mo_ta" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>🖼️ URL Hình Ảnh</label>
+                    <input type="url" name="hinh_anh_url">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>⚖️ Trọng Lượng (kg)</label>
+                        <input type="number" name="trong_luong" step="0.1" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>📏 Kích Thước</label>
+                        <input type="text" name="kich_thuoc">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>📂 Danh Mục</label>
+                        <input type="text" name="danh_muc">
+                    </div>
+                    <div class="form-group">
+                        <label>🌍 Quốc Gia Nguồn</label>
+                        <input type="text" name="quoc_gia_nguon">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addProductModal')">Hủy</button>
+                    <button type="submit" class="btn btn-primary">💾 Lưu Sản Phẩm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div id="editProductModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Chỉnh Sửa Sản Phẩm</h2>
+                <span class="close" onclick="closeModal('editProductModal')">&times;</span>
+            </div>
+            <form id="editProductForm">
+                <input type="hidden" name="product_id" id="editProductId">
+                <div class="form-group">
+                    <label>🏷️ Tên Sản Phẩm *</label>
+                    <input type="text" name="ten_san_pham" id="editTenSanPham" required>
+                </div>
+                <div class="form-group">
+                    <label>🔗 Link Gốc</label>
+                    <input type="url" name="link_goc" id="editLinkGoc">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>💵 Giá Gốc (USD)</label>
+                        <input type="number" name="gia_goc" id="editGiaGoc" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>💰 Giá Bán (VND)</label>
+                        <input type="number" name="gia_ban" id="editGiaBan" min="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>📋 Mô Tả</label>
+                    <textarea name="mo_ta" id="editMoTa" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>🖼️ URL Hình Ảnh</label>
+                    <input type="url" name="hinh_anh_url" id="editHinhAnhUrl">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>⚖️ Trọng Lượng (kg)</label>
+                        <input type="number" name="trong_luong" id="editTrongLuong" step="0.1" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>📏 Kích Thước</label>
+                        <input type="text" name="kich_thuoc" id="editKichThuoc">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>📂 Danh Mục</label>
+                        <input type="text" name="danh_muc" id="editDanhMuc">
+                    </div>
+                    <div class="form-group">
+                        <label>🌍 Quốc Gia Nguồn</label>
+                        <input type="text" name="quoc_gia_nguon" id="editQuocGiaNguon">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editProductModal')">Hủy</button>
+                    <button type="submit" class="btn btn-primary">💾 Cập Nhật Sản Phẩm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div id="productDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-eye"></i> Chi Tiết Sản Phẩm</h2>
+                <span class="close" onclick="closeModal('productDetailModal')">&times;</span>
+            </div>
+            <div class="modal-body" id="productDetailContent">
+                <!-- Product details will be loaded here -->
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('productDetailModal')">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="editProductFromDetail()">✏️ Chỉnh Sửa</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div id="orderDetailModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2><i class="fas fa-receipt"></i> Chi Tiết Đơn Hàng</h2>
+                <span class="close" onclick="closeModal('orderDetailModal')">&times;</span>
+            </div>
+            <div class="modal-body" id="orderDetailContent">
+                <!-- Order details will be loaded here -->
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('orderDetailModal')">Đóng</button>
+                <button type="button" class="btn btn-success" onclick="editOrderFromDetail()">✏️ Chỉnh Sửa</button>
+                <button type="button" class="btn btn-primary" onclick="updateOrderStatusFromDetail()">📊 Cập Nhật Trạng Thái</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Order Modal -->
+    <div id="addOrderModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus"></i> Tạo Đơn Hàng Mới</h2>
+                <span class="close" onclick="closeModal('addOrderModal')">&times;</span>
+            </div>
+            <form id="add-order-form" onsubmit="handleAddOrder(event)">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>👤 Khách Hàng *</label>
+                            <select name="khach_hang_id" id="addKhachHangId" required>
+                                <option value="">Chọn khách hàng...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>📊 Trạng Thái</label>
+                            <select name="trang_thai" id="addTrangThai">
+                                <option value="cho_xac_nhan">📋 Chờ xác nhận</option>
+                                <option value="da_xac_nhan">✅ Đã xác nhận</option>
+                                <option value="dang_mua">🛒 Đang mua</option>
+                                <option value="da_mua">💰 Đã mua</option>
+                                <option value="dang_ship">🚚 Đang ship</option>
+                                <option value="da_nhan">📦 Đã nhận</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>📝 Ghi Chú</label>
+                        <textarea name="ghi_chu" id="addGhiChu" rows="3" placeholder="Nhập ghi chú cho đơn hàng..."></textarea>
+                    </div>
+
+                    <h3><i class="fas fa-shopping-cart"></i> Chi Tiết Sản Phẩm</h3>
+                    <div class="order-items-container">
+                        <div class="order-item" data-item-index="0">
+                            <div class="form-row">
+                                <div class="form-group flex-2">
+                                    <label>🛍️ Sản Phẩm *</label>
+                                    <select name="san_pham_id_0" required onchange="updateProductPrice(0)">
+                                        <option value="">Chọn sản phẩm...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>💰 Giá (USD)</label>
+                                    <input type="number" name="gia_mua_0" step="0.01" min="0" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>📦 Số Lượng *</label>
+                                    <input type="number" name="so_luong_0" min="1" value="1" required onchange="calculateOrderTotal()">
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="removeOrderItem(0)" disabled>🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="addOrderItem()">
+                            <i class="fas fa-plus"></i> Thêm Sản Phẩm
+                        </button>
+                    </div>
+
+                    <div class="order-summary">
+                        <div class="summary-row">
+                            <strong>💰 Tổng Tiền: $<span id="orderTotalAmount">0.00</span></strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addOrderModal')">Hủy</button>
+                    <button type="submit" class="btn btn-primary">💾 Tạo Đơn Hàng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Order Modal -->
+    <div id="editOrderModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Chỉnh Sửa Đơn Hàng</h2>
+                <span class="close" onclick="closeModal('editOrderModal')">&times;</span>
+            </div>
+            <form id="edit-order-form" onsubmit="handleEditOrder(event)">
+                <input type="hidden" name="order_id" id="editOrderId">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>👤 Khách Hàng</label>
+                            <select name="khach_hang_id" id="editKhachHangId" disabled>
+                                <option value="">Chọn khách hàng...</option>
+                            </select>
+                            <small class="form-help">Không thể thay đổi khách hàng sau khi tạo đơn</small>
+                        </div>
+                        <div class="form-group">
+                            <label>📊 Trạng Thái</label>
+                            <select name="trang_thai" id="editTrangThai">
+                                <option value="cho_xac_nhan">📋 Chờ xác nhận</option>
+                                <option value="da_xac_nhan">✅ Đã xác nhận</option>
+                                <option value="dang_mua">🛒 Đang mua</option>
+                                <option value="da_mua">💰 Đã mua</option>
+                                <option value="dang_ship">🚚 Đang ship</option>
+                                <option value="da_nhan">📦 Đã nhận</option>
+                                <option value="huy">❌ Đã hủy</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>📝 Ghi Chú</label>
+                        <textarea name="ghi_chu" id="editGhiChu" rows="3"></textarea>
+                    </div>
+
+                    <h3><i class="fas fa-shopping-cart"></i> Chi Tiết Sản Phẩm</h3>
+                    <div id="editOrderItemsContainer">
+                        <!-- Order items will be loaded here -->
+                    </div>
+
+                    <div class="order-summary">
+                        <div class="summary-row">
+                            <strong>💰 Tổng Tiền: $<span id="editOrderTotalAmount">0.00</span></strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editOrderModal')">Hủy</button>
+                    <button type="submit" class="btn btn-primary">💾 Cập Nhật Đơn Hàng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Update Order Status Modal -->
+    <div id="updateOrderStatusModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-clipboard-check"></i> Cập Nhật Trạng Thái Đơn Hàng</h2>
+                <span class="close" onclick="closeModal('updateOrderStatusModal')">&times;</span>
+            </div>
+            <form id="update-order-status-form" onsubmit="handleUpdateOrderStatus(event)">
+                <div class="modal-body">
+                    <input type="hidden" name="order_id" id="statusOrderId">
+                    <div class="form-group">
+                        <label>📊 Trạng Thái Hiện Tại</label>
+                        <div class="current-status" id="currentOrderStatus">
+                            <!-- Current status will be shown here -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>📊 Trạng Thái Mới *</label>
+                        <select name="trang_thai" id="newOrderStatus" required>
+                            <option value="">Chọn trạng thái mới...</option>
+                            <option value="cho_xac_nhan">📋 Chờ xác nhận</option>
+                            <option value="da_xac_nhan">✅ Đã xác nhận</option>
+                            <option value="dang_mua">🛒 Đang mua</option>
+                            <option value="da_mua">💰 Đã mua</option>
+                            <option value="dang_ship">🚚 Đang ship</option>
+                            <option value="da_nhan">📦 Đã nhận</option>
+                            <option value="huy">❌ Hủy đơn</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>📝 Ghi Chú Thay Đổi</label>
+                        <textarea name="ghi_chu" id="statusChangeNote" rows="3" placeholder="Nhập lý do thay đổi trạng thái..."></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('updateOrderStatusModal')">Hủy</button>
+                    <button type="submit" class="btn btn-primary">💾 Cập Nhật Trạng Thái</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Đang xử lý... ⏳</p>
+        </div>
+    </div>
+
+    <!-- 👤 USER MANAGEMENT TAB - Admin chỉ có quyền này! -->
+    <div id="users" class="tab-content">
+        <div class="page-header">
+            <h1><i class="fas fa-user-cog"></i> Quản Lý Người Dùng</h1>
+            <p>Quản lý tài khoản và phân quyền (Admin only) 👑</p>
+        </div>
+
+        <div class="section-card">
+            <div class="section-header">
+                <h2>Danh sách người dùng</h2>
+                <button class="btn-primary" onclick="showCreateUserModal()">
+                    <i class="fas fa-user-plus"></i> Thêm người dùng
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Họ tên</th>
+                            <th>Email</th>
+                            <th>Vai trò</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày tạo</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Users will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SYSTEM SETTINGS TAB (Admin only) -->
+    <div id="system-settings" class="tab-content">
+        <div class="page-header">
+            <h1><i class="fas fa-cog"></i> Cấu Hình Hệ Thống</h1>
+            <p>Quản lý các thông số cấu hình (Admin only)</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-list"></i> Danh sách cấu hình</h3>
+            </div>
+            <div class="card-content">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Value</th>
+                                <th>Mô tả</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="settings-table-body">
+                            <tr>
+                                <td colspan="4" class="loading">Đang tải cấu hình... ⏳</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+            <div class="card-header">
+                <h3><i class="fas fa-plus"></i> Thêm/Cập nhật nhanh</h3>
+            </div>
+            <div class="card-content">
+                <form id="addSettingForm" onsubmit="createSetting(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Key</label>
+                            <input type="text" id="settingKey" placeholder="ví dụ: app_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Value</label>
+                            <input type="text" id="settingValue" placeholder="ví dụ: FADO CRM">
+                        </div>
+                        <div class="form-group flex-2">
+                            <label>Mô tả</label>
+                            <input type="text" id="settingDescription" placeholder="mô tả ngắn">
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Lưu
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- 🔐 Authentication Check & Initialization -->
+    <script>
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Require authentication
+            if (!requireAuth()) {
+                return;
+            }
+
+            // Initialize user interface
+            initializeUserInterface();
+
+            // Show/hide admin-only features
+            toggleAdminFeatures();
+        });
+
+        function initializeUserInterface() {
+            const user = getCurrentUser();
+            if (user) {
+                document.getElementById('userName').textContent = user.ho_ten;
+                document.getElementById('userRole').textContent = window.authService.getUserRoleDisplay();
+            }
+        }
+
+        function toggleAdminFeatures() {
+            const isAdmin = hasRole('admin');
+            const isStaff = hasAnyRole(['admin', 'manager', 'staff']);
+
+            // Show admin-only elements
+            const adminElements = document.querySelectorAll('.admin-only');
+            adminElements.forEach(element => {
+                element.style.display = isAdmin ? 'block' : 'none';
+            });
+
+            // Show staff+ elements (upload functionality)
+            const staffElements = document.querySelectorAll('.staff-only');
+            staffElements.forEach(element => {
+                element.style.display = isStaff ? 'flex' : 'none';
+            });
+        }
+
+        function showCreateUserModal() {
+            if (!requireRole('admin')) return;
+
+            // Show create user modal
+            alert('Tính năng tạo user sẽ được implement trong phiên bản tiếp theo!');
+        }
+    </script>
+
+    <script src="js/notifications.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

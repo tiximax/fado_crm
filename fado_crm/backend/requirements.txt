@@ -1,0 +1,82 @@
+# 🚀 FADO CRM Requirements - Những thư viện siêu đỉnh!
+# Cài đặt: pip install -r requirements.txt ⚡
+
+# 🎯 FastAPI và dependencies chính
+fastapi==0.104.1                # 🚀 Framework API siêu tốc
+uvicorn[standard]==0.24.0        # 🔥 ASGI server mạnh mẽ
+python-multipart==0.0.6         # 📁 Xử lý form data
+
+# 🗄️ Database và ORM
+sqlalchemy==2.0.23              # 🏗️ ORM mạnh nhất Python
+alembic==1.12.1                 # 🔄 Migration tool
+
+# 📋 Validation và serialization
+pydantic[email]==2.5.0          # ✅ Data validation như ninja
+email-validator==2.1.0          # 📧 Email validation
+
+# 🌐 CORS và middleware
+python-jose[cryptography]==3.3.0  # 🔐 JWT tokens
+passlib[bcrypt]==1.7.4           # 🛡️ Password hashing
+python-dotenv==1.0.0             # 🔧 Environment variables
+
+# 📊 Optional dependencies cho production
+psycopg2-binary==2.9.9          # 🐘 PostgreSQL adapter
+redis==5.0.1                    # 🔴 Redis cho caching
+
+# 📈 Phase 5 - Advanced Features Dependencies
+pandas==2.1.3                   # 📊 Data analysis cho Excel export
+openpyxl==3.1.2                 # 📄 Excel file handling
+reportlab==4.0.7                # 📄 PDF generation
+psutil==5.9.6                   # 🔍 System monitoring
+prometheus-client==0.19.0       # 📈 Metrics collection
+
+# 🧪 Development và testing
+pytest==7.4.3                   # 🧪 Testing framework
+pytest-asyncio==0.21.1          # ⚡ Async testing
+httpx==0.25.2                   # 📡 HTTP client cho testing
+
+# 📈 Monitoring và logging
+python-json-logger==2.0.7       # 📝 JSON logging
+prometheus-client==0.19.0       # 📊 Metrics collection
+loguru==0.7.2                   # 🎯 Beautiful logging for Phase 1
+
+# 📁 File processing và images - Phase 3
+Pillow==10.1.0                  # 🖼️ Image processing và thumbnails
+aiofiles==23.2.1                # 📁 Async file operations
+
+# ☁️ Object storage drivers (optional)
+boto3==1.34.162                 # AWS S3 client
+minio==7.2.8                    # MinIO client
+
+# 📊 Excel & CSV processing cho export/import
+openpyxl==3.1.2                 # 📊 Excel files processing
+pandas==2.1.4                   # 🐼 Data manipulation
+
+# 🔔 WebSocket support cho real-time notifications
+websockets==12.0                # 🔔 WebSocket support
+
+# 🔍 Advanced search & filtering
+python-slugify==8.0.1           # 🔗 URL-friendly slugs
+
+# 🛡️ Rate limiting (optional)
+slowapi==0.1.9                  # ⏱️ Simple rate limiting for FastAPI
+
+# 🎨 Code quality
+black==23.11.0                  # 🎨 Code formatter
+flake8==6.1.0                   # 🔍 Linter
+isort==5.12.0                   # 📚 Import sorter
+
+# 🧬 GraphQL API (optional)
+strawberry-graphql==0.214.0     # 🍓 GraphQL support for FastAPI
+
+# 💾 Database drivers
+# SQLite (built-in) - cho development 🛠️
+# PostgreSQL - cho production 🚀
+# MySQL alternative: pymysql==1.1.0
+
+# 🎯 Lưu ý cài đặt:
+# 1. Tạo virtual environment: python -m venv venv
+# 2. Activate: venv\Scripts\activate (Windows) hoặc source venv/bin/activate (Linux/Mac)
+# 3. Cài đặt: pip install -r requirements.txt
+# 4. Chạy server: uvicorn main:app --reload
+# 5. Truy cập: http://localhost:8000/docs để xem API documentation! 📚

@@ -1,0 +1,462 @@
+# 📊 FADO CRM - Advanced Analytics Service
+# Hệ thống phân tích dữ liệu thông minh như Data Scientist! 🧠
+
+from sqlalchemy.orm import Session
+from sqlalchemy import func, text, extract, case, and_, or_
+from datetime import datetime, timedelta, date
+from typing import Dict, List, Any, Optional, Tuple
+from decimal import Decimal
+import json
+from collections import defaultdict
+
+from database import get_db
+from models import KhachHang, SanPham, DonHang, ChiTietDonHang, LichSuLienHe, TrangThaiDonHang, LoaiKhachHang
+from logging_config import app_logger
+
+class AdvancedAnalytics:
+    def __init__(self):
+        self.db_session = None
+        app_logger.info("Advanced Analytics service initialized")
+
+    def set_session(self, db: Session):
+        """🔌 Set database session"""
+        self.db_session = db
+
+    # 📈 SALES ANALYTICS
+    def get_sales_overview(self, date_range: int = 30) -> Dict[str, Any]:
+        """📊 Tổng quan doanh số bán hàng"""
+        try:
+            end_date = datetime.utcnow()
+            start_date = end_date - timedelta(days=date_range)
+
+            # Total revenue
+            total_revenue = self.db_session.query(
+                func.sum(DonHang.tong_tien)
+            ).filter(
+                DonHang.ngay_tao >= start_date,
+                DonHang.trang_thai != TrangThaiDonHang.HUY
+            ).scalar() or 0
+
+            # Total orders
+            total_orders = self.db_session.query(DonHang).filter(
+                DonHang.ngay_tao >= start_date
+            ).count()
+
+            # Completed orders
+            completed_orders = self.db_session.query(DonHang).filter(
+                DonHang.ngay_tao >= start_date,
+                DonHang.trang_thai == TrangThaiDonHang.DA_NHAN
+            ).count()
+
+            # Average order value
+            avg_order_value = total_revenue / total_orders if total_orders > 0 else 0
+
+            # Previous period comparison
+            prev_start = start_date - timedelta(days=date_range)
+            prev_revenue = self.db_session.query(
+                func.sum(DonHang.tong_tien)
+            ).filter(
+                DonHang.ngay_tao >= prev_start,
+                DonHang.ngay_tao < start_date,
+                DonHang.trang_thai != TrangThaiDonHang.HUY
+            ).scalar() or 0
+
+            revenue_growth = ((total_revenue - prev_revenue) / prev_revenue * 100) if prev_revenue > 0 else 0
+
+            return {
+                "total_revenue": float(total_revenue),
+                "total_orders": total_orders,
+                "completed_orders": completed_orders,
+                "avg_order_value": float(avg_order_value),
+                "completion_rate": (completed_orders / total_orders * 100) if total_orders > 0 else 0,
+                "revenue_growth": round(revenue_growth, 2),
+                "date_range": date_range
+            }
+
+        except Exception as e:
+            app_logger.error(f"❌ Error in get_sales_overview: {str(e)}")
+            return {}
+
+    def get_daily_revenue_trend(self, days: int = 30) -> List[Dict[str, Any]]:
+        """📈 Xu hướng doanh thu theo ngày"""
+        try:
+            end_date = datetime.utcnow().date()
+            start_date = end_date - timedelta(days=days)
+
+            # Query daily revenue
+            daily_data = self.db_session.query(
+                func.date(DonHang.ngay_tao).label('date'),
+                func.sum(DonHang.tong_tien).label('revenue'),
+                func.count(DonHang.id).label('orders')
+            ).filter(
+                func.date(DonHang.ngay_tao) >= start_date,
+                DonHang.trang_thai != TrangThaiDonHang.HUY
+            ).group_by(
+                func.date(DonHang.ngay_tao)
+            ).order_by(
+                func.date(DonHang.ngay_tao)
+            ).all()
+
+            # Create complete date range
+            result = []
+            current_date = start_date
+
+            # Convert query results to dict for easy lookup
+            data_dict = {row.date: {"revenue": float(row.revenue or 0), "orders": row.orders}
+                        for row in daily_data}
+
+            while current_date <= end_date:
+                day_data = data_dict.get(current_date, {"revenue": 0, "orders": 0})
+                result.append({
+                    "date": current_date.strftime("%Y-%m-%d"),
+                    "revenue": day_data["revenue"],
+                    "orders": day_data["orders"],
+                    "avg_order_value": day_data["revenue"] / day_data["orders"] if day_data["orders"] > 0 else 0
+                })
+                current_date += timedelta(days=1)
+
+            return result
+
+        except Exception as e:
+            app_logger.error(f"❌ Error in get_daily_revenue_trend: {str(e)}")
+            return []
+
+    def get_monthly_comparison(self, months: int = 12) -> List[Dict[str, Any]]:
+        """📅 So sánh doanh thu theo tháng"""
+        try:
+            end_date = datetime.utcnow()
+            start_date = end_date - timedelta(days=months * 30)
+
+            monthly_data = self.db_session.query(
+                extract('year', DonHang.ngay_tao).label('year'),
+                extract('month', DonHang.ngay_tao).label('month'),
+                func.sum(DonHang.tong_tien).label('revenue'),
+                func.count(DonHang.id).label('orders'),
+                func.count(func.distinct(DonHang.khach_hang_id)).label('unique_customers')
+            ).filter(
+                DonHang.ngay_tao >= start_date,
+                DonHang.trang_thai != TrangThaiDonHang.HUY
+            ).group_by(
+                extract('year', DonHang.ngay_tao),
+                extract('month', DonHang.ngay_tao)
+            ).order_by(
+                extract('year', DonHang.ngay_tao),
+                extract('month', DonHang.ngay_tao)
+            ).all()
+
+            result = []
+            for row in monthly_data:
+                month_name = datetime(int(row.year), int(row.month), 1).strftime("%B %Y")
+                result.append({
+                    "year": int(row.year),
+                    "month": int(row.month),
+                    "month_name": month_name,
+                    "revenue": float(row.revenue or 0),
+                    "orders": row.orders,
+                    "unique_customers": row.unique_customers,
+                    "avg_order_value": float(row.revenue or 0) / row.orders if row.orders > 0 else 0
+                })
+
+            return result
+
+        except Exception as e:
+            app_logger.error(f"❌ Error in get_monthly_comparison: {str(e)}")
+            return []
+
+    # 👥 CUSTOMER ANALYTICS
+    def get_customer_analytics(self) -> Dict[str, Any]:
+        """👥 Phân tích khách hàng chi tiết"""
+        try:
+            total_customers = self.db_session.query(KhachHang).count()
+
+            # Customer by type distribution
+            customer_types = self.db_session.query(
+                KhachHang.loai_khach,
+                func.count(KhachHang.id).label('count')
+            ).group_by(KhachHang.loai_khach).all()
+
+            type_distribution = {
+                "moi": 0,
+                "than_thiet": 0,
+                "vip": 0,
+                "blacklist": 0
+            }
+
+            for row in customer_types:
+                type_distribution[row.loai_khach.value] = row.count
+
+            # Top customers by revenue
+            top_customers = self.db_session.query(
+                KhachHang.id,
+                KhachHang.ho_ten,
+                KhachHang.email,
+                KhachHang.loai_khach,
+                func.sum(DonHang.tong_tien).label('total_spent'),
+                func.count(DonHang.id).label('order_count')
+            ).join(
+                DonHang, KhachHang.id == DonHang.khach_hang_id
+            ).filter(
+                DonHang.trang_thai != TrangThaiDonHang.HUY
+            ).group_by(
+                KhachHang.id, KhachHang.ho_ten, KhachHang.email, KhachHang.loai_khach
+            ).order_by(
+                func.sum(DonHang.tong_tien).desc()
+            ).limit(10).all()
+
+            top_customers_list = []
+            for row in top_customers:
+                top_customers_list.append({
+                    "id": row.id,
+                    "name": row.ho_ten,
+                    "email": row.email,
+                    "type": row.loai_khach.value,
+                    "total_spent": float(row.total_spent or 0),
+                    "order_count": row.order_count
+                })
+
+            # New customers this month
+            start_of_month = datetime.utcnow().replace(day=1, hour=0, minute=0, second=0)
+            new_customers_this_month = self.db_session.query(KhachHang).filter(
+                KhachHang.ngay_tao >= start_of_month
+            ).count()
+
+            # Customer lifetime value
+            avg_customer_value = self.db_session.query(
+                func.avg(KhachHang.tong_tien_da_mua)
+            ).scalar() or 0
+
+            return {
+                "total_customers": total_customers,
+                "new_customers_this_month": new_customers_this_month,
+                "type_distribution": type_distribution,
+                "top_customers": top_customers_list,
+                "avg_customer_value": float(avg_customer_value)
+            }
+
+        except Exception as e:
+            app_logger.error(f"❌ Error in get_customer_analytics: {str(e)}")
+            return {}
+
+    def get_product_performance(self, limit: int = 20) -> Dict[str, Any]:
+        """🛍️ Hiệu suất sản phẩm"""
+        try:
+            # Top selling products
+            top_products = self.db_session.query(
+                SanPham.id,
+                SanPham.ten_san_pham,
+                SanPham.danh_muc,
+                SanPham.quoc_gia_nguon,
+                func.sum(ChiTietDonHang.so_luong).label('total_sold'),
+                func.sum(ChiTietDonHang.so_luong * ChiTietDonHang.gia_mua).label('total_revenue'),
+                func.count(func.distinct(ChiTietDonHang.don_hang_id)).label('order_count')
+            ).join(
+                ChiTietDonHang, SanPham.id == ChiTietDonHang.san_pham_id
+            ).join(
+                DonHang, ChiTietDonHang.don_hang_id == DonHang.id
+            ).filter(
+                DonHang.trang_thai != TrangThaiDonHang.HUY
+            ).group_by(
+                SanPham.id, SanPham.ten_san_pham, SanPham.danh_muc, SanPham.quoc_gia_nguon
+            ).order_by(
+                func.sum(ChiTietDonHang.so_luong).desc()
+            ).limit(limit).all()
+
+            product_list = []
+            for row in top_products:
+                avg_order_value = float(row.total_revenue or 0) / row.order_count if row.order_count > 0 else 0
+                product_list.append({
+                    "id": row.id,
+                    "name": row.ten_san_pham,
+                    "category": row.danh_muc,
+                    "country": row.quoc_gia_nguon,
+                    "total_sold": row.total_sold,
+                    "total_revenue": float(row.total_revenue or 0),
+                    "order_count": row.order_count,
+                    "avg_order_value": avg_order_value
+                })
+
+            # Category performance
+            category_performance = self.db_session.query(
+                SanPham.danh_muc,
+                func.sum(ChiTietDonHang.so_luong).label('total_sold'),
+                func.sum(ChiTietDonHang.so_luong * ChiTietDonHang.gia_mua).label('total_revenue')
+            ).join(
+                ChiTietDonHang, SanPham.id == ChiTietDonHang.san_pham_id
+            ).join(
+                DonHang, ChiTietDonHang.don_hang_id == DonHang.id
+            ).filter(
+                DonHang.trang_thai != TrangThaiDonHang.HUY,
+                SanPham.danh_muc.isnot(None)
+            ).group_by(
+                SanPham.danh_muc
+            ).order_by(
+                func.sum(ChiTietDonHang.so_luong * ChiTietDonHang.gia_mua).desc()
+            ).all()
+
+            categories = []
+            for row in category_performance:
+                categories.append({
+                    "category": row.danh_muc,
+                    "total_sold": row.total_sold,
+                    "total_revenue": float(row.total_revenue or 0)
+                })
+
+            return {
+                "top_products": product_list,
+                "category_performance": categories
+            }
+
+        except Exception as e:
+            app_logger.error(f"❌ Error in get_product_performance: {str(e)}")
+            return {}
+
+    def get_order_status_analytics(self) -> Dict[str, Any]:
+        """📋 Phân tích trạng thái đơn hàng"""
+        try:
+            # Order status distribution
+            status_distribution = self.db_session.query(
+                DonHang.trang_thai,
+                func.count(DonHang.id).label('count'),
+                func.sum(DonHang.tong_tien).label('total_value')
+            ).group_by(DonHang.trang_thai).all()
+
+            status_data = {}
+            total_orders = 0
+            total_value = 0
+
+            for row in status_distribution:
+                count = row.count
+                value = float(row.total_value or 0)
+                total_orders += count
+                total_value += value
+
+                status_data[row.trang_thai.value] = {
+                    "count": count,
+                    "total_value": value,
+                    "percentage": 0  # Will calculate after getting total
+                }
+
+            # Calculate percentages
+            for status in status_data:
+                status_data[status]["percentage"] = (
+                    status_data[status]["count"] / total_orders * 100
+                ) if total_orders > 0 else 0
+
+            # Average processing time by status
+            processing_times = self.db_session.query(
+                DonHang.trang_thai,
+                func.avg(
+                    func.extract('epoch', DonHang.ngay_cap_nhat - DonHang.ngay_tao) / 86400
+                ).label('avg_days')
+            ).filter(
+                DonHang.ngay_cap_nhat.isnot(None)
+            ).group_by(DonHang.trang_thai).all()
+
+            processing_time_data = {}
+            for row in processing_times:
+                processing_time_data[row.trang_thai.value] = round(float(row.avg_days or 0), 2)
+
+            return {
+                "status_distribution": status_data,
+                "processing_times": processing_time_data,
+                "total_orders": total_orders,
+                "total_value": total_value
+            }
+
+        except Exception as e:
+            app_logger.error(f"❌ Error in get_order_status_analytics: {str(e)}")
+            return {}
+
+    def get_advanced_dashboard_data(self, date_range: int = 30) -> Dict[str, Any]:
+        """🎯 Dữ liệu dashboard nâng cao tổng hợp"""
+        try:
+            return {
+                "sales_overview": self.get_sales_overview(date_range),
+                "daily_trends": self.get_daily_revenue_trend(date_range),
+                "monthly_comparison": self.get_monthly_comparison(12),
+                "customer_analytics": self.get_customer_analytics(),
+                "product_performance": self.get_product_performance(15),
+                "order_status": self.get_order_status_analytics(),
+                "generated_at": datetime.utcnow().isoformat(),
+                "date_range": date_range
+            }
+
+        except Exception as e:
+            app_logger.error(f"❌ Error in get_advanced_dashboard_data: {str(e)}")
+            return {}
+
+    # 🎯 BUSINESS INTELLIGENCE
+    def get_business_insights(self) -> Dict[str, Any]:
+        """🧠 Business Intelligence và Insights"""
+        try:
+            insights = []
+
+            # Revenue trend analysis
+            recent_revenue = self.get_daily_revenue_trend(7)
+            if len(recent_revenue) >= 7:
+                last_week_avg = sum(day['revenue'] for day in recent_revenue[-7:]) / 7
+                prev_week_avg = sum(day['revenue'] for day in recent_revenue[-14:-7]) / 7 if len(recent_revenue) >= 14 else 0
+
+                if last_week_avg > prev_week_avg * 1.1:
+                    insights.append({
+                        "type": "positive",
+                        "title": "📈 Doanh thu tăng trưởng mạnh",
+                        "description": f"Doanh thu tuần này tăng {((last_week_avg - prev_week_avg) / prev_week_avg * 100):.1f}% so với tuần trước",
+                        "action": "Tăng cường marketing để duy trì momentum"
+                    })
+                elif last_week_avg < prev_week_avg * 0.9:
+                    insights.append({
+                        "type": "warning",
+                        "title": "⚠️ Doanh thu giảm",
+                        "description": f"Doanh thu tuần này giảm {((prev_week_avg - last_week_avg) / prev_week_avg * 100):.1f}% so với tuần trước",
+                        "action": "Cần xem xét lại chiến lược marketing và khuyến mãi"
+                    })
+
+            # Customer insights
+            customer_data = self.get_customer_analytics()
+            vip_percentage = (customer_data.get('type_distribution', {}).get('vip', 0) /
+                            customer_data.get('total_customers', 1)) * 100
+
+            if vip_percentage > 20:
+                insights.append({
+                    "type": "positive",
+                    "title": "👑 Nhiều khách hàng VIP",
+                    "description": f"{vip_percentage:.1f}% khách hàng là VIP",
+                    "action": "Tạo chương trình loyalty đặc biệt cho VIP"
+                })
+
+            # Product performance insights
+            product_data = self.get_product_performance(10)
+            if product_data.get('top_products'):
+                top_product = product_data['top_products'][0]
+                insights.append({
+                    "type": "info",
+                    "title": "🏆 Sản phẩm bán chạy nhất",
+                    "description": f"{top_product['name']} với {top_product['total_sold']} sản phẩm đã bán",
+                    "action": f"Tăng stock cho danh mục {top_product['category']}"
+                })
+
+            return {
+                "insights": insights,
+                "generated_at": datetime.utcnow().isoformat()
+            }
+
+        except Exception as e:
+            app_logger.error(f"❌ Error in get_business_insights: {str(e)}")
+            return {"insights": []}
+
+# 🌟 Global analytics service
+analytics_service = AdvancedAnalytics()
+
+# 🎯 Helper functions
+def get_analytics_data(db: Session, date_range: int = 30) -> Dict[str, Any]:
+    """📊 Get comprehensive analytics data"""
+    analytics_service.set_session(db)
+    return analytics_service.get_advanced_dashboard_data(date_range)
+
+def get_business_insights(db: Session) -> Dict[str, Any]:
+    """🧠 Get AI-powered business insights"""
+    analytics_service.set_session(db)
+    return analytics_service.get_business_insights()
+
+print("Advanced Analytics service loaded successfully!")

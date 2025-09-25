@@ -1,0 +1,10 @@
+{
+  "name": "FADO CRM",
+  "short_name": "FADOCRM",
+  "description": "CRM cho ngành mua hộ - FastAPI + Vanilla JS",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0b1b2b",
+  "theme_color": "#0b1b2b",
+  "icons": []
+}

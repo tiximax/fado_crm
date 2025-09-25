@@ -1,0 +1,444 @@
+# -*- coding: utf-8 -*-
+"""
+AI-Powered Recommendations Engine
+Hệ thống gợi ý thông minh cho FADO CRM sử dụng machine learning cơ bản
+"""
+
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Tuple, Any
+from sqlalchemy.orm import Session
+from sqlalchemy import func, and_, or_, text, desc
+from models import Customer, Product, Order, ContactHistory
+from database import get_db
+import json
+import statistics
+from collections import defaultdict, Counter
+import math
+
+
+class AIRecommendationEngine:
+    """Engine gợi ý AI cho FADO CRM"""
+
+    def __init__(self, db: Session):
+        self.db = db
+        self.confidence_threshold = 0.6
+
+    def recommend_products_for_customer(self, customer_id: int, limit: int = 5) -> Dict[str, Any]:
+        """🤖 Gợi ý sản phẩm phù hợp cho khách hàng"""
+
+        # Lấy thông tin khách hàng
+        customer = self.db.query(Customer).filter(Customer.customer_id == customer_id).first()
+        if not customer:
+            return {"error": "Khách hàng không tồn tại"}
+
+        # Lịch sử mua hàng của khách hàng
+        customer_orders = self.db.execute(text("""
+            SELECT p.category, p.origin_country, COUNT(*) as frequency,
+                   AVG(o.total_amount) as avg_spent, MAX(o.order_date) as last_order
+            FROM orders o
+            JOIN products p ON o.product_id = p.product_id
+            WHERE o.customer_id = :customer_id
+            GROUP BY p.category, p.origin_country
+            ORDER BY frequency DESC, avg_spent DESC
+        """), {"customer_id": customer_id}).fetchall()
+
+        if not customer_orders:
+            # Khách hàng mới - gợi ý theo xu hướng chung
+            return self._recommend_trending_products(limit)
+
+        # Tìm khách hàng tương tự (collaborative filtering đơn giản)
+        similar_customers = self._find_similar_customers(customer_id, customer_orders)
+
+        # Gợi ý dựa trên khách hàng tương tự
+        similar_products = self._get_products_from_similar_customers(
+            customer_id, similar_customers, limit * 2
+        )
+
+        # Gợi ý dựa trên lịch sử cá nhân (content-based)
+        personal_recommendations = self._get_content_based_recommendations(
+            customer_orders, limit * 2
+        )
+
+        # Kết hợp và chấm điểm
+        final_recommendations = self._combine_and_score_recommendations(
+            similar_products, personal_recommendations, limit
+        )
+
+        return {
+            "customer_id": customer_id,
+            "customer_name": customer.full_name,
+            "recommendations": final_recommendations,
+            "recommendation_strategy": "hybrid_collaborative_content",
+            "confidence": self._calculate_overall_confidence(final_recommendations),
+            "generated_at": datetime.now().isoformat()
+        }
+
+    def recommend_customers_for_product(self, product_id: int, limit: int = 10) -> Dict[str, Any]:
+        """🎯 Gợi ý khách hàng tiềm năng cho sản phẩm"""
+
+        product = self.db.query(Product).filter(Product.product_id == product_id).first()
+        if not product:
+            return {"error": "Sản phẩm không tồn tại"}
+
+        # Khách hàng đã mua sản phẩm tương tự
+        similar_buyers = self.db.execute(text("""
+            SELECT DISTINCT c.customer_id, c.full_name, c.phone, c.customer_type,
+                   COUNT(o.order_id) as order_count,
+                   AVG(o.total_amount) as avg_order_value,
+                   MAX(o.order_date) as last_order,
+                   SUM(CASE WHEN p.category = :category THEN 1 ELSE 0 END) as category_purchases
+            FROM customers c
+            JOIN orders o ON c.customer_id = o.customer_id
+            JOIN products p ON o.product_id = p.product_id
+            WHERE (p.category = :category OR p.origin_country = :origin_country)
+              AND p.product_id != :product_id
+            GROUP BY c.customer_id, c.full_name, c.phone, c.customer_type
+            HAVING category_purchases > 0
+            ORDER BY category_purchases DESC, avg_order_value DESC
+            LIMIT :limit
+        """), {
+            "category": product.category,
+            "origin_country": product.origin_country,
+            "product_id": product_id,
+            "limit": limit * 2
+        }).fetchall()
+
+        # Tính điểm tiềm năng cho mỗi khách hàng
+        recommendations = []
+        for buyer in similar_buyers:
+            # Tính RFM score
+            days_since_last_order = (datetime.now() - buyer.last_order).days if buyer.last_order else 365
+            recency_score = max(0, (30 - days_since_last_order) / 30)  # 0-1
+            frequency_score = min(1.0, buyer.order_count / 10)  # Normalize to 0-1
+            monetary_score = min(1.0, buyer.avg_order_value / 1000000)  # Normalize to 1M VND
+
+            # Tính affinity với category/country
+            affinity_score = min(1.0, buyer.category_purchases / 5)
+
+            # Overall potential score
+            potential_score = (
+                recency_score * 0.3 +
+                frequency_score * 0.25 +
+                monetary_score * 0.25 +
+                affinity_score * 0.2
+            )
+
+            recommendations.append({
+                "customer_id": buyer.customer_id,
+                "customer_name": buyer.full_name,
+                "phone": buyer.phone,
+                "customer_type": buyer.customer_type,
+                "potential_score": round(potential_score, 3),
+                "order_history": {
+                    "total_orders": buyer.order_count,
+                    "avg_order_value": float(buyer.avg_order_value),
+                    "category_purchases": buyer.category_purchases,
+                    "last_order": buyer.last_order.isoformat() if buyer.last_order else None,
+                    "days_since_last_order": days_since_last_order
+                }
+            })
+
+        # Sort by potential score
+        recommendations.sort(key=lambda x: x["potential_score"], reverse=True)
+
+        return {
+            "product_id": product_id,
+            "product_name": product.product_name,
+            "category": product.category,
+            "target_customers": recommendations[:limit],
+            "total_candidates": len(recommendations),
+            "recommendation_strategy": "rfm_affinity_based",
+            "generated_at": datetime.now().isoformat()
+        }
+
+    def generate_business_insights(self) -> Dict[str, Any]:
+        """💡 Tạo insights kinh doanh từ dữ liệu"""
+
+        insights = []
+
+        # Insight 1: Xu hướng danh mục sản phẩm
+        category_trends = self.db.execute(text("""
+            SELECT p.category,
+                   COUNT(o.order_id) as recent_orders,
+                   AVG(o.total_amount) as avg_order_value,
+                   COUNT(DISTINCT o.customer_id) as unique_customers
+            FROM orders o
+            JOIN products p ON o.product_id = p.product_id
+            WHERE o.order_date >= DATE('now', '-30 days')
+            GROUP BY p.category
+            ORDER BY recent_orders DESC
+        """)).fetchall()
+
+        if category_trends:
+            top_category = category_trends[0]
+            insights.append({
+                "type": "category_trending",
+                "title": f"📈 Danh mục {top_category.category} đang hot",
+                "description": f"Trong 30 ngày qua có {top_category.recent_orders} đơn hàng với giá trị trung bình {top_category.avg_order_value:,.0f} VND",
+                "confidence": 0.9,
+                "actionable": f"Nên tăng cường marketing cho danh mục {top_category.category}",
+                "data": dict(top_category._mapping)
+            })
+
+        # Insight 2: Khách hàng có rủi ro churn
+        churn_risk = self.db.execute(text("""
+            SELECT c.customer_id, c.full_name, c.customer_type,
+                   JULIANDAY('now') - JULIANDAY(MAX(o.order_date)) as days_inactive,
+                   COUNT(o.order_id) as total_orders,
+                   SUM(o.total_amount) as lifetime_value
+            FROM customers c
+            LEFT JOIN orders o ON c.customer_id = o.customer_id
+            GROUP BY c.customer_id, c.full_name, c.customer_type
+            HAVING days_inactive > 60 AND total_orders >= 3
+            ORDER BY lifetime_value DESC
+            LIMIT 5
+        """)).fetchall()
+
+        if churn_risk:
+            insights.append({
+                "type": "churn_risk",
+                "title": f"⚠️ {len(churn_risk)} khách hàng có nguy cơ mất",
+                "description": "Khách hàng VIP không mua hàng >60 ngày",
+                "confidence": 0.8,
+                "actionable": "Nên liên hệ để tái kích hoạt",
+                "data": [dict(customer._mapping) for customer in churn_risk]
+            })
+
+        # Insight 3: Cơ hội upselling
+        upselling_opportunities = self.db.execute(text("""
+            SELECT c.customer_id, c.full_name,
+                   AVG(o.total_amount) as avg_order,
+                   COUNT(o.order_id) as order_frequency,
+                   MAX(o.total_amount) as highest_order
+            FROM customers c
+            JOIN orders o ON c.customer_id = o.customer_id
+            WHERE o.order_date >= DATE('now', '-90 days')
+            GROUP BY c.customer_id, c.full_name
+            HAVING order_frequency >= 2 AND avg_order < highest_order * 0.7
+            ORDER BY (highest_order - avg_order) DESC
+            LIMIT 10
+        """)).fetchall()
+
+        if upselling_opportunities:
+            insights.append({
+                "type": "upselling_opportunity",
+                "title": f"💰 {len(upselling_opportunities)} cơ hội tăng giá trị đơn hàng",
+                "description": "Khách hàng có thể mua với giá trị cao hơn",
+                "confidence": 0.7,
+                "actionable": "Gợi ý sản phẩm premium hoặc bundle",
+                "data": [dict(opp._mapping) for opp in upselling_opportunities]
+            })
+
+        # Insight 4: Sản phẩm slow-moving
+        slow_products = self.db.execute(text("""
+            SELECT p.product_id, p.product_name, p.category,
+                   COALESCE(order_count, 0) as order_count,
+                   p.selling_price,
+                   JULIANDAY('now') - JULIANDAY(COALESCE(last_order, p.created_at)) as days_since_last_sale
+            FROM products p
+            LEFT JOIN (
+                SELECT product_id, COUNT(*) as order_count, MAX(order_date) as last_order
+                FROM orders
+                GROUP BY product_id
+            ) o ON p.product_id = o.product_id
+            WHERE COALESCE(order_count, 0) <= 1 AND p.selling_price > 100000
+            ORDER BY days_since_last_sale DESC
+            LIMIT 5
+        """)).fetchall()
+
+        if slow_products:
+            insights.append({
+                "type": "inventory_optimization",
+                "title": f"📦 {len(slow_products)} sản phẩm bán chậm",
+                "description": "Sản phẩm giá cao nhưng ít được quan tâm",
+                "confidence": 0.8,
+                "actionable": "Xem xét giảm giá hoặc tăng marketing",
+                "data": [dict(product._mapping) for product in slow_products]
+            })
+
+        return {
+            "insights": insights,
+            "total_insights": len(insights),
+            "generated_at": datetime.now().isoformat(),
+            "recommendation_engine": "fado_ai_v1"
+        }
+
+    def _find_similar_customers(self, customer_id: int, customer_orders: List) -> List[int]:
+        """Tìm khách hàng có hành vi tương tự"""
+
+        # Tạo vector preferences của khách hàng hiện tại
+        customer_preferences = {}
+        for order in customer_orders:
+            key = f"{order.category}_{order.origin_country}"
+            customer_preferences[key] = order.frequency
+
+        # Tìm khách hàng khác có preferences tương tự
+        similar_customers = self.db.execute(text("""
+            SELECT DISTINCT o.customer_id,
+                   p.category, p.origin_country, COUNT(*) as frequency
+            FROM orders o
+            JOIN products p ON o.product_id = p.product_id
+            WHERE o.customer_id != :customer_id
+            GROUP BY o.customer_id, p.category, p.origin_country
+        """), {"customer_id": customer_id}).fetchall()
+
+        # Tính similarity score
+        customer_scores = defaultdict(float)
+        customer_vectors = defaultdict(dict)
+
+        for record in similar_customers:
+            key = f"{record.category}_{record.origin_country}"
+            customer_vectors[record.customer_id][key] = record.frequency
+
+        # Cosine similarity
+        for other_customer_id, other_preferences in customer_vectors.items():
+            similarity = self._cosine_similarity(customer_preferences, other_preferences)
+            if similarity > 0.3:  # Threshold
+                customer_scores[other_customer_id] = similarity
+
+        # Return top 10 similar customers
+        return sorted(customer_scores.items(), key=lambda x: x[1], reverse=True)[:10]
+
+    def _cosine_similarity(self, vec1: Dict, vec2: Dict) -> float:
+        """Tính cosine similarity giữa 2 vectors"""
+        all_keys = set(vec1.keys()) | set(vec2.keys())
+        if not all_keys:
+            return 0
+
+        dot_product = sum(vec1.get(key, 0) * vec2.get(key, 0) for key in all_keys)
+        norm1 = math.sqrt(sum(vec1.get(key, 0) ** 2 for key in all_keys))
+        norm2 = math.sqrt(sum(vec2.get(key, 0) ** 2 for key in all_keys))
+
+        if norm1 == 0 or norm2 == 0:
+            return 0
+
+        return dot_product / (norm1 * norm2)
+
+    def _get_products_from_similar_customers(self, customer_id: int, similar_customers: List[Tuple], limit: int) -> List[Dict]:
+        """Lấy sản phẩm từ khách hàng tương tự"""
+        if not similar_customers:
+            return []
+
+        similar_customer_ids = [str(cid) for cid, score in similar_customers]
+        if not similar_customer_ids:
+            return []
+
+        query = f"""
+            SELECT p.product_id, p.product_name, p.category, p.origin_country,
+                   p.selling_price, COUNT(*) as popularity,
+                   AVG(o.total_amount) as avg_order_value
+            FROM orders o
+            JOIN products p ON o.product_id = p.product_id
+            WHERE o.customer_id IN ({','.join(similar_customer_ids)})
+              AND p.product_id NOT IN (
+                  SELECT DISTINCT product_id FROM orders WHERE customer_id = :customer_id
+              )
+            GROUP BY p.product_id, p.product_name, p.category, p.origin_country, p.selling_price
+            ORDER BY popularity DESC, avg_order_value DESC
+            LIMIT :limit
+        """
+
+        results = self.db.execute(text(query), {
+            "customer_id": customer_id,
+            "limit": limit
+        }).fetchall()
+
+        return [dict(row._mapping) for row in results]
+
+    def _get_content_based_recommendations(self, customer_orders: List, limit: int) -> List[Dict]:
+        """Gợi ý dựa trên nội dung (category, country preferences)"""
+        if not customer_orders:
+            return []
+
+        # Lấy top categories và countries
+        categories = [order.category for order in customer_orders]
+        countries = [order.origin_country for order in customer_orders]
+
+        top_categories = [cat for cat, count in Counter(categories).most_common(3)]
+        top_countries = [country for country, count in Counter(countries).most_common(2)]
+
+        if not top_categories:
+            return []
+
+        # Tìm sản phẩm tương tự
+        category_list = "', '".join(top_categories)
+        country_list = "', '".join(top_countries)
+
+        query = f"""
+            SELECT p.product_id, p.product_name, p.category, p.origin_country,
+                   p.selling_price, COUNT(o.order_id) as popularity
+            FROM products p
+            LEFT JOIN orders o ON p.product_id = o.product_id
+            WHERE (p.category IN ('{category_list}') OR p.origin_country IN ('{country_list}'))
+            GROUP BY p.product_id, p.product_name, p.category, p.origin_country, p.selling_price
+            ORDER BY popularity DESC
+            LIMIT :limit
+        """
+
+        results = self.db.execute(text(query), {"limit": limit}).fetchall()
+        return [dict(row._mapping) for row in results]
+
+    def _recommend_trending_products(self, limit: int) -> Dict[str, Any]:
+        """Gợi ý sản phẩm xu hướng cho khách hàng mới"""
+        trending = self.db.execute(text("""
+            SELECT p.product_id, p.product_name, p.category, p.origin_country,
+                   p.selling_price, COUNT(o.order_id) as recent_popularity,
+                   AVG(o.total_amount) as avg_order_value
+            FROM products p
+            JOIN orders o ON p.product_id = o.product_id
+            WHERE o.order_date >= DATE('now', '-30 days')
+            GROUP BY p.product_id, p.product_name, p.category, p.origin_country, p.selling_price
+            ORDER BY recent_popularity DESC
+            LIMIT :limit
+        """), {"limit": limit}).fetchall()
+
+        return {
+            "recommendations": [dict(row._mapping) for row in trending],
+            "recommendation_strategy": "trending_products",
+            "confidence": 0.5
+        }
+
+    def _combine_and_score_recommendations(self, similar_products: List[Dict], personal_recommendations: List[Dict], limit: int) -> List[Dict]:
+        """Kết hợp và chấm điểm các gợi ý"""
+        all_products = {}
+
+        # Score products from similar customers
+        for product in similar_products:
+            pid = product['product_id']
+            all_products[pid] = product.copy()
+            all_products[pid]['collaborative_score'] = product.get('popularity', 0) * 0.6
+            all_products[pid]['content_score'] = 0
+
+        # Score products from content-based
+        for product in personal_recommendations:
+            pid = product['product_id']
+            if pid in all_products:
+                all_products[pid]['content_score'] = product.get('popularity', 0) * 0.4
+            else:
+                all_products[pid] = product.copy()
+                all_products[pid]['collaborative_score'] = 0
+                all_products[pid]['content_score'] = product.get('popularity', 0) * 0.4
+
+        # Calculate final scores
+        for product in all_products.values():
+            product['final_score'] = product['collaborative_score'] + product['content_score']
+            product['confidence'] = min(1.0, product['final_score'] / 10)
+
+        # Sort and return top recommendations
+        sorted_products = sorted(all_products.values(), key=lambda x: x['final_score'], reverse=True)
+        return sorted_products[:limit]
+
+    def _calculate_overall_confidence(self, recommendations: List[Dict]) -> float:
+        """Tính confidence tổng thể"""
+        if not recommendations:
+            return 0.0
+
+        confidences = [rec.get('confidence', 0) for rec in recommendations]
+        return round(statistics.mean(confidences), 3)
+
+
+def get_ai_recommendation_engine(db: Session = None) -> AIRecommendationEngine:
+    """Factory function để tạo AI recommendation engine"""
+    if db is None:
+        db = next(get_db())
+    return AIRecommendationEngine(db)

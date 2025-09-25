@@ -1,0 +1,87 @@
+# FADO CRM - Setup Users
+import sys
+import os
+
+# Add current directory to path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from database import SessionLocal, create_tables
+from models import NguoiDung, VaiTro
+from auth import get_password_hash
+
+def create_test_users():
+    """Create test users for the system"""
+    print("FADO CRM - Creating test users...")
+
+    # Create database tables if not exist
+    create_tables()
+
+    db = SessionLocal()
+
+    users_data = [
+        {
+            "email": "admin@fado.vn",
+            "ho_ten": "FADO Admin",
+            "password": "admin123",
+            "vai_tro": VaiTro.ADMIN,
+            "so_dien_thoai": "0901234567"
+        },
+        {
+            "email": "manager@fado.vn",
+            "ho_ten": "Nguyen Van Manager",
+            "password": "manager123",
+            "vai_tro": VaiTro.MANAGER,
+            "so_dien_thoai": "0901234568"
+        },
+        {
+            "email": "staff@fado.vn",
+            "ho_ten": "Tran Thi Staff",
+            "password": "staff123",
+            "vai_tro": VaiTro.STAFF,
+            "so_dien_thoai": "0901234569"
+        },
+        {
+            "email": "viewer@fado.vn",
+            "ho_ten": "Le Van Viewer",
+            "password": "viewer123",
+            "vai_tro": VaiTro.VIEWER,
+            "so_dien_thoai": "0901234570"
+        }
+    ]
+
+    try:
+        for user_data in users_data:
+            # Check if user already exists
+            existing = db.query(NguoiDung).filter(NguoiDung.email == user_data["email"]).first()
+            if existing:
+                print(f"User {user_data['email']} already exists")
+                continue
+
+            user = NguoiDung(
+                email=user_data["email"],
+                ho_ten=user_data["ho_ten"],
+                so_dien_thoai=user_data["so_dien_thoai"],
+                mat_khau_hash=get_password_hash(user_data["password"]),
+                vai_tro=user_data["vai_tro"],
+                is_active=True
+            )
+
+            db.add(user)
+            print(f"Created {user_data['vai_tro'].value}: {user_data['email']}")
+
+        db.commit()
+        print("Successfully created test users!")
+
+        print("\nLogin credentials:")
+        for user_data in users_data:
+            print(f"- {user_data['email']} / {user_data['password']} ({user_data['vai_tro'].value})")
+
+    except Exception as e:
+        db.rollback()
+        print(f"Error creating users: {str(e)}")
+
+    finally:
+        db.close()
+
+if __name__ == "__main__":
+    create_test_users()
