@@ -13,7 +13,7 @@ import os
 
 # Import các modules tự tạo - Đây là những đứa con tinh thần của chúng ta! 👨‍👩‍👧‍👦
 from database import get_db, create_tables
-from models import KhachHang, SanPham, DonHang, ChiTietDonHang, LichSuLienHe, NguoiDung, TrangThaiDonHang, LoaiKhachHang, VaiTro, AuditLog, SystemSetting
+from models import KhachHang, SanPham, DonHang, ChiTietDonHang, LichSuLienHe, NguoiDung, TrangThaiDonHang, LoaiKhachHang, VaiTro, AuditLog, SystemSetting, PaymentStatus
 import schemas
 
 # 🔐 Import authentication system
