@@ -11,13 +11,13 @@ import hmac
 import hashlib
 import urllib.parse
 import os
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 
 EXCLUDED_FIELDS = {"vnp_SecureHash", "vnp_SecureHashType"}
 
 # Auth & models for permission checks
 from auth import get_current_active_user, get_admin_user, get_manager_user
-from models import NguoiDung
+from models import NguoiDung, SystemSetting as SystemSettingModel
 
 # File service (optional); provide graceful fallback if unavailable
 try:
@@ -198,3 +198,83 @@ async def cleanup_temp_files(
         return {"success": True, "message": f"Da xoa {deleted_count} file tam"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Loi khi don dep file tam: {e}")
+
+# ===== Additional Upload Delete Endpoint (by category & filename) =====
+@app.delete("/upload/file")
+async def delete_uploaded_file(
+    category: str = Query(..., description="Danh muc: product_images | thumbnails | documents"),
+    filename: str = Query(..., description="Ten file can xoa"),
+    current_user: NguoiDung = Depends(get_admin_user),
+):
+    try:
+        if _fs is not None:
+            if category == "product_images":
+                ok = _fs.delete_file(filename, "image")
+            elif category in ("thumbnails", "documents"):
+                ok = _fs.storage.delete(category, filename)
+            else:
+                raise HTTPException(status_code=400, detail="Category khong hop le")
+        else:
+            from pathlib import Path
+            if category == "product_images":
+                p = Path('uploads') / 'product_images' / filename
+            elif category == "thumbnails":
+                p = Path('uploads') / 'thumbnails' / filename
+            elif category == "documents":
+                p = Path('uploads') / 'documents' / filename
+            else:
+                raise HTTPException(status_code=400, detail="Category khong hop le")
+            ok = False
+            if p.exists():
+                p.unlink()
+                ok = True
+        if not ok:
+            raise HTTPException(status_code=500, detail="Xoa file that bai")
+        return {"success": True, "message": f"Da xoa {filename} khoi {category}"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Loi khi xoa file: {e}")
+
+# ===== System Settings (Admin) =====
+from sqlalchemy.orm import Session
+from database import get_db
+
+@app.get("/admin/system-settings")
+async def list_settings(current_user: NguoiDung = Depends(get_admin_user), db: Session = Depends(get_db)):
+    rows = db.query(SystemSettingModel).order_by(SystemSettingModel.key.asc()).all()
+    return [
+        {
+            "key": r.key,
+            "value": r.value,
+            "description": getattr(r, 'description', None),
+            "updated_at": getattr(r, 'updated_at', None),
+        }
+        for r in rows
+    ]
+
+@app.get("/admin/system-settings/{key}")
+async def get_setting(key: str, current_user: NguoiDung = Depends(get_admin_user), db: Session = Depends(get_db)):
+    r = db.query(SystemSettingModel).filter(SystemSettingModel.key == key).first()
+    if not r:
+        raise HTTPException(status_code=404, detail="Khong tim thay cau hinh")
+    return {"key": r.key, "value": r.value, "description": getattr(r, 'description', None), "updated_at": getattr(r, 'updated_at', None)}
+
+@app.put("/admin/system-settings/{key}")
+async def upsert_setting(key: str, payload: Dict[str, Any], current_user: NguoiDung = Depends(get_admin_user), db: Session = Depends(get_db)):
+    r = db.query(SystemSettingModel).filter(SystemSettingModel.key == key).first()
+    if not r:
+        r = SystemSettingModel(key=key, value=str(payload.get('value', '')), description=payload.get('description'))
+        db.add(r)
+    else:
+        r.value = str(payload.get('value', ''))
+        if 'description' in payload:
+            r.description = payload.get('description')
+    try:
+        from datetime import datetime as _dt
+        r.updated_at = _dt.utcnow()
+    except Exception:
+        pass
+    db.commit()
+    db.refresh(r)
+    return {"key": r.key, "value": r.value, "description": getattr(r, 'description', None), "updated_at": getattr(r, 'updated_at', None)}

@@ -1,8 +1,8 @@
 // 🧪 E2E for System Settings UI (Admin only)
 const { test, expect } = require('@playwright/test');
 
-const FRONTEND_URL = 'http://localhost:3000';
-const BACKEND_URL = 'http://localhost:8000';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8000';
 
 const jwt = require('jsonwebtoken');
 

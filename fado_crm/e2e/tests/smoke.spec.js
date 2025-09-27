@@ -1,8 +1,8 @@
 // 🧪 FADO CRM - E2E smoke tests
 const { test, expect } = require('@playwright/test');
 
-const FRONTEND_URL = 'http://localhost:3000';
-const BACKEND_URL = 'http://localhost:8000';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8000';
 
 // Basic server health
 test('backend health endpoint responds', async ({ request }) => {
