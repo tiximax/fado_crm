@@ -33,6 +33,23 @@ class NguoiDung(BaseModel):
         from_attributes = True
 
 # Customer
+# Customer create/update
+class KhachHangCreate(BaseModel):
+    ho_ten: str
+    email: EmailStr
+    so_dien_thoai: Optional[str] = None
+    dia_chi: Optional[str] = None
+    loai_khach: Optional[LoaiKhachHang] = None
+    ghi_chu: Optional[str] = None
+
+class KhachHangUpdate(BaseModel):
+    ho_ten: Optional[str] = None
+    email: Optional[EmailStr] = None
+    so_dien_thoai: Optional[str] = None
+    dia_chi: Optional[str] = None
+    loai_khach: Optional[LoaiKhachHang] = None
+    ghi_chu: Optional[str] = None
+
 class KhachHang(BaseModel):
     id: int
     ho_ten: str
@@ -44,6 +61,31 @@ class KhachHang(BaseModel):
     ngay_tao: datetime
     class Config:
         from_attributes = True
+
+# Product create/update
+class SanPhamCreate(BaseModel):
+    ten_san_pham: str
+    link_goc: Optional[str] = None
+    gia_goc: Optional[float] = None
+    gia_ban: Optional[float] = None
+    mo_ta: Optional[str] = None
+    hinh_anh_url: Optional[str] = None
+    trong_luong: Optional[float] = None
+    kich_thuoc: Optional[str] = None
+    danh_muc: Optional[str] = None
+    quoc_gia_nguon: Optional[str] = None
+
+class SanPhamUpdate(BaseModel):
+    ten_san_pham: Optional[str] = None
+    link_goc: Optional[str] = None
+    gia_goc: Optional[float] = None
+    gia_ban: Optional[float] = None
+    mo_ta: Optional[str] = None
+    hinh_anh_url: Optional[str] = None
+    trong_luong: Optional[float] = None
+    kich_thuoc: Optional[str] = None
+    danh_muc: Optional[str] = None
+    quoc_gia_nguon: Optional[str] = None
 
 # Product
 class SanPham(BaseModel):
@@ -67,6 +109,28 @@ class ChiTietDonHang(BaseModel):
     gia_mua: Optional[float] = None
     class Config:
         from_attributes = True
+
+# Order create/update
+class DonHangCreate(BaseModel):
+    khach_hang_id: int
+    tong_gia_san_pham: float = 0.0
+    phi_mua_ho: float = 0.0
+    phi_van_chuyen: float = 0.0
+    phi_khac: float = 0.0
+    ngay_giao_hang: Optional[datetime] = None
+    ghi_chu_khach: Optional[str] = None
+    ghi_chu_noi_bo: Optional[str] = None
+    chi_tiet_list: List['ChiTietDonHangCreate']
+
+class DonHangUpdate(BaseModel):
+    trang_thai: Optional[TrangThaiDonHang] = None
+    phi_mua_ho: Optional[float] = None
+    phi_van_chuyen: Optional[float] = None
+    phi_khac: Optional[float] = None
+    ngay_giao_hang: Optional[datetime] = None
+    ghi_chu_khach: Optional[str] = None
+    ghi_chu_noi_bo: Optional[str] = None
+    ma_van_don: Optional[str] = None
 
 # Order
 class DonHang(BaseModel):
@@ -152,6 +216,11 @@ class AuditLog(BaseModel):
 
 # Order management enhancements
 class OrderStatusUpdate(BaseModel):
+    trang_thai: TrangThaiDonHang
+    ghi_chu: Optional[str] = None
+
+# Backward-compat name used in some modules
+class TrangThaiUpdate(BaseModel):
     trang_thai: TrangThaiDonHang
     ghi_chu: Optional[str] = None
 
