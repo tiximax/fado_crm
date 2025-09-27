@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 # 🚀 FADO CRM Server Launcher - Khởi chạy như tên lửa!
 # Script này sẽ khởi động server một cách ngầu và professional! ⚡
 
@@ -8,27 +9,33 @@ import subprocess
 import platform
 from pathlib import Path
 
+# Set encoding for Windows console
+if sys.platform == 'win32':
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.detach())
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.detach())
+
 def print_banner():
-    """🎨 In banner siêu đẹp khi khởi động!"""
+    """In banner khi khoi dong!"""
     banner = """
-    🛍️  FADO.VN CRM SYSTEM  🛍️
-    ════════════════════════════════════════
-    🚀 API Backend: FastAPI + SQLAlchemy
-    🎨 Frontend: HTML + CSS + JavaScript
-    📊 Features: Dashboard, CRM, Analytics
-    💖 Built with AI Love & Vietnamese Spirit
-    ════════════════════════════════════════
+    FADO.VN CRM SYSTEM
+    ====================================
+    API Backend: FastAPI + SQLAlchemy
+    Frontend: HTML + CSS + JavaScript
+    Features: Dashboard, CRM, Analytics
+    Built with AI Love & Vietnamese Spirit
+    ====================================
     """
     print(banner)
 
 def check_python_version():
-    """🐍 Kiểm tra phiên bản Python"""
+    """Kiem tra phien ban Python"""
     if sys.version_info < (3, 8):
-        print("❌ Cần Python 3.8 trở lên!")
-        print(f"📍 Phiên bản hiện tại: {sys.version}")
+        print("ERROR: Can Python 3.8 tro len!")
+        print(f"Phien ban hien tai: {sys.version}")
         sys.exit(1)
     else:
-        print(f"✅ Python version: {sys.version}")
+        print(f"OK: Python version: {sys.version}")
 
 def check_virtual_environment():
     """🏠 Kiểm tra virtual environment"""
@@ -97,10 +104,10 @@ def start_backend_server():
         return None
 
     try:
-        # Chạy uvicorn server
+        # Chạy uvicorn server with fixed main
         cmd = [
             sys.executable, "-m", "uvicorn",
-            "main:app",
+            "main_fixed:app",
             "--host", "0.0.0.0",
             "--port", "8000",
             "--reload",

@@ -1,56 +1,43 @@
-# 🗄️ FADO CRM - Database Connection Siêu Tốc!
-# Code này nhanh như tia chớp và ổn định như một tảng đá! ⚡
-
+# FADO CRM - Database Connection
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base
 import os
 
-# 🚀 Database URL - Có thể dùng SQLite cho demo hoặc PostgreSQL cho production
+# Database URL - SQLite for demo or PostgreSQL for production
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./fado_crm.db")
 
-# 🔧 Tạo engine - Động cơ siêu mạnh của database!
+# Create engine
 engine = create_engine(
     DATABASE_URL,
-    # Đặc biệt cho SQLite - enable foreign keys để database không bị lỗi
     connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {}
 )
 
-# 🏭 Session factory - Nhà máy tạo session như bánh quy!
+# Session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# 🎯 Dependency để lấy database session
+# Dependency to get database session
 def get_db():
-    """
-    🎪 Hàm magic để lấy database session!
-    Dùng như dependency injection trong FastAPI - cực kỳ elegant!
-    """
+    """Get database session for FastAPI dependency injection"""
     db = SessionLocal()
     try:
-        yield db  # 🎁 Trả về session như một món quà
+        yield db
     finally:
-        db.close()  # 🚪 Luôn nhớ đóng cửa sau khi xong việc!
+        db.close()
 
-# 🏗️ Hàm tạo tất cả tables
+# Create all tables
 def create_tables():
-    """
-    Tao tat ca bang trong database!
-    Chay ham nay mot lan de setup database hoan chinh
-    """
-    print("Dang tao database tables...")
+    """Create all database tables"""
+    print("Creating database tables...")
     Base.metadata.create_all(bind=engine)
-    print("Hoan thanh! Database da san sang!")
+    print("Database ready!")
 
-# 🧹 Hàm xóa tất cả tables (cẩn thận khi dùng!)
+# Drop all tables (use with caution!)
 def drop_tables():
-    """
-    NGUY HIEM! Ham nay xoa toan bo database!
-    Chi dung khi muon reset lai tu dau
-    """
-    print("CANH BAO: Dang xoa tat ca tables...")
+    """WARNING: Drop all tables"""
+    print("WARNING: Dropping all tables...")
     Base.metadata.drop_all(bind=engine)
-    print("Xong! Database da duoc reset!")
+    print("Database reset!")
 
 if __name__ == "__main__":
-    # Chay script nay de tao database
     create_tables()

@@ -1,0 +1,5 @@
+# Minimal dependencies for testing
+fastapi
+uvicorn
+sqlalchemy
+python-dotenv

@@ -1,11 +1,1 @@
-# 🧪 Tests for operational endpoints added in Phase 4
-from fastapi.testclient import TestClient
-from main import app
-
-def test_health_endpoint():
-    client = TestClient(app)
-    resp = client.get("/health")
-    assert resp.status_code == 200
-    data = resp.json()
-    assert "status" in data
-    assert "database" in data
+# Tests for operational endpoints added in Phase 4 from fastapi.testclient import TestClient from main import app def test_health_endpoint(): client = TestClient(app) resp = client.get("/health") assert resp.status_code == 200 data = resp.json() assert "status" in data assert "database" in data

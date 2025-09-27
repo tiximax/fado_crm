@@ -15,6 +15,21 @@ let ordersData = [];
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 FADO CRM Starting up...');
 
+    // Wait a bit for authService to initialize, then check authentication
+    setTimeout(() => {
+        if (!window.authService || !window.authService.isAuthenticated()) {
+            console.log('🔒 User not authenticated, redirecting to login...');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        console.log('✅ User authenticated, proceeding with app initialization...');
+        proceedWithAppInitialization();
+    }, 100);
+});
+
+function proceedWithAppInitialization() {
+
     // Register Service Worker for PWA
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').then(() => {
@@ -29,11 +44,23 @@ document.addEventListener('DOMContentLoaded', function() {
     loadPublicSettings();
     setupEventListeners();
     loadDashboard();
-});
+}
 
 // 🏗️ Initialize App - Khởi tạo ứng dụng
 function initializeApp() {
     console.log('🎨 Initializing FADO CRM...');
+
+    // Display current user info
+    const currentUser = window.authService.getCurrentUser();
+    if (currentUser) {
+        console.log(`👤 Logged in as: ${currentUser.ho_ten} (${currentUser.vai_tro})`);
+
+        // Update any user display elements if they exist
+        const userNameEl = document.getElementById('currentUserName');
+        if (userNameEl) {
+            userNameEl.textContent = currentUser.ho_ten;
+        }
+    }
 
     // Set active tab
     showTab('dashboard');
@@ -184,9 +211,25 @@ async function loadDashboard() {
     try {
         showLoading(true);
 
+        console.log('📊 Loading dashboard data...');
+
+        // Check authentication first
+        if (!window.authService.isAuthenticated()) {
+            console.error('❌ Not authenticated for dashboard');
+            showToast('⚠️ Vui lòng đăng nhập lại!', 'error');
+            window.location.href = 'login.html';
+            return;
+        }
+
         // Load dashboard statistics with authentication
         const response = await window.authService.apiCall('/dashboard');
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
         const stats = await response.json();
+        console.log('📊 Dashboard stats received:', stats);
 
         // Update stats cards với animation
         updateStatCard('total-customers', stats.tong_khach_hang);
@@ -241,7 +284,7 @@ function animateCounter(element, start, end, duration = 1000) {
 
 async function loadRecentOrders() {
     try {
-        const response = await fetch(`${API_BASE_URL}/don-hang/?limit=5`);
+        const response = await window.authService.apiCall('/orders/?limit=5');
         const orders = await response.json();
 
         const container = document.getElementById('recent-orders');
@@ -273,7 +316,7 @@ async function loadRecentOrders() {
 
 async function loadNewCustomers() {
     try {
-        const response = await fetch(`${API_BASE_URL}/khach-hang/?limit=5`);
+        const response = await window.authService.apiCall('/customers/?limit=5');
         const customers = await response.json();
 
         const container = document.getElementById('new-customers');
@@ -307,7 +350,7 @@ async function loadNewCustomers() {
 async function loadCustomers() {
     try {
         showLoading(true);
-        const response = await fetch(`${API_BASE_URL}/khach-hang/`);
+        const response = await window.authService.apiCall('/customers/');
         customersData = await response.json();
 
         displayCustomers(customersData);
@@ -354,12 +397,12 @@ async function searchCustomers() {
     const searchTerm = document.getElementById('customer-search').value;
     const typeFilter = document.getElementById('customer-type-filter').value;
 
-    let url = `${API_BASE_URL}/khach-hang/?`;
+    let url = `/customers/?`;
     if (searchTerm) url += `search=${encodeURIComponent(searchTerm)}&`;
     if (typeFilter) url += `loai_khach=${typeFilter}&`;
 
     try {
-        const response = await fetch(url);
+        const response = await window.authService.apiCall(url);
         const customers = await response.json();
         displayCustomers(customers);
     } catch (error) {
@@ -376,7 +419,7 @@ function filterCustomers() {
 async function loadProducts() {
     try {
         showLoading(true);
-        const response = await fetch(`${API_BASE_URL}/san-pham/`);
+        const response = await window.authService.apiCall('/products/');
         productsData = await response.json();
 
         displayProducts(productsData);
@@ -432,11 +475,11 @@ function displayProducts(products) {
 async function searchProducts() {
     const searchTerm = document.getElementById('product-search').value;
 
-    let url = `${API_BASE_URL}/san-pham/?`;
+    let url = `/products/?`;
     if (searchTerm) url += `search=${encodeURIComponent(searchTerm)}`;
 
     try {
-        const response = await fetch(url);
+        const response = await window.authService.apiCall(url);
         const products = await response.json();
         displayProducts(products);
     } catch (error) {
@@ -449,7 +492,7 @@ async function searchProducts() {
 async function loadOrders() {
     try {
         showLoading(true);
-        const response = await fetch(`${API_BASE_URL}/don-hang/`);
+        const response = await window.authService.apiCall('/orders/');
         ordersData = await response.json();
 
         displayOrders(ordersData);
@@ -493,7 +536,7 @@ function displayOrders(orders) {
 async function filterOrders() {
     const statusFilter = document.getElementById('order-status-filter').value;
 
-    let url = `${API_BASE_URL}/don-hang/?`;
+    let url = `${API_BASE_URL}/orders/?`;
     if (statusFilter) url += `trang_thai=${statusFilter}`;
 
     try {
@@ -510,7 +553,7 @@ async function filterOrders() {
 async function loadContactHistory() {
     try {
         showLoading(true);
-        const response = await fetch(`${API_BASE_URL}/lich-su-lien-he/`);
+        const response = await window.authService.apiCall('/contact-history/');
         const contacts = await response.json();
 
         displayContactHistory(contacts);
@@ -612,11 +655,8 @@ async function handleAddCustomer(event) {
     try {
         showLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/khach-hang/`, {
+        const response = await window.authService.apiCall('/customers/', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(customerData)
         });
 
@@ -660,11 +700,8 @@ async function handleAddProduct(event) {
     try {
         showLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/san-pham/`, {
+        const response = await window.authService.apiCall('/products/', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(productData)
         });
 
@@ -693,14 +730,21 @@ async function handleAddProduct(event) {
 // 🔧 Action Functions - Các hành động chính
 async function autoUpdateCustomerType(customerId) {
     try {
+        // TODO: Implement customer type auto-update via PUT /customers/{id}
+        showToast('🔄 Auto-update customer type feature needs implementation', 'info');
+        return;
+
+        /*
         showLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/khach-hang/${customerId}/cap-nhat-loai`, {
-            method: 'POST'
+        const response = await window.authService.apiCall(`/customers/${customerId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ auto_update_type: true })
         });
 
         const result = await response.json();
         showToast(result.message, result.success ? 'success' : 'warning');
+        */
 
         // Reload customers to see updated status
         if (currentTab === 'customers') {
@@ -729,7 +773,7 @@ async function viewProductDetail(productId) {
     try {
         showLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/san-pham/${productId}`);
+        const response = await window.authService.apiCall(`/products/${productId}`);
         if (!response.ok) {
             throw new Error('Failed to fetch product details');
         }
@@ -827,7 +871,7 @@ async function viewProductDetail(productId) {
 async function viewOrderDetail(orderId) {
     try {
         showLoading(true);
-        const response = await fetch(`${API_BASE_URL}/don-hang/${orderId}`);
+        const response = await window.authService.apiCall(`/orders/${orderId}`);
 
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
@@ -849,7 +893,7 @@ async function editOrder(orderId) {
         showLoading(true);
 
         // Load order data and populate edit form
-        const response = await fetch(`${API_BASE_URL}/don-hang/${orderId}`);
+        const response = await window.authService.apiCall(`/orders/${orderId}`);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
@@ -870,7 +914,7 @@ async function updateOrderStatus(orderId) {
     try {
         showLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/don-hang/${orderId}`);
+        const response = await window.authService.apiCall(`/orders/${orderId}`);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
@@ -1001,12 +1045,14 @@ console.log(`
 // 🌐 Public settings loader
 async function loadPublicSettings() {
     try {
-        const resp = await fetch(`${API_BASE_URL}/settings/public`);
-        if (!resp.ok) return;
-        const data = await resp.json();
-        const appNameEl = document.getElementById('appName');
-        if (appNameEl && data.app_name) {
-            appNameEl.textContent = data.app_name;
+        // Skip settings loading for now - endpoint not implemented
+        return;
+        // const resp = await fetch(`${API_BASE_URL}/settings/public`);
+        // if (!resp.ok) return;
+        // const data = await resp.json();
+        // const appNameEl = document.getElementById('appName');
+        // if (appNameEl && data.app_name) {
+        //     appNameEl.textContent = data.app_name;
             document.title = `🛍️ ${data.app_name} - Quản Lý Mua Hộ Siêu Đỉnh!`;
         }
     } catch (e) {
@@ -1019,7 +1065,7 @@ async function editProduct(productId) {
     try {
         showLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/san-pham/${productId}`);
+        const response = await window.authService.apiCall(`/products/${productId}`);
         if (!response.ok) {
             throw new Error('Failed to fetch product details');
         }
@@ -1077,7 +1123,7 @@ async function handleEditProduct(event) {
     try {
         showLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/san-pham/${productId}`, {
+        const response = await window.authService.apiCall(`/products/${productId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1111,8 +1157,8 @@ async function handleEditProduct(event) {
 async function loadCustomersAndProducts() {
     try {
         const [customersResponse, productsResponse] = await Promise.all([
-            fetch(`${API_BASE_URL}/khach-hang/`),
-            fetch(`${API_BASE_URL}/san-pham/`)
+            window.authService.apiCall('/customers/'),
+            window.authService.apiCall('/products/')
         ]);
 
         if (customersResponse.ok && productsResponse.ok) {
@@ -1329,11 +1375,8 @@ async function handleAddOrder(event) {
             return;
         }
 
-        const response = await fetch(`${API_BASE_URL}/don-hang/`, {
+        const response = await window.authService.apiCall('/orders/', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify(orderData)
         });
 
@@ -1486,11 +1529,8 @@ async function handleEditOrder(event) {
             ghi_chu: formData.get('ghi_chu')
         };
 
-        const response = await fetch(`${API_BASE_URL}/don-hang/${orderId}`, {
+        const response = await window.authService.apiCall(`/orders/${orderId}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify(orderData)
         });
 
@@ -1527,12 +1567,8 @@ async function handleUpdateOrderStatus(event) {
             ghi_chu: formData.get('ghi_chu')
         };
 
-        const response = await fetch(`${API_BASE_URL}/don-hang/${orderId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(statusData)
+        const response = await window.authService.apiCall(`/orders/${orderId}/status?new_status=${statusData.trang_thai}`, {
+            method: 'PUT'
         });
 
         if (response.ok) {
@@ -1716,7 +1752,7 @@ async function deleteProduct(productId) {
     try {
         showLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/san-pham/${productId}`, {
+        const response = await window.authService.apiCall(`/products/${productId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -1752,7 +1788,7 @@ async function deleteCustomer(customerId) {
     try {
         showLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/khach-hang/${customerId}`, {
+        const response = await window.authService.apiCall(`/customers/${customerId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -1788,11 +1824,8 @@ async function deleteOrder(orderId) {
     try {
         showLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/don-hang/${orderId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            }
+        const response = await window.authService.apiCall(`/orders/${orderId}`, {
+            method: 'DELETE'
         });
 
         if (response.ok) {

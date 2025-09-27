@@ -1,0 +1,22 @@
+# FADO CRM - Stable Production Requirements
+# Minimal dependencies for maximum stability
+
+# Core Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Database
+sqlalchemy==2.0.23
+
+# Validation
+pydantic==2.5.0
+
+# Configuration
+python-dotenv==1.0.0
+
+# HTTP client (for basic integrations)
+requests==2.31.0
+
+# Development tools (optional)
+pytest==7.4.3
+httpx==0.25.2

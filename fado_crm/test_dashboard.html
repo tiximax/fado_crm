@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Dashboard - FADO CRM</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .test-result { margin: 15px 0; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Dashboard Authentication & Data Loading</h1>
+
+    <button onclick="testLogin()">1. Test Login</button>
+    <button onclick="testDashboard()">2. Test Dashboard Data</button>
+    <button onclick="testCustomers()">3. Test Customers</button>
+    <button onclick="testProducts()">4. Test Products</button>
+    <button onclick="testOrders()">5. Test Orders</button>
+
+    <div id="results"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8003';
+        let authToken = null;
+
+        function addResult(message, success = true) {
+            const div = document.createElement('div');
+            div.className = `test-result ${success ? 'success' : 'error'}`;
+            div.innerHTML = message;
+            document.getElementById('results').appendChild(div);
+        }
+
+        async function testLogin() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: 'admin@fado.vn', password: 'admin123' })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    authToken = data.access_token;
+                    addResult(`✅ Login successful! User: ${data.user.ho_ten} (${data.user.vai_tro})`);
+                    return true;
+                } else {
+                    addResult(`❌ Login failed: ${response.status}`, false);
+                    return false;
+                }
+            } catch (error) {
+                addResult(`❌ Login error: ${error.message}`, false);
+                return false;
+            }
+        }
+
+        async function makeAuthenticatedRequest(endpoint) {
+            if (!authToken) {
+                addResult('❌ No auth token - please login first', false);
+                return null;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (response.ok) {
+                    return await response.json();
+                } else {
+                    addResult(`❌ Request to ${endpoint} failed: ${response.status}`, false);
+                    return null;
+                }
+            } catch (error) {
+                addResult(`❌ Request to ${endpoint} error: ${error.message}`, false);
+                return null;
+            }
+        }
+
+        async function testDashboard() {
+            const data = await makeAuthenticatedRequest('/dashboard');
+            if (data) {
+                addResult(`✅ Dashboard data: ${data.tong_khach_hang} customers, ${data.tong_don_hang} orders, ${data.doanh_thu_thang.toLocaleString()} VND revenue`);
+            }
+        }
+
+        async function testCustomers() {
+            const data = await makeAuthenticatedRequest('/customers/?limit=3');
+            if (data) {
+                addResult(`✅ Customers data: ${data.length} customers loaded`);
+                if (data.length > 0) {
+                    addResult(`   📝 Sample: ${data[0].ho_ten} (${data[0].loai_khach})`);
+                }
+            }
+        }
+
+        async function testProducts() {
+            const data = await makeAuthenticatedRequest('/products/?limit=3');
+            if (data) {
+                addResult(`✅ Products data: ${data.length} products loaded`);
+                if (data.length > 0) {
+                    addResult(`   📦 Sample: ${data[0].ten_san_pham} - ${data[0].gia_ban?.toLocaleString()} VND`);
+                }
+            }
+        }
+
+        async function testOrders() {
+            const data = await makeAuthenticatedRequest('/orders/?limit=3');
+            if (data) {
+                addResult(`✅ Orders data: ${data.length} orders loaded`);
+                if (data.length > 0) {
+                    addResult(`   📋 Sample: ${data[0].ma_don_hang} - ${data[0].trang_thai} - ${data[0].tong_tien?.toLocaleString()} VND`);
+                }
+            }
+        }
+
+        // Auto-run tests
+        setTimeout(async () => {
+            addResult('🚀 Starting automated tests...');
+            if (await testLogin()) {
+                await testDashboard();
+                await testCustomers();
+                await testProducts();
+                await testOrders();
+                addResult('✅ All tests completed!');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
