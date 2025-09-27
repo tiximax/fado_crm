@@ -1,8 +1,8 @@
 // 🧪 E2E test: Upload product image via UI (Local storage driver)
 const { test, expect } = require('@playwright/test');
 
-const FRONTEND_URL = 'http://localhost:3000';
-const BACKEND_URL = 'http://localhost:8000';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8000';
 
 async function seedAdminTokens(page, request) {
   const loginRes = await request.post(`${BACKEND_URL}/auth/login`, {

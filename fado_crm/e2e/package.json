@@ -6,7 +6,9 @@
   "scripts": {
     "test": "playwright test",
     "test:ui": "playwright test --ui",
-    "install:browsers": "playwright install --with-deps"
+    "install:browsers": "playwright install --with-deps",
+    "test:vn:server": "powershell -NoLogo -NoProfile -File ..\\scripts\\run_e2e_vnpay.ps1",
+    "test:all:server": "powershell -NoLogo -NoProfile -File ..\\scripts\\run_e2e_all.ps1"
   },
   "devDependencies": {
     "@playwright/test": "^1.47.2",

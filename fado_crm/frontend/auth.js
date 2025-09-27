@@ -3,7 +3,12 @@
 
 class AuthService {
     constructor() {
-        this.API_BASE = 'http://localhost:8000';
+        try {
+            const storedBase = (typeof localStorage !== 'undefined') ? localStorage.getItem('api_base') : null;
+            this.API_BASE = storedBase || 'http://127.0.0.1:8003';
+        } catch (e) {
+            this.API_BASE = 'http://127.0.0.1:8003';
+        }
         this.token = null;
         this.user = null;
         this.refreshToken = null;

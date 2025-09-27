@@ -2,7 +2,7 @@
 const { test, expect } = require('@playwright/test');
 const crypto = require('crypto');
 
-const BACKEND_URL = 'http://localhost:8000';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8000';
 
 function quotePlus(str) {
   return encodeURIComponent(String(str)).replace(/%20/g, '+');

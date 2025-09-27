@@ -11,7 +11,7 @@ sqlalchemy==2.0.23              # 🏗️ ORM mạnh nhất Python
 alembic==1.12.1                 # 🔄 Migration tool
 
 # 📋 Validation và serialization
-pydantic[email]==2.5.0          # ✅ Data validation như ninja
+pydantic[email]==2.9.2          # ✅ Data validation như ninja (Python 3.13 compatible)
 email-validator==2.1.0          # 📧 Email validation
 
 # 🌐 CORS và middleware
@@ -20,7 +20,7 @@ passlib[bcrypt]==1.7.4           # 🛡️ Password hashing
 python-dotenv==1.0.0             # 🔧 Environment variables
 
 # 📊 Optional dependencies cho production
-psycopg2-binary==2.9.9          # 🐘 PostgreSQL adapter
+# psycopg2-binary==2.9.9          # 🐘 PostgreSQL adapter (disabled on Win/Python 3.13 for dev)
 redis==5.0.1                    # 🔴 Redis cho caching
 
 # 📈 Phase 5 - Advanced Features Dependencies

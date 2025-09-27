@@ -2,7 +2,7 @@
 # FADO CRM - FastAPI Backend Sieu Toc!
 # API nay nhanh nhu tia chop va manh nhu Thor!
 
-from fastapi import FastAPI, Depends, HTTPException, Query, status, Response
+from fastapi import FastAPI, Depends, HTTPException, Query, status, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
@@ -34,7 +34,12 @@ except ImportError as e:
 
 # Optional imports with error handling
 try:
-    from auth import get_current_active_user, get_admin_user
+    from auth import (
+        get_current_active_user,
+        get_admin_user,
+        login_user,
+        refresh_access_token
+    )
     AUTH_AVAILABLE = True
 except ImportError:
     AUTH_AVAILABLE = False
@@ -116,6 +121,34 @@ async def health_check():
         "analytics_available": ANALYTICS_AVAILABLE,
         "version": "1.0.0"
     }
+
+# AUTHENTICATION ENDPOINTS
+@app.post("/auth/login", response_model=schemas.LoginResponse)
+async def login(login_data: schemas.LoginRequest, db: Session = Depends(get_db)):
+    """Dang nhap va lay JWT token (su dung auth.login_user)"""
+    try:
+        result = login_user(db, login_data.email, login_data.password)
+        return schemas.LoginResponse(**result)
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Email hoac mat khau khong chinh xac"
+        )
+
+@app.post("/auth/refresh", response_model=schemas.TokenResponse)
+async def refresh_token(refresh_data: schemas.RefreshTokenRequest, db: Session = Depends(get_db)):
+    try:
+        result = refresh_access_token(refresh_data.refresh_token, db)
+        return schemas.TokenResponse(**result)
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token khong hop le"
+        )
+
+@app.get("/auth/me", response_model=schemas.NguoiDung)
+async def get_current_user_info(current_user = Depends(get_current_active_user)):
+    return current_user
 
 # Dashboard/Thong ke tong quan
 @app.get("/dashboard", response_model=schemas.ThongKeResponse)

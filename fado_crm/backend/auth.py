@@ -17,8 +17,8 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 
-# Password hashing
-pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+# Password hashing: support both pbkdf2_sha256 (default) and bcrypt for backward compatibility
+pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt"], deprecated="auto")
 
 # HTTP Bearer for token extraction
 security = HTTPBearer()

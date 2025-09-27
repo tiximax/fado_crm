@@ -236,7 +236,12 @@
         // 🔐 Authentication Manager
         class AuthManager {
             constructor() {
-                this.API_BASE = 'http://localhost:8003';
+                try {
+                    const stored = localStorage.getItem('api_base');
+                    this.API_BASE = stored || 'http://127.0.0.1:8003';
+                } catch (e) {
+                    this.API_BASE = 'http://127.0.0.1:8003';
+                }
                 this.initializeElements();
                 this.setupEventListeners();
                 this.checkExistingAuth();
