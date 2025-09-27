@@ -1,1 +1,165 @@
-# FADO CRM - Pydantic Schemas Sieu Chat Che! # Validation nhu mot ninja bao ve du lieu! from pydantic import BaseModel, EmailStr, Field from typing import Optional, List from datetime import datetime from models import TrangThaiDonHang, LoaiKhachHang, VaiTro # Schemas cho Khach Hang class KhachHangBase(BaseModel): ho_ten: str = Field(..., min_length=2, max_length=100, description=" Ho ten khach hang") email: EmailStr = Field(..., description=" Email hop le") so_dien_thoai: Optional[str] = Field(None, max_length=20, description=" So dien thoai") dia_chi: Optional[str] = Field(None, description=" Dia chi nhan hang") loai_khach: Optional[LoaiKhachHang] = Field(LoaiKhachHang.MOI, description=" Loai khach hang") ghi_chu: Optional[str] = Field(None, description=" Ghi chu dac biet") class KhachHangCreate(KhachHangBase): """ Schema tao khach hang moi - Chao mung tan binh!""" pass class KhachHangUpdate(BaseModel): """ Schema cap nhat thong tin khach hang""" ho_ten: Optional[str] = Field(None, min_length=2, max_length=100) email: Optional[EmailStr] = None so_dien_thoai: Optional[str] = Field(None, max_length=20) dia_chi: Optional[str] = None loai_khach: Optional[LoaiKhachHang] = None ghi_chu: Optional[str] = None class KhachHang(KhachHangBase): """ Schema tra ve thong tin day du cua khach hang""" id: int ngay_tao: datetime tong_tien_da_mua: float = Field(0.0, description=" Tong tien da chi") so_don_thanh_cong: int = Field(0, description=" So don thanh cong") class Config: from_attributes = True # Cho phep convert tu SQLAlchemy model # Schemas cho San Pham class SanPhamBase(BaseModel): ten_san_pham: str = Field(..., min_length=2, max_length=200, description=" Ten san pham") link_goc: Optional[str] = Field(None, max_length=500, description=" Link goc") gia_goc: Optional[float] = Field(None, ge=0, description=" Gia goc (USD)") gia_ban: Optional[float] = Field(None, ge=0, description=" Gia ban (VND)") mo_ta: Optional[str] = Field(None, description=" Mo ta san pham") hinh_anh_url: Optional[str] = Field(None, max_length=500, description=" URL hinh anh") trong_luong: Optional[float] = Field(None, ge=0, description=" Trong luong (kg)") kich_thuoc: Optional[str] = Field(None, max_length=100, description=" Kich thuoc") danh_muc: Optional[str] = Field(None, max_length=100, description=" Danh muc") quoc_gia_nguon: Optional[str] = Field(None, max_length=50, description=" Nuoc xuat xu") is_active: Optional[bool] = Field(True, description=" Trang thai hoat dong") class SanPhamCreate(SanPhamBase): """ Schema tao san pham moi""" pass class SanPhamUpdate(BaseModel): """ Schema cap nhat san pham""" ten_san_pham: Optional[str] = Field(None, min_length=2, max_length=200) link_goc: Optional[str] = Field(None, max_length=500) gia_goc: Optional[float] = Field(None, ge=0) gia_ban: Optional[float] = Field(None, ge=0) mo_ta: Optional[str] = None hinh_anh_url: Optional[str] = Field(None, max_length=500) trong_luong: Optional[float] = Field(None, ge=0) kich_thuoc: Optional[str] = Field(None, max_length=100) danh_muc: Optional[str] = Field(None, max_length=100) quoc_gia_nguon: Optional[str] = Field(None, max_length=50) is_active: Optional[bool] = None class SanPham(SanPhamBase): """ Schema tra ve thong tin day du san pham""" id: int ngay_tao: datetime is_active: bool = True class Config: from_attributes = True # Schemas cho Chi Tiet Don Hang class ChiTietDonHangBase(BaseModel): san_pham_id: int = Field(..., gt=0, description=" ID san pham") so_luong: int = Field(1, gt=0, description=" So luong") gia_mua: Optional[float] = Field(None, ge=0, description=" Gia mua thuc te") ghi_chu: Optional[str] = Field(None, description=" Ghi chu") class ChiTietDonHangCreate(ChiTietDonHangBase): """ Schema tao chi tiet don hang""" pass class ChiTietDonHang(ChiTietDonHangBase): """ Schema chi tiet don hang voi thong tin san pham""" id: int don_hang_id: int san_pham: Optional[SanPham] = None # Thong tin san pham lien ket class Config: from_attributes = True # Schemas cho Don Hang class DonHangBase(BaseModel): khach_hang_id: int = Field(..., gt=0, description=" ID khach hang") tong_gia_san_pham: float = Field(0.0, ge=0, description=" Tong gia san pham") phi_mua_ho: float = Field(0.0, ge=0, description=" Phi mua ho") phi_van_chuyen: float = Field(0.0, ge=0, description=" Phi van chuyen") phi_khac: float = Field(0.0, ge=0, description=" Phi khac") ngay_giao_hang: Optional[datetime] = Field(None, description=" Ngay giao hang du kien") ghi_chu_khach: Optional[str] = Field(None, description=" Ghi chu tu khach") ghi_chu_noi_bo: Optional[str] = Field(None, description=" Ghi chu noi bo") class DonHangCreate(DonHangBase): """ Schema tao don hang moi voi danh sach san pham""" chi_tiet_list: List[ChiTietDonHangCreate] = Field(..., min_items=1, description=" Danh sach san pham") class DonHangUpdate(BaseModel): """ Schema cap nhat don hang""" trang_thai: Optional[TrangThaiDonHang] = None phi_mua_ho: Optional[float] = Field(None, ge=0) phi_van_chuyen: Optional[float] = Field(None, ge=0) phi_khac: Optional[float] = Field(None, ge=0) ngay_giao_hang: Optional[datetime] = None ghi_chu_khach: Optional[str] = None ghi_chu_noi_bo: Optional[str] = None ma_van_don: Optional[str] = Field(None, max_length=50, description=" Ma van don") class DonHang(DonHangBase): """ Schema don hang day du voi tat ca thong tin""" id: int ma_don_hang: str trang_thai: TrangThaiDonHang tong_tien: float = Field(description=" Tong tien cuoi cung") ngay_tao: datetime ngay_cap_nhat: datetime ma_van_don: Optional[str] = None khach_hang: Optional[KhachHang] = None # Thong tin khach hang chi_tiet_list: List[ChiTietDonHang] = [] # Danh sach chi tiet class Config: from_attributes = True # Schemas cho Lich Su Lien He class LichSuLienHeBase(BaseModel): khach_hang_id: int = Field(..., gt=0, description=" ID khach hang") loai_lien_he: str = Field(..., description=" Loai lien he: call/sms/email") noi_dung: str = Field(..., min_length=1, description=" Noi dung cuoc lien he") nhan_vien_xu_ly: str = Field(..., max_length=100, description=" Nhan vien xu ly") ket_qua: Optional[str] = Field(None, max_length=200, description=" Ket qua") class LichSuLienHeCreate(LichSuLienHeBase): """ Schema tao lich su lien he moi""" pass class LichSuLienHe(LichSuLienHeBase): """ Schema lich su lien he day du""" id: int ngay_lien_he: datetime class Config: from_attributes = True # Schema cho Dashboard/Thong ke class ThongKeResponse(BaseModel): """ Schema cho dashboard thong ke sieu cool!""" tong_khach_hang: int = Field(description=" Tong so khach hang") tong_don_hang: int = Field(description=" Tong so don hang") doanh_thu_thang: float = Field(description=" Doanh thu thang nay") don_cho_xu_ly: int = Field(description=" Don cho xu ly") khach_moi_thang: int = Field(description=" Khach moi thang nay") # Response cho API calls class MessageResponse(BaseModel): """ Schema cho message response chung""" message: str = Field(description=" Thong bao") success: bool = Field(True, description=" Trang thai thanh cong") # Authentication Schemas - Bao mat cap do NASA! class LoginRequest(BaseModel): """ Schema cho dang nhap""" email: EmailStr = Field(..., description=" Email dang nhap") password: str = Field(..., min_length=6, description=" Mat khau") class LoginResponse(BaseModel): """ Schema cho phan hoi dang nhap""" access_token: str = Field(..., description=" JWT Access Token") refresh_token: str = Field(..., description=" JWT Refresh Token") token_type: str = Field("bearer", description=" Loai token") expires_in: int = Field(..., description=" Thoi gian het han (giay)") user: 'NguoiDung' = Field(..., description=" Thong tin nguoi dung") class RefreshTokenRequest(BaseModel): """ Schema cho refresh token""" refresh_token: str = Field(..., description=" Refresh token") class TokenResponse(BaseModel): """ Schema cho phan hoi token moi""" access_token: str = Field(..., description=" JWT Access Token moi") token_type: str = Field("bearer", description=" Loai token") expires_in: int = Field(..., description=" Thoi gian het han (giay)") class ChangePasswordRequest(BaseModel): """ Schema doi mat khau""" old_password: str = Field(..., min_length=6, description=" Mat khau cu") new_password: str = Field(..., min_length=6, description=" Mat khau moi") # Schemas cho Nguoi Dung class NguoiDungBase(BaseModel): """ Schema co ban cho nguoi dung""" email: EmailStr = Field(..., description=" Email dang nhap") ho_ten: str = Field(..., min_length=2, max_length=100, description=" Ho ten") so_dien_thoai: Optional[str] = Field(None, max_length=20, description=" So dien thoai") vai_tro: Optional[VaiTro] = Field(VaiTro.STAFF, description=" Vai tro") ghi_chu: Optional[str] = Field(None, description=" Ghi chu") class NguoiDungCreate(NguoiDungBase): """ Schema tao nguoi dung moi""" password: str = Field(..., min_length=6, description=" Mat khau") class NguoiDungUpdate(BaseModel): """ Schema cap nhat nguoi dung""" ho_ten: Optional[str] = Field(None, min_length=2, max_length=100) so_dien_thoai: Optional[str] = Field(None, max_length=20) vai_tro: Optional[VaiTro] = None is_active: Optional[bool] = None ghi_chu: Optional[str] = None class NguoiDung(NguoiDungBase): """ Schema nguoi dung day du""" id: int is_active: bool = True ngay_tao: datetime lan_dang_nhap_cuoi: Optional[datetime] = None class Config: from_attributes = True # System Settings Schemas class SystemSettingBase(BaseModel): description: Optional[str] = Field(None, max_length=255) class SystemSettingUpdate(SystemSettingBase): value: str = Field(..., description="Gia tri cau hinh") class SystemSetting(SystemSettingBase): key: str value: str updated_at: datetime class Config: from_attributes = True # Payments Schemas class PaymentCreateRequest(BaseModel): order_id: int = Field(..., gt=0) class PaymentCreateResponse(BaseModel): transaction_id: str txn_ref: str redirect_url: str # Audit Log Schemas class AuditLog(BaseModel): id: int action: str resource: str resource_id: Optional[str] = None user_id: Optional[int] = None ip_address: Optional[str] = None user_agent: Optional[str] = None details: Optional[str] = None created_at: datetime class Config: from_attributes = True # Order Management Enhancement Schemas class OrderStatusUpdate(BaseModel): """ Schema cap nhat trang thai don hang""" trang_thai: TrangThaiDonHang = Field(..., description=" Trang thai moi cua don hang") ghi_chu: Optional[str] = Field(None, description=" Ghi chu ve viec thay doi trang thai") class OrderDetailsUpdate(BaseModel): """ Schema cap nhat chi tiet don hang""" chi_tiet_list: List[ChiTietDonHangCreate] = Field(..., min_items=1, description=" Danh sach san pham moi") # Xong roi! Schemas chat che nhu Fort Knox! # Gio co the validate du lieu nhu mot pro security! 
+# -*- coding: utf-8 -*-
+# FADO CRM - Pydantic Schemas (Reconstructed Minimal)
+# Mục tiêu: cung cấp các model cần thiết để server hoạt động ổn định.
+
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional, List
+from datetime import datetime
+from models import TrangThaiDonHang, LoaiKhachHang, VaiTro
+
+# Generic message
+class MessageResponse(BaseModel):
+    message: str
+    success: bool = True
+
+# Dashboard stats
+class ThongKeResponse(BaseModel):
+    tong_khach_hang: int
+    tong_don_hang: int
+    doanh_thu_thang: float
+    don_cho_xu_ly: int
+    khach_moi_thang: int
+
+# User schemas
+class NguoiDung(BaseModel):
+    id: int
+    email: EmailStr
+    ho_ten: str
+    vai_tro: VaiTro
+    is_active: bool = True
+    ngay_tao: datetime
+    lan_dang_nhap_cuoi: Optional[datetime] = None
+    class Config:
+        from_attributes = True
+
+# Customer
+class KhachHang(BaseModel):
+    id: int
+    ho_ten: str
+    email: EmailStr
+    so_dien_thoai: Optional[str] = None
+    loai_khach: LoaiKhachHang = LoaiKhachHang.MOI
+    tong_tien_da_mua: float = 0.0
+    so_don_thanh_cong: int = 0
+    ngay_tao: datetime
+    class Config:
+        from_attributes = True
+
+# Product
+class SanPham(BaseModel):
+    id: int
+    ten_san_pham: str
+    mo_ta: Optional[str] = None
+    danh_muc: Optional[str] = None
+    quoc_gia_nguon: Optional[str] = None
+    gia_ban: Optional[float] = None
+    is_active: bool = True
+    ngay_tao: datetime
+    class Config:
+        from_attributes = True
+
+# Order detail
+class ChiTietDonHang(BaseModel):
+    id: int
+    don_hang_id: int
+    san_pham: Optional[SanPham] = None
+    so_luong: int
+    gia_mua: Optional[float] = None
+    class Config:
+        from_attributes = True
+
+# Order
+class DonHang(BaseModel):
+    id: int
+    ma_don_hang: str
+    khach_hang: Optional[KhachHang] = None
+    trang_thai: TrangThaiDonHang
+    tong_tien: float
+    ngay_tao: datetime
+    ngay_cap_nhat: Optional[datetime] = None
+    ma_van_don: Optional[str] = None
+    chi_tiet_list: List[ChiTietDonHang] = []
+    class Config:
+        from_attributes = True
+
+# Contact history
+class LichSuLienHe(BaseModel):
+    id: int
+    khach_hang_id: int
+    loai_lien_he: str
+    noi_dung: str
+    nhan_vien_xu_ly: str
+    ket_qua: Optional[str] = None
+    ngay_lien_he: datetime
+    class Config:
+        from_attributes = True
+
+# Auth schemas
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+class LoginResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+    expires_in: int
+    user: NguoiDung
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    expires_in: int
+
+class ChangePasswordRequest(BaseModel):
+    old_password: str
+    new_password: str
+
+# System settings
+class SystemSetting(BaseModel):
+    key: str
+    value: str
+    description: Optional[str] = None
+    updated_at: datetime
+    class Config:
+        from_attributes = True
+
+# Payments
+class PaymentCreateRequest(BaseModel):
+    order_id: int
+
+class PaymentCreateResponse(BaseModel):
+    transaction_id: str
+    txn_ref: str
+    redirect_url: str
+
+# Audit log
+class AuditLog(BaseModel):
+    id: int
+    action: str
+    resource: str
+    resource_id: Optional[str] = None
+    user_id: Optional[int] = None
+    ip_address: Optional[str] = None
+    user_agent: Optional[str] = None
+    details: Optional[str] = None
+    created_at: datetime
+    class Config:
+        from_attributes = True
+
+# Order management enhancements
+class OrderStatusUpdate(BaseModel):
+    trang_thai: TrangThaiDonHang
+    ghi_chu: Optional[str] = None
+
+class ChiTietDonHangCreate(BaseModel):
+    san_pham_id: int
+    so_luong: int
+    gia_mua: Optional[float] = None
+    ghi_chu: Optional[str] = None
+
+class OrderDetailsUpdate(BaseModel):
+    chi_tiet_list: List[ChiTietDonHangCreate]
