@@ -31,6 +31,9 @@ test('upload single product image via UI succeeds', async ({ page, request }) =>
   // Seed tokens so file-upload page doesn't redirect to login
   await seedAdminTokens(page, request);
 
+  // Ensure frontend uses correct API base
+  await page.addInitScript((api) => { try { localStorage.setItem('api_base', api); } catch (e) {} }, BACKEND_URL);
+
   // Go to file upload page
   await page.goto(`${FRONTEND_URL}/file-upload.html`);
 
