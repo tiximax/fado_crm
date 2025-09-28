@@ -2,7 +2,7 @@
 # FADO CRM - Full Application (app_full)
 # Hợp nhất server ổn định cho dev/test (auth + dashboard + CRUD cơ bản) + một số module nâng cao
 
-from main_working import app  # Tái sử dụng toàn bộ app đã ổn định trong main_working
+from backend.main_working import app  # Tái sử dụng toàn bộ app đã ổn định trong main_working
 
 # ===== Advanced Modules: Minimal Payments (VNPay) =====
 from fastapi import HTTPException, Request, Depends, UploadFile, File, Form, Query

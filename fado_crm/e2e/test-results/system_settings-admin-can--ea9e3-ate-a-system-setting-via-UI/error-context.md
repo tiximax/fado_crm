@@ -1,0 +1,146 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: 
+        - generic [ref=e6]: FADO.VN CRM
+      - generic [ref=e7]:
+        - button " Dashboard" [ref=e8] [cursor=pointer]:
+          - generic [ref=e9] [cursor=pointer]: 
+          - text: Dashboard
+        - button " Khách Hàng" [ref=e10] [cursor=pointer]:
+          - generic [ref=e11] [cursor=pointer]: 
+          - text: Khách Hàng
+        - button " Sản Phẩm" [ref=e12] [cursor=pointer]:
+          - generic [ref=e13] [cursor=pointer]: 
+          - text: Sản Phẩm
+        - button " Đơn Hàng" [ref=e14] [cursor=pointer]:
+          - generic [ref=e15] [cursor=pointer]: 
+          - text: Đơn Hàng
+        - button " Liên Hệ" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17] [cursor=pointer]: 
+          - text: Liên Hệ
+        - link " Analytics" [ref=e18] [cursor=pointer]:
+          - /url: analytics.html
+          - generic [ref=e19] [cursor=pointer]: 
+          - text: Analytics
+        - link " Upload" [ref=e20] [cursor=pointer]:
+          - /url: file-upload.html
+          - generic [ref=e21] [cursor=pointer]: 
+          - text: Upload
+        - link " Export/Import" [ref=e22] [cursor=pointer]:
+          - /url: export-import.html
+          - generic [ref=e23] [cursor=pointer]: 
+          - text: Export/Import
+        - button " Người Dùng" [ref=e24] [cursor=pointer]:
+          - generic [ref=e25] [cursor=pointer]: 
+          - text: Người Dùng
+        - button " Cấu hình" [active] [ref=e26] [cursor=pointer]:
+          - generic [ref=e27] [cursor=pointer]: 
+          - text: Cấu hình
+      - generic [ref=e28]:
+        - link " Analytics" [ref=e29] [cursor=pointer]:
+          - /url: advanced-dashboard.html
+          - generic [ref=e30] [cursor=pointer]: 
+          - text: Analytics
+        - link " Upload" [ref=e31] [cursor=pointer]:
+          - /url: file-upload.html
+          - generic [ref=e32] [cursor=pointer]: 
+          - text: Upload
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - generic [ref=e35]: Admin
+          - generic [ref=e36]: 👑 Admin
+        - button " Đăng xuất" [ref=e37] [cursor=pointer]:
+          - generic [ref=e38] [cursor=pointer]: 
+          - text: Đăng xuất
+  - generic [ref=e39]:
+    - generic [ref=e40]:
+      - generic [ref=e41]:
+        - heading " Dashboard Tổng Quan" [level=1] [ref=e42]:
+          - generic [ref=e43]: 
+          - text: Dashboard Tổng Quan
+        - paragraph [ref=e44]: Thống kê realtime cho FADO.VN CRM 🚀
+      - generic [ref=e45]:
+        - generic [ref=e46]:
+          - generic [ref=e48]: 
+          - generic [ref=e49]:
+            - heading "0" [level=3] [ref=e50]
+            - paragraph [ref=e51]: Tổng Khách Hàng
+            - generic [ref=e53]:
+              - generic [ref=e54]: 
+              - text: 19.7% từ tháng trước
+          - img [ref=e56]
+        - generic [ref=e58]:
+          - generic [ref=e60]: 
+          - generic [ref=e61]:
+            - heading "0" [level=3] [ref=e62]
+            - paragraph [ref=e63]: Tổng Đơn Hàng
+            - generic [ref=e65]:
+              - generic [ref=e66]: 
+              - text: 0.3% từ tháng trước
+          - img [ref=e68]
+        - generic [ref=e70]:
+          - generic [ref=e72]: $
+          - generic [ref=e73]:
+            - heading "0" [level=3] [ref=e74]
+            - paragraph [ref=e75]: Doanh Thu Tháng
+            - generic [ref=e77]:
+              - generic [ref=e78]: 
+              - text: 1.1% từ tháng trước
+          - img [ref=e80]
+        - generic [ref=e82]:
+          - generic [ref=e84]: 
+          - generic [ref=e85]:
+            - heading "0" [level=3] [ref=e86]
+            - paragraph [ref=e87]: Đơn Chờ Xử Lý
+            - generic [ref=e89]:
+              - generic [ref=e90]: 
+              - text: 16.3% từ tháng trước
+          - img [ref=e92]
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - heading " Đơn Hàng Gần Đây" [level=3] [ref=e97]:
+            - generic [ref=e98]: 
+            - text: Đơn Hàng Gần Đây
+          - generic [ref=e101]: Đang tải dữ liệu... ⏳
+        - generic [ref=e102]:
+          - heading " Khách Hàng Mới" [level=3] [ref=e104]:
+            - generic [ref=e105]: 
+            - text: Khách Hàng Mới
+          - generic [ref=e108]: Đang tải dữ liệu... ⏳
+    - text:  +   +  ⏳  +  +
+  - option "🆕 Khách mới" [selected]
+  - option "💎 Khách thân thiết"
+  - option "👑 Khách VIP"
+  - option "Chọn khách hàng..." [selected]
+  - option "📋 Chờ xác nhận" [selected]
+  - option "✅ Đã xác nhận"
+  - option "🛒 Đang mua"
+  - option "💰 Đã mua"
+  - option "🚚 Đang ship"
+  - option "📦 Đã nhận"
+  - option "Chọn sản phẩm..." [selected]
+  - option "Chọn khách hàng..." [selected]
+  - option "📋 Chờ xác nhận" [selected]
+  - option "✅ Đã xác nhận"
+  - option "🛒 Đang mua"
+  - option "💰 Đã mua"
+  - option "🚚 Đang ship"
+  - option "📦 Đã nhận"
+  - option "❌ Đã hủy"
+  - option "Chọn trạng thái mới..." [selected]
+  - option "📋 Chờ xác nhận"
+  - option "✅ Đã xác nhận"
+  - option "🛒 Đang mua"
+  - option "💰 Đã mua"
+  - option "🚚 Đang ship"
+  - option "📦 Đã nhận"
+  - option "❌ Hủy đơn"
+  - text:      + 
+  - text: 
+  - generic [ref=e110] [cursor=pointer]: +
+```

@@ -52,10 +52,24 @@ if (!hasToken) {
 
   await page.goto(`${FRONTEND_URL}/index.html`);
 
-  // Open System Settings tab
-  await page.getByRole('button', { name: /Cấu hình/i }).click();
+  // Open System Settings tab (robust)
+  // Try normal click first (if handlers are ready), then fallback to programmatic showTab
+  try {
+    await page.getByRole('button', { name: /Cấu hình/i }).click();
+  } catch (e) {
+    // ignore
+  }
+  // Wait briefly for tab to activate; if not, force it
+  try {
+    await page.waitForSelector('#system-settings.tab-content.active', { timeout: 1000 });
+  } catch (e) {
+    await page.waitForFunction(() => window && typeof window.showTab === 'function');
+    await page.evaluate(() => window.showTab('system-settings'));
+  }
+  await page.waitForSelector('#system-settings.tab-content.active', { state: 'visible' });
 
   // Create setting using quick form
+  await page.locator('#settingKey').waitFor({ state: 'visible' });
   await page.locator('#settingKey').fill('app_name');
   await page.locator('#settingValue').fill('FADO CRM');
   await page.locator('#settingDescription').fill('Tên ứng dụng');

@@ -1,0 +1,197 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-fado_crm}
+      POSTGRES_USER: ${POSTGRES_USER:-fado_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fado_pass_prod_2025}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-prod-db.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-fado_user} -d ${POSTGRES_DB:-fado_crm}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Redis for caching and background tasks
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_pass_2025}
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--pass", "${REDIS_PASSWORD:-redis_pass_2025}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-fado_user}:${POSTGRES_PASSWORD:-fado_pass_prod_2025}@postgres:5432/${POSTGRES_DB:-fado_crm}
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-redis_pass_2025}@redis:6379
+      - ENVIRONMENT=production
+      - SECRET_KEY=${SECRET_KEY:-change-this-in-production}
+      - STORAGE_DRIVER=${STORAGE_DRIVER:-local}
+      - CORS_ORIGINS=${CORS_ORIGINS:-https://fado-crm.com,https://www.fado-crm.com}
+      - VNPAY_TMN_CODE=${VNPAY_TMN_CODE}
+      - VNPAY_HASH_SECRET=${VNPAY_HASH_SECRET}
+      - VNPAY_RETURN_URL=${VNPAY_RETURN_URL:-https://fado-crm.com/payments/return}
+      - VNPAY_PAYMENT_URL=${VNPAY_PAYMENT_URL:-https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_FROM=${SMTP_FROM:-noreply@fado-crm.com}
+    volumes:
+      - uploads_data:/app/uploads
+      - logs_data:/app/logs
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/prod.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./frontend:/usr/share/nginx/html/static:ro
+      - uploads_data:/usr/share/nginx/html/uploads:ro
+      - ./ssl:/etc/ssl/certs:ro  # Mount SSL certificates
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - backend
+    depends_on:
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Background task worker (Celery)
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    command: celery -A backend.celery_app worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-fado_user}:${POSTGRES_PASSWORD:-fado_pass_prod_2025}@postgres:5432/${POSTGRES_DB:-fado_crm}
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-redis_pass_2025}@redis:6379
+      - ENVIRONMENT=production
+      - SECRET_KEY=${SECRET_KEY:-change-this-in-production}
+    volumes:
+      - uploads_data:/app/uploads
+      - logs_data:/app/logs
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Celery Beat Scheduler
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    command: celery -A backend.celery_app beat --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-fado_user}:${POSTGRES_PASSWORD:-fado_pass_prod_2025}@postgres:5432/${POSTGRES_DB:-fado_crm}
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-redis_pass_2025}@redis:6379
+      - ENVIRONMENT=production
+      - SECRET_KEY=${SECRET_KEY:-change-this-in-production}
+    volumes:
+      - logs_data:/app/logs
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  uploads_data:
+    driver: local
+  logs_data:
+    driver: local
+
+networks:
+  backend:
+    driver: bridge
