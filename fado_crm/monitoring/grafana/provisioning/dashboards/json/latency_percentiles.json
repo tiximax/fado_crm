@@ -1,0 +1,38 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "id": null,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "p50 latency by endpoint (s)",
+      "gridPos": {"x": 0, "y": 0, "w": 8, "h": 6},
+      "targets": [{"expr": "histogram_quantile(0.5, sum by (le, endpoint) (rate(fado_http_request_duration_seconds_bucket[5m])))", "legendFormat": "{{endpoint}}"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "p95 latency by endpoint (s)",
+      "gridPos": {"x": 8, "y": 0, "w": 8, "h": 6},
+      "targets": [{"expr": "histogram_quantile(0.95, sum by (le, endpoint) (rate(fado_http_request_duration_seconds_bucket[5m])))", "legendFormat": "{{endpoint}}"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "p99 latency by endpoint (s)",
+      "gridPos": {"x": 16, "y": 0, "w": 8, "h": 6},
+      "targets": [{"expr": "histogram_quantile(0.99, sum by (le, endpoint) (rate(fado_http_request_duration_seconds_bucket[5m])))", "legendFormat": "{{endpoint}}"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Average latency (s)",
+      "gridPos": {"x": 0, "y": 6, "w": 12, "h": 6},
+      "targets": [{"expr": "sum(rate(fado_http_request_duration_seconds_sum[5m])) / sum(rate(fado_http_request_duration_seconds_count[5m]))", "legendFormat": "avg"}]
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["fado", "latency"],
+  "time": {"from": "now-6h", "to": "now"},
+  "title": "FADO Latency Percentiles",
+  "version": 1
+}

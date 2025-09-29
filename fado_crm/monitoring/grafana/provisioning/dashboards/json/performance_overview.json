@@ -1,0 +1,77 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Requests per second by endpoint",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "sum by (endpoint) (rate(fado_http_requests_total[5m]))",
+          "legendFormat": "{{endpoint}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "p95 latency by endpoint (seconds)",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, endpoint) (rate(fado_http_request_duration_seconds_bucket[5m])))",
+          "legendFormat": "{{endpoint}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Active requests",
+      "gridPos": { "x": 0, "y": 8, "w": 8, "h": 6 },
+      "targets": [
+        { "expr": "fado_active_connections", "legendFormat": "active" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "DB connections",
+      "gridPos": { "x": 8, "y": 8, "w": 8, "h": 6 },
+      "targets": [
+        { "expr": "fado_database_connections", "legendFormat": "db conns" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU %",
+      "gridPos": { "x": 16, "y": 8, "w": 8, "h": 6 },
+      "targets": [
+        { "expr": "fado_system_cpu_usage_percent", "legendFormat": "cpu" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory %",
+      "gridPos": { "x": 0, "y": 14, "w": 8, "h": 6 },
+      "targets": [
+        { "expr": "fado_system_memory_usage_percent", "legendFormat": "mem" }
+      ]
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["fado", "performance"],
+  "templating": {"list": []},
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "FADO Performance Overview",
+  "version": 1
+}
