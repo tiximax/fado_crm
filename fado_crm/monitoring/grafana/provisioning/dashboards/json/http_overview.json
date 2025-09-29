@@ -1,0 +1,50 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "id": null,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Overall Requests per Second (RPS)",
+      "gridPos": {"x": 0, "y": 0, "w": 8, "h": 6},
+      "targets": [{"expr": "sum(rate(fado_http_requests_total[5m]))", "legendFormat": "rps"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "RPS by Endpoint",
+      "gridPos": {"x": 8, "y": 0, "w": 16, "h": 6},
+      "targets": [{"expr": "sum by (endpoint) (rate(fado_http_requests_total[5m]))", "legendFormat": "{{endpoint}}"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Success Rate % (2xx)",
+      "gridPos": {"x": 0, "y": 6, "w": 8, "h": 6},
+      "targets": [{"expr": "100 * sum(rate(fado_http_requests_total{status_code=~\"2..\"}[5m])) / sum(rate(fado_http_requests_total[5m]))", "legendFormat": "success %"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Error Rate % (5xx)",
+      "gridPos": {"x": 8, "y": 6, "w": 8, "h": 6},
+      "targets": [{"expr": "100 * sum(rate(fado_http_requests_total{status_code=~\"5..\"}[5m])) / sum(rate(fado_http_requests_total[5m]))", "legendFormat": "5xx %"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Status Code Breakdown",
+      "gridPos": {"x": 16, "y": 6, "w": 8, "h": 6},
+      "targets": [{"expr": "sum by (status_code) (rate(fado_http_requests_total[5m]))", "legendFormat": "{{status_code}}"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Requests by Method",
+      "gridPos": {"x": 0, "y": 12, "w": 12, "h": 6},
+      "targets": [{"expr": "sum by (method) (rate(fado_http_requests_total[5m]))", "legendFormat": "{{method}}"}]
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["fado", "http"],
+  "time": {"from": "now-6h", "to": "now"},
+  "title": "FADO HTTP Overview",
+  "version": 1
+}
