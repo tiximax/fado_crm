@@ -35,3 +35,42 @@ def test_prometheus_config():
     assert any("alertmanager:9093" == t for t in targets), (
         f"Expected alertmanager target 'alertmanager:9093' in targets, got: {targets}"
     )
+
+
+def test_prometheus_rules_content():
+    """Ensure our Prometheus alert rules file contains expected alerts and severities."""
+    rules_path = REPO_ROOT / "monitoring" / "prometheus" / "rules" / "fado_alerts.yml"
+    assert rules_path.exists(), f"Rules file not found at {rules_path}"
+
+    with rules_path.open("r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+
+    groups = data.get("groups", []) or []
+    assert any(g.get("name") == "fado_crm_alerts" for g in groups), "Missing group 'fado_crm_alerts'"
+
+    # Collect alerts and verify expected ones are present
+    expected = {
+        "HighErrorRate",
+        "HighLatencyP95",
+        "CPUHigh",
+        "MemoryHigh",
+        "ActiveConnectionsHigh",
+        "DatabaseConnectionsHigh",
+    }
+    found = set()
+    severities = {}
+    for g in groups:
+        for rule in g.get("rules", []) or []:
+            name = rule.get("alert")
+            if name:
+                found.add(name)
+                labels = rule.get("labels", {}) or {}
+                if name in expected:
+                    severities[name] = labels.get("severity")
+
+    missing = expected - found
+    assert not missing, f"Missing expected alerts: {sorted(missing)}; found={sorted(found)}"
+
+    # Basic severity checks for present alerts
+    for name, sev in severities.items():
+        assert sev in {"warning", "critical"}, f"Unexpected severity for {name}: {sev}"
