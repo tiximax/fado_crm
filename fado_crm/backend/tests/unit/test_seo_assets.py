@@ -1,5 +1,4 @@
 import pathlib
-import re
 import xml.etree.ElementTree as ET
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
