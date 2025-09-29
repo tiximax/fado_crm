@@ -2,13 +2,24 @@
 # FADO CRM - Full Application (app_full)
 # Hợp nhất server ổn định cho dev/test (auth + dashboard + CRUD cơ bản) + một số module nâng cao
 
+from backend.main_working import app  # Tái sử dụng toàn bộ app đã ổn định trong main_working
+
+# Đăng ký router hiệu năng (/performance)
+try:
+    from backend.performance_endpoints import router as performance_router
+
+    app.include_router(performance_router)
+except Exception as _e:
+    # Không chặn app nếu module hiệu năng lỗi; chỉ log nhẹ.
+    import sys
+
+    print(f"[app_full] Warning: could not include performance endpoints: {_e}", file=sys.stderr)
+
 import hashlib
 import hmac
 import os
 import urllib.parse
 from typing import Any, Dict, List, Optional
-
-from backend.main_working import app  # Tái sử dụng toàn bộ app đã ổn định trong main_working
 
 # ===== Advanced Modules: Minimal Payments (VNPay) =====
 from fastapi import Depends, File, Form, HTTPException, Query, Request, UploadFile

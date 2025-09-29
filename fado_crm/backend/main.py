@@ -2,7 +2,11 @@
 # Mục tiêu: đảm bảo uvicorn --app-dir backend main:app chạy ổn định.
 # Tạm thời ủy quyền app cho main_working.app (đầy đủ middleware, health, CRUD, auth).
 
-from backend.app_full import app
+# Hỗ trợ import linh hoạt cho cả chế độ chạy server và chạy pytest
+try:
+    from backend.app_full import app
+except ModuleNotFoundError:
+    from app_full import app
 
 if __name__ == "__main__":
     import uvicorn
