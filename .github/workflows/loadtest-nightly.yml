@@ -1,0 +1,46 @@
+name: loadtest-nightly
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # 02:00 UTC nightly
+  workflow_dispatch: {}
+
+jobs:
+  loadtest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Start stack (backend + deps)
+        working-directory: fado_crm
+        run: |
+          docker-compose up -d postgres redis backend
+
+      - name: Wait for backend health
+        run: |
+          for i in {1..60}; do
+            if curl -sf http://localhost:8000/health > /dev/null; then echo "Backend healthy"; exit 0; fi
+            sleep 5;
+          done
+          echo "Backend health check failed"; docker-compose -f fado_crm/docker-compose.yml logs backend || true; exit 1
+
+      - name: Install Locust
+        run: |
+            python -m pip install --upgrade pip
+            pip install locust
+
+      - name: Run Locust headless
+        run: |
+            locust -f fado_crm/loadtests/locustfile.py --headless -u 50 -r 5 -t 2m --host http://localhost:8000
+
+      - name: Teardown stack
+        if: always()
+        working-directory: fado_crm
+        run: |
+          docker-compose down -v
