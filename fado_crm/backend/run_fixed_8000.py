@@ -1,6 +1,7 @@
 import importlib.util
-import uvicorn
 from pathlib import Path
+
+import uvicorn
 
 # Load backend/main_fixed.py explicitly
 path = Path(r"C:\Users\Admin\omnara-claude-20250923000733\fado_crm\backend\main_fixed.py")

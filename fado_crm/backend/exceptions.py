@@ -2,10 +2,12 @@
 # FADO CRM - Custom Exceptions & Error Handlers
 # Xu ly loi nhu mot ninja bao ve ung dung!
 
-from fastapi import HTTPException
-from typing import Any, Dict, Optional
 import traceback
 from datetime import datetime
+from typing import Any, Dict, Optional
+
+from fastapi import HTTPException
+
 
 class FADOException(Exception):
     """Base exception class cho FADO CRM"""
@@ -15,7 +17,7 @@ class FADOException(Exception):
         message: str,
         error_code: str = "GENERAL_ERROR",
         status_code: int = 500,
-        details: Optional[Dict[str, Any]] = None
+        details: Optional[Dict[str, Any]] = None,
     ):
         self.message = message
         self.error_code = error_code
@@ -23,6 +25,7 @@ class FADOException(Exception):
         self.details = details or {}
         self.timestamp = datetime.utcnow()
         super().__init__(self.message)
+
 
 class ValidationError(FADOException):
     """Loi validation du lieu"""
@@ -32,8 +35,9 @@ class ValidationError(FADOException):
             message=message,
             error_code="VALIDATION_ERROR",
             status_code=422,
-            details={"field": field, **(details or {})}
+            details={"field": field, **(details or {})},
         )
+
 
 class NotFoundError(FADOException):
     """Loi khong tim thay du lieu"""
@@ -46,60 +50,48 @@ class NotFoundError(FADOException):
             message=message,
             error_code="NOT_FOUND",
             status_code=404,
-            details={"resource": resource, "resource_id": resource_id}
+            details={"resource": resource, "resource_id": resource_id},
         )
+
 
 class ConflictError(FADOException):
     """Loi conflict du lieu"""
 
     def __init__(self, message: str, details: Dict[str, Any] = None):
         super().__init__(
-            message=message,
-            error_code="CONFLICT_ERROR",
-            status_code=409,
-            details=details
+            message=message, error_code="CONFLICT_ERROR", status_code=409, details=details
         )
+
 
 class DatabaseError(FADOException):
     """Loi database"""
 
     def __init__(self, message: str = "Loi co so du lieu", details: Dict[str, Any] = None):
         super().__init__(
-            message=message,
-            error_code="DATABASE_ERROR",
-            status_code=500,
-            details=details
+            message=message, error_code="DATABASE_ERROR", status_code=500, details=details
         )
+
 
 class AuthenticationError(FADOException):
     """Loi xac thuc"""
 
     def __init__(self, message: str = "Xac thuc that bai"):
-        super().__init__(
-            message=message,
-            error_code="AUTHENTICATION_ERROR",
-            status_code=401
-        )
+        super().__init__(message=message, error_code="AUTHENTICATION_ERROR", status_code=401)
+
 
 class AuthorizationError(FADOException):
     """Loi phan quyen"""
 
     def __init__(self, message: str = "Khong co quyen truy cap"):
-        super().__init__(
-            message=message,
-            error_code="AUTHORIZATION_ERROR",
-            status_code=403
-        )
+        super().__init__(message=message, error_code="AUTHORIZATION_ERROR", status_code=403)
+
 
 class RateLimitError(FADOException):
     """Loi rate limiting"""
 
     def __init__(self, message: str = "Qua nhieu yeu cau"):
-        super().__init__(
-            message=message,
-            error_code="RATE_LIMIT_ERROR",
-            status_code=429
-        )
+        super().__init__(message=message, error_code="RATE_LIMIT_ERROR", status_code=429)
+
 
 # Error response format
 def format_error_response(exception: FADOException) -> Dict[str, Any]:
@@ -109,8 +101,9 @@ def format_error_response(exception: FADOException) -> Dict[str, Any]:
         "error_code": exception.error_code,
         "message": exception.message,
         "timestamp": exception.timestamp.isoformat(),
-        "details": exception.details
+        "details": exception.details,
     }
+
 
 def format_http_exception(exception: HTTPException) -> Dict[str, Any]:
     """Format standard HTTP exception"""
@@ -119,8 +112,9 @@ def format_http_exception(exception: HTTPException) -> Dict[str, Any]:
         "error_code": "HTTP_ERROR",
         "message": exception.detail,
         "timestamp": datetime.utcnow().isoformat(),
-        "status_code": exception.status_code
+        "status_code": exception.status_code,
     }
+
 
 def format_validation_error(errors: list) -> Dict[str, Any]:
     """Format pydantic validation error"""
@@ -134,25 +128,20 @@ def format_validation_error(errors: list) -> Dict[str, Any]:
                 {
                     "field": ".".join(str(loc) for loc in error["loc"]),
                     "message": error["msg"],
-                    "type": error["type"]
+                    "type": error["type"],
                 }
                 for error in errors
             ]
-        }
+        },
     }
+
 
 # Success response format
 def format_success_response(
-    data: Any = None,
-    message: str = "Thanh cong",
-    meta: Dict[str, Any] = None
+    data: Any = None, message: str = "Thanh cong", meta: Dict[str, Any] = None
 ) -> Dict[str, Any]:
     """Format success response"""
-    response = {
-        "success": True,
-        "message": message,
-        "timestamp": datetime.utcnow().isoformat()
-    }
+    response = {"success": True, "message": message, "timestamp": datetime.utcnow().isoformat()}
 
     if data is not None:
         response["data"] = data

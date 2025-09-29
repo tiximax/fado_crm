@@ -29,6 +29,7 @@ FADO CRM API is a comprehensive RESTful API built with FastAPI for managing cros
 7. [Dashboard & Statistics](#dashboard--statistics)
 8. [Data Models](#data-models)
 9. [Response Formats](#response-formats)
+10. [Performance Monitoring](#performance-monitoring)
 
 ---
 
@@ -519,6 +520,93 @@ HUY = "Hủy"                      # Cancelled
   "success": true
 }
 ```
+
+---
+
+## 📈 Performance Monitoring
+
+- Base path: `/performance`
+- Yêu cầu bảo mật:
+  - Public: `GET /performance/health`, `GET /performance/metrics`
+  - Admin: `GET /performance/database/stats`, `GET /performance/database/indexes`, `GET /performance/database/slow-queries`, `GET /performance/database/optimize`, `POST /performance/cache/clear`
+
+### Endpoints
+
+- GET `/performance/health`
+  - Mô tả: Kiểm tra nhanh tình trạng hệ thống (DB, cache)
+  - Phản hồi mẫu:
+  ```json
+  {
+    "overall_status": "healthy",
+    "services": {
+      "database": { "status": "healthy", "response_time_ms": 5.12 },
+      "cache": { "status": "disabled" }
+    },
+    "timestamp": 1695888888.123
+  }
+  ```
+
+- GET `/performance/metrics`
+  - Mô tả: Xuất Prometheus metrics (text/plain)
+  - Lưu ý: Nếu Prometheus không khả dụng, trả về dòng thông báo dạng `# metrics unavailable: ...`
+
+- GET `/performance/database/stats` (Admin)
+  - Mô tả: Thống kê hiệu năng truy vấn, pool kết nối, cache và hệ thống
+  - Phản hồi mẫu (rút gọn):
+  ```json
+  {
+    "query_performance": {
+      "dashboard_stats": { "count": 10, "avg_time": 0.02 }
+    },
+    "connection_pool": { "pool_size": 5, "checked_in": 5, "checked_out": 0, "overflow": 0 },
+    "cache_stats": { "connected_clients": 0 },
+    "system_performance": { "cpu_percent": 12.5 },
+    "timestamp": 1695888888.456
+  }
+  ```
+
+- GET `/performance/database/indexes` (Admin)
+  - Mô tả: Danh sách index theo bảng (SQLite dùng PRAGMA index_list/index_info)
+  - Phản hồi mẫu:
+  ```json
+  {
+    "khach_hang": [
+      { "name": "idx_khach_hang_search", "columns": ["ho_ten", "email"], "is_unique": false, "is_auto": false }
+    ]
+  }
+  ```
+
+- GET `/performance/database/slow-queries` (Admin)
+  - Mô tả: Mô phỏng phát hiện truy vấn chậm (dev với SQLite); trên PostgreSQL nên dùng `pg_stat_statements`
+
+- GET `/performance/database/optimize` (Admin)
+  - Mô tả: Chạy ANALYZE, VACUUM (SQLite), integrity_check và ước lượng kích thước DB
+  - Phản hồi mẫu:
+  ```json
+  {
+    "optimization_completed": true,
+    "results": {
+      "analyze_time": 0.02,
+      "vacuum_time": 0.10,
+      "integrity_check": { "status": "ok" },
+      "database_size_mb": 12.34
+    },
+    "timestamp": 1695888888.789
+  }
+  ```
+
+- POST `/performance/cache/clear` (Admin)
+  - Body (tuỳ chọn):
+  ```json
+  { "pattern": "customers" }
+  ```
+  - Mô tả: Xoá cache (toàn bộ hoặc theo pattern)
+
+### Gợi ý triển khai Production
+- Dev: SQLite; Prod: PostgreSQL + QueuePool
+- Cache qua Redis: đặt `REDIS_URL`, bật `ENABLE_QUERY_CACHE=true`
+- Tinh chỉnh pool: `DB_POOL_SIZE`, `DB_MAX_OVERFLOW`, `DB_POOL_TIMEOUT`
+- Bật log truy vấn chậm, gắn Prometheus vào middleware/DB để theo dõi chi tiết
 
 ---
 

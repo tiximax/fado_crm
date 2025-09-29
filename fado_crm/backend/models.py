@@ -1,11 +1,12 @@
 # FADO.VN CRM - Database Models
-from sqlalchemy import Column, Integer, String, DateTime, Float, Text, ForeignKey, Boolean, Enum
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from datetime import datetime
 import enum
+from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Enum, Float, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
+
 
 # Enum for order status
 class TrangThaiDonHang(enum.Enum):
@@ -17,11 +18,13 @@ class TrangThaiDonHang(enum.Enum):
     DA_NHAN = "da_nhan"
     HUY = "huy"
 
+
 class LoaiKhachHang(enum.Enum):
     MOI = "moi"
     THAN_THIET = "than_thiet"
     VIP = "vip"
     BLACKLIST = "blacklist"
+
 
 # Enum for user roles
 class VaiTro(enum.Enum):
@@ -29,6 +32,7 @@ class VaiTro(enum.Enum):
     MANAGER = "manager"
     STAFF = "staff"
     VIEWER = "viewer"
+
 
 # Customer Model
 class KhachHang(Base):
@@ -47,6 +51,7 @@ class KhachHang(Base):
 
     # Relationships
     don_hang_list = relationship("DonHang", back_populates="khach_hang")
+
 
 # Product Model
 class SanPham(Base):
@@ -68,6 +73,7 @@ class SanPham(Base):
 
     # Relationships
     chi_tiet_don_hang = relationship("ChiTietDonHang", back_populates="san_pham")
+
 
 # Order Model
 class DonHang(Base):
@@ -99,6 +105,7 @@ class DonHang(Base):
     khach_hang = relationship("KhachHang", back_populates="don_hang_list")
     chi_tiet_list = relationship("ChiTietDonHang", back_populates="don_hang")
 
+
 # Order Detail Model
 class ChiTietDonHang(Base):
     __tablename__ = "chi_tiet_don_hang"
@@ -113,6 +120,7 @@ class ChiTietDonHang(Base):
     # Relationships
     don_hang = relationship("DonHang", back_populates="chi_tiet_list")
     san_pham = relationship("SanPham", back_populates="chi_tiet_don_hang")
+
 
 # Contact History Model
 class LichSuLienHe(Base):
@@ -129,6 +137,7 @@ class LichSuLienHe(Base):
     # Relationships
     khach_hang = relationship("KhachHang")
 
+
 # User Model
 class NguoiDung(Base):
     __tablename__ = "nguoi_dung"
@@ -144,6 +153,7 @@ class NguoiDung(Base):
     so_dien_thoai = Column(String(20))
     ghi_chu = Column(Text)
 
+
 # Audit Log
 class AuditLog(Base):
     __tablename__ = "audit_log"
@@ -158,6 +168,7 @@ class AuditLog(Base):
     details = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+
 # System Settings
 class SystemSetting(Base):
     __tablename__ = "system_setting"
@@ -167,12 +178,14 @@ class SystemSetting(Base):
     description = Column(String(255))
     updated_at = Column(DateTime, default=datetime.utcnow)
 
+
 # Payment Status
 class PaymentStatus(enum.Enum):
     PENDING = "pending"
     SUCCESS = "success"
     FAILED = "failed"
     REFUNDED = "refunded"
+
 
 # Payment Transactions
 class PaymentTransaction(Base):

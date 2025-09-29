@@ -4,14 +4,15 @@ Basic FADO CRM Server - Minimal version that works
 """
 
 import os
-import sys
 import subprocess
+import sys
 from pathlib import Path
 
+
 def main():
-    print("="*50)
+    print("=" * 50)
     print("FADO CRM - BASIC SERVER")
-    print("="*50)
+    print("=" * 50)
 
     # Check if backend directory exists
     backend_dir = Path("backend")
@@ -60,7 +61,17 @@ if __name__ == "__main__":
             f.write(minimal_main)
 
         # Start the server
-        cmd = [sys.executable, "-m", "uvicorn", "minimal_main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+        cmd = [
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "minimal_main:app",
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "8000",
+            "--reload",
+        ]
         print("Command:", " ".join(cmd))
         print("\nStarting server...")
         print("Backend API will be at: http://localhost:8000")
@@ -76,6 +87,7 @@ if __name__ == "__main__":
         print(f"ERROR: {e}")
     finally:
         os.chdir(original_dir)
+
 
 if __name__ == "__main__":
     main()

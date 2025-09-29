@@ -4,16 +4,18 @@
 # Script này sẽ khởi động server một cách ngầu và professional! ⚡
 
 import os
-import sys
-import subprocess
 import platform
+import subprocess
+import sys
 from pathlib import Path
 
 # Set encoding for Windows console
-if sys.platform == 'win32':
+if sys.platform == "win32":
     import codecs
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.detach())
-    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.detach())
+
+    sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
+    sys.stderr = codecs.getwriter("utf-8")(sys.stderr.detach())
+
 
 def print_banner():
     """In banner khi khoi dong!"""
@@ -28,6 +30,7 @@ def print_banner():
     """
     print(banner)
 
+
 def check_python_version():
     """Kiem tra phien ban Python"""
     if sys.version_info < (3, 8):
@@ -37,15 +40,19 @@ def check_python_version():
     else:
         print(f"OK: Python version: {sys.version}")
 
+
 def check_virtual_environment():
     """🏠 Kiểm tra virtual environment"""
-    if hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
+    if hasattr(sys, "real_prefix") or (
+        hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix
+    ):
         print("✅ Đang chạy trong virtual environment")
         return True
     else:
         print("⚠️  Không phát hiện virtual environment!")
         print("💡 Khuyến nghị tạo venv: python -m venv venv")
         return False
+
 
 def install_requirements():
     """📦 Cài đặt dependencies"""
@@ -57,14 +64,15 @@ def install_requirements():
 
     print("📦 Cài đặt dependencies...")
     try:
-        subprocess.run([
-            sys.executable, "-m", "pip", "install", "-r", str(requirements_file)
-        ], check=True)
+        subprocess.run(
+            [sys.executable, "-m", "pip", "install", "-r", str(requirements_file)], check=True
+        )
         print("✅ Cài đặt dependencies thành công!")
         return True
     except subprocess.CalledProcessError:
         print("❌ Lỗi khi cài đặt dependencies!")
         return False
+
 
 def setup_database():
     """🗄️ Thiết lập database"""
@@ -81,8 +89,9 @@ def setup_database():
 
     try:
         # Import và chạy database setup
-        sys.path.insert(0, '.')
+        sys.path.insert(0, ".")
         from database import create_tables
+
         create_tables()
         print("✅ Database đã được thiết lập!")
         return True
@@ -91,8 +100,9 @@ def setup_database():
         return False
     finally:
         os.chdir(original_dir)
-        if '.' in sys.path:
-            sys.path.remove('.')
+        if "." in sys.path:
+            sys.path.remove(".")
+
 
 def start_backend_server():
     """🖥️ Khởi động backend server"""
@@ -106,12 +116,17 @@ def start_backend_server():
     try:
         # Chạy uvicorn server with fixed main
         cmd = [
-            sys.executable, "-m", "uvicorn",
+            sys.executable,
+            "-m",
+            "uvicorn",
             "main_fixed:app",
-            "--host", "0.0.0.0",
-            "--port", "8000",
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "8000",
             "--reload",
-            "--reload-dir", "."
+            "--reload-dir",
+            ".",
         ]
 
         process = subprocess.Popen(
@@ -121,7 +136,7 @@ def start_backend_server():
             stderr=subprocess.STDOUT,
             text=True,
             bufsize=1,
-            universal_newlines=True
+            universal_newlines=True,
         )
 
         print("✅ Backend server đang chạy tại: http://localhost:8000")
@@ -133,6 +148,7 @@ def start_backend_server():
     except Exception as e:
         print(f"❌ Lỗi khởi động backend: {e}")
         return None
+
 
 def open_frontend():
     """🌐 Mở frontend trong browser"""
@@ -160,6 +176,7 @@ def open_frontend():
     except Exception as e:
         print(f"⚠️ Không thể mở browser tự động: {e}")
         print(f"💡 Mở thủ công: {frontend_url}")
+
 
 def main():
     """🎯 Hàm chính - Main entry point"""
@@ -196,14 +213,14 @@ def main():
     open_frontend()
 
     # 7. Hướng dẫn sử dụng
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("🎉 FADO CRM ĐÃ SẴN SÀNG!")
-    print("="*50)
+    print("=" * 50)
     print("🖥️  Backend API: http://localhost:8000")
     print("📚 API Docs: http://localhost:8000/docs")
     print("🌐 Frontend: Đã mở trong browser")
     print("\n⌨️  Nhấn Ctrl+C để dừng server")
-    print("="*50)
+    print("=" * 50)
 
     try:
         # Đợi user dừng server
@@ -218,6 +235,7 @@ def main():
 
         print("✅ Server đã dừng!")
         print("👋 Cảm ơn bạn đã sử dụng FADO CRM!")
+
 
 if __name__ == "__main__":
     main()

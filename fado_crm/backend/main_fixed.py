@@ -1,39 +1,45 @@
 # -*- coding: utf-8 -*-
 # FADO CRM - FastAPI Backend Sieu Toc! (Fixed Version)
 
-from fastapi import FastAPI, Depends, HTTPException, Query, Request
+import hashlib
+import hmac
+import os
+import urllib.parse
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy.orm import Session
-from sqlalchemy import func, text
-from typing import List, Optional, Dict, Any
-from datetime import datetime
 from pydantic import BaseModel
-import os
-import hmac
-import hashlib
-import urllib.parse
+from sqlalchemy import func, text
+from sqlalchemy.orm import Session
 
 EXCLUDED_FIELDS = {"vnp_SecureHash", "vnp_SecureHashType"}
+
 
 def _sorted_query_string(params: Dict[str, Any]) -> str:
     items = [(k, v) for k, v in params.items() if k not in EXCLUDED_FIELDS and v is not None]
     items.sort(key=lambda kv: kv[0])
     return "&".join(f"{k}={urllib.parse.quote_plus(str(v))}" for k, v in items)
 
+
 def _sign_params(params: Dict[str, Any], secret: str) -> str:
     data = _sorted_query_string(params)
     h = hmac.new(secret.encode("utf-8"), data.encode("utf-8"), hashlib.sha512)
     return h.hexdigest()
 
+
 # Import core modules
-from database import get_db, create_tables
-from models import KhachHang, SanPham, DonHang, TrangThaiDonHang, LoaiKhachHang
+from database import create_tables, get_db
+from models import DonHang, KhachHang, LoaiKhachHang, SanPham, TrangThaiDonHang
+
 
 # Simple response models
 class MessageResponse(BaseModel):
     message: str
     success: bool
+
 
 class ThongKeResponse(BaseModel):
     tong_khach_hang: int
@@ -42,11 +48,18 @@ class ThongKeResponse(BaseModel):
     don_cho_xu_ly: int
     khach_moi_thang: int
 
+
 # Simple logger
 class SimpleLogger:
-    def info(self, msg): print(f"INFO: {msg}")
-    def error(self, msg): print(f"ERROR: {msg}")
-    def warning(self, msg): print(f"WARNING: {msg}")
+    def info(self, msg):
+        print(f"INFO: {msg}")
+
+    def error(self, msg):
+        print(f"ERROR: {msg}")
+
+    def warning(self, msg):
+        print(f"WARNING: {msg}")
+
 
 app_logger = SimpleLogger()
 
@@ -56,7 +69,7 @@ app = FastAPI(
     description="API CRM cho nganh mua ho - Fixed Version",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
 )
 
 # CORS
@@ -72,6 +85,7 @@ app.add_middleware(
 os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
+
 # Startup event
 @app.on_event("startup")
 async def startup_event():
@@ -84,14 +98,15 @@ async def startup_event():
         app_logger.error(f"Failed to start API: {str(e)}")
         raise
 
+
 # Root endpoint
 @app.get("/", response_model=MessageResponse)
 async def root():
     """Endpoint chao mung - Hello World phien ban sieu xin!"""
     return MessageResponse(
-        message="Chao mung den voi FADO.VN CRM API! San sang phuc vu!",
-        success=True
+        message="Chao mung den voi FADO.VN CRM API! San sang phuc vu!", success=True
     )
+
 
 # Health check endpoint
 @app.get("/health")
@@ -100,6 +115,7 @@ async def health_check():
     db_error = None
     try:
         from database import engine
+
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
         db_ok = True
@@ -109,8 +125,9 @@ async def health_check():
     return {
         "status": "ok" if db_ok else "degraded",
         "database": "ok" if db_ok else {"status": "error", "error": db_error},
-        "version": "1.0.0"
+        "version": "1.0.0",
     }
+
 
 # Payments: VNPay return & webhook (minimal handlers for E2E tests)
 @app.get("/payments/return")
@@ -132,12 +149,15 @@ async def vnpay_return(request: Request):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Loi xu ly return: {e}")
 
+
 @app.post("/payments/webhook")
 async def vnpay_webhook(payload: Dict[str, Any], request: Request):
     # VNPay may send form-encoded or JSON
     try:
         data: Dict[str, Any] = payload or {}
-        if not data and request.headers.get("content-type", "").startswith("application/x-www-form-urlencoded"):
+        if not data and request.headers.get("content-type", "").startswith(
+            "application/x-www-form-urlencoded"
+        ):
             form = await request.form()
             data = dict(form)
         secret = os.getenv("VNPAY_HASH_SECRET", "secret")
@@ -152,6 +172,7 @@ async def vnpay_webhook(payload: Dict[str, Any], request: Request):
         # Return VNPay expected error format
         return {"RspCode": "99", "Message": f"system error: {e}"}
 
+
 # Dashboard/Thong ke tong quan
 @app.get("/dashboard", response_model=ThongKeResponse)
 async def get_dashboard(db: Session = Depends(get_db)):
@@ -164,32 +185,39 @@ async def get_dashboard(db: Session = Depends(get_db)):
     tong_don_hang = db.query(DonHang).count()
 
     # Doanh thu thang nay
-    doanh_thu_thang = db.query(func.sum(DonHang.tong_tien)).filter(
-        DonHang.ngay_tao >= start_of_month,
-        DonHang.trang_thai != TrangThaiDonHang.HUY
-    ).scalar() or 0.0
+    doanh_thu_thang = (
+        db.query(func.sum(DonHang.tong_tien))
+        .filter(DonHang.ngay_tao >= start_of_month, DonHang.trang_thai != TrangThaiDonHang.HUY)
+        .scalar()
+        or 0.0
+    )
 
     # Don cho xu ly
-    don_cho_xu_ly = db.query(DonHang).filter(
-        DonHang.trang_thai.in_([
-            TrangThaiDonHang.CHO_XAC_NHAN,
-            TrangThaiDonHang.DA_XAC_NHAN,
-            TrangThaiDonHang.DANG_MUA
-        ])
-    ).count()
+    don_cho_xu_ly = (
+        db.query(DonHang)
+        .filter(
+            DonHang.trang_thai.in_(
+                [
+                    TrangThaiDonHang.CHO_XAC_NHAN,
+                    TrangThaiDonHang.DA_XAC_NHAN,
+                    TrangThaiDonHang.DANG_MUA,
+                ]
+            )
+        )
+        .count()
+    )
 
     # Khach moi thang nay
-    khach_moi_thang = db.query(KhachHang).filter(
-        KhachHang.ngay_tao >= start_of_month
-    ).count()
+    khach_moi_thang = db.query(KhachHang).filter(KhachHang.ngay_tao >= start_of_month).count()
 
     return ThongKeResponse(
         tong_khach_hang=tong_khach_hang,
         tong_don_hang=tong_don_hang,
         doanh_thu_thang=doanh_thu_thang,
         don_cho_xu_ly=don_cho_xu_ly,
-        khach_moi_thang=khach_moi_thang
+        khach_moi_thang=khach_moi_thang,
     )
+
 
 # KHACH HANG ENDPOINTS
 @app.get("/khach-hang/")
@@ -197,16 +225,16 @@ async def get_khach_hang_list(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
     search: Optional[str] = Query(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """Lay danh sach khach hang"""
     query = db.query(KhachHang)
 
     if search:
         query = query.filter(
-            (KhachHang.ho_ten.contains(search)) |
-            (KhachHang.email.contains(search)) |
-            (KhachHang.so_dien_thoai.contains(search))
+            (KhachHang.ho_ten.contains(search))
+            | (KhachHang.email.contains(search))
+            | (KhachHang.so_dien_thoai.contains(search))
         )
 
     khach_hang_list = query.offset(skip).limit(limit).all()
@@ -214,17 +242,20 @@ async def get_khach_hang_list(
     # Convert to dict for JSON response
     result = []
     for kh in khach_hang_list:
-        result.append({
-            "id": kh.id,
-            "ho_ten": kh.ho_ten,
-            "email": kh.email,
-            "so_dien_thoai": kh.so_dien_thoai,
-            "dia_chi": kh.dia_chi,
-            "loai": kh.loai.value if kh.loai else None,
-            "ngay_tao": kh.ngay_tao.isoformat() if kh.ngay_tao else None
-        })
+        result.append(
+            {
+                "id": kh.id,
+                "ho_ten": kh.ho_ten,
+                "email": kh.email,
+                "so_dien_thoai": kh.so_dien_thoai,
+                "dia_chi": kh.dia_chi,
+                "loai": kh.loai.value if kh.loai else None,
+                "ngay_tao": kh.ngay_tao.isoformat() if kh.ngay_tao else None,
+            }
+        )
 
     return {"data": result, "total": len(result)}
+
 
 @app.get("/khach-hang/{khach_hang_id}")
 async def get_khach_hang(khach_hang_id: int, db: Session = Depends(get_db)):
@@ -240,8 +271,9 @@ async def get_khach_hang(khach_hang_id: int, db: Session = Depends(get_db)):
         "so_dien_thoai": khach_hang.so_dien_thoai,
         "dia_chi": khach_hang.dia_chi,
         "loai": khach_hang.loai.value if khach_hang.loai else None,
-        "ngay_tao": khach_hang.ngay_tao.isoformat() if khach_hang.ngay_tao else None
+        "ngay_tao": khach_hang.ngay_tao.isoformat() if khach_hang.ngay_tao else None,
     }
+
 
 # SAN PHAM ENDPOINTS
 @app.get("/san-pham/")
@@ -249,7 +281,7 @@ async def get_san_pham_list(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
     search: Optional[str] = Query(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """Lay danh sach san pham"""
     query = db.query(SanPham)
@@ -261,17 +293,20 @@ async def get_san_pham_list(
 
     result = []
     for sp in san_pham_list:
-        result.append({
-            "id": sp.id,
-            "ten": sp.ten,
-            "mo_ta": sp.mo_ta,
-            "gia_goc": float(sp.gia_goc) if sp.gia_goc else None,
-            "gia_ban": float(sp.gia_ban) if sp.gia_ban else None,
-            "danh_muc": sp.danh_muc,
-            "ngay_tao": sp.ngay_tao.isoformat() if sp.ngay_tao else None
-        })
+        result.append(
+            {
+                "id": sp.id,
+                "ten": sp.ten,
+                "mo_ta": sp.mo_ta,
+                "gia_goc": float(sp.gia_goc) if sp.gia_goc else None,
+                "gia_ban": float(sp.gia_ban) if sp.gia_ban else None,
+                "danh_muc": sp.danh_muc,
+                "ngay_tao": sp.ngay_tao.isoformat() if sp.ngay_tao else None,
+            }
+        )
 
     return {"data": result, "total": len(result)}
+
 
 # DON HANG ENDPOINTS
 @app.get("/don-hang/")
@@ -279,7 +314,7 @@ async def get_don_hang_list(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
     trang_thai: Optional[str] = Query(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """Lay danh sach don hang"""
     query = db.query(DonHang)
@@ -295,17 +330,20 @@ async def get_don_hang_list(
 
     result = []
     for dh in don_hang_list:
-        result.append({
-            "id": dh.id,
-            "ma_don_hang": dh.ma_don_hang,
-            "khach_hang_id": dh.khach_hang_id,
-            "tong_tien": float(dh.tong_tien) if dh.tong_tien else None,
-            "trang_thai": dh.trang_thai.value if dh.trang_thai else None,
-            "ghi_chu": dh.ghi_chu,
-            "ngay_tao": dh.ngay_tao.isoformat() if dh.ngay_tao else None
-        })
+        result.append(
+            {
+                "id": dh.id,
+                "ma_don_hang": dh.ma_don_hang,
+                "khach_hang_id": dh.khach_hang_id,
+                "tong_tien": float(dh.tong_tien) if dh.tong_tien else None,
+                "trang_thai": dh.trang_thai.value if dh.trang_thai else None,
+                "ghi_chu": dh.ghi_chu,
+                "ngay_tao": dh.ngay_tao.isoformat() if dh.ngay_tao else None,
+            }
+        )
 
     return {"data": result, "total": len(result)}
+
 
 @app.get("/don-hang/{don_hang_id}")
 async def get_don_hang(don_hang_id: int, db: Session = Depends(get_db)):
@@ -321,19 +359,22 @@ async def get_don_hang(don_hang_id: int, db: Session = Depends(get_db)):
         "tong_tien": float(don_hang.tong_tien) if don_hang.tong_tien else None,
         "trang_thai": don_hang.trang_thai.value if don_hang.trang_thai else None,
         "ghi_chu": don_hang.ghi_chu,
-        "ngay_tao": don_hang.ngay_tao.isoformat() if don_hang.ngay_tao else None
+        "ngay_tao": don_hang.ngay_tao.isoformat() if don_hang.ngay_tao else None,
     }
+
 
 # AUTH ENDPOINTS - Simple authentication
 class LoginRequest(BaseModel):
     email: str
     password: str
 
+
 class LoginResponse(BaseModel):
     success: bool
     message: str
     token: str = None
     user: dict = None
+
 
 @app.post("/auth/login", response_model=LoginResponse)
 async def login(login_data: LoginRequest):
@@ -344,30 +385,23 @@ async def login(login_data: LoginRequest):
             success=True,
             message="Đăng nhập thành công!",
             token="demo-jwt-token-123",
-            user={
-                "id": 1,
-                "email": "admin@fado.vn",
-                "ho_ten": "Admin FADO",
-                "vai_tro": "admin"
-            }
+            user={"id": 1, "email": "admin@fado.vn", "ho_ten": "Admin FADO", "vai_tro": "admin"},
         )
     else:
         raise HTTPException(status_code=401, detail="Email hoặc mật khẩu không chính xác")
 
+
 @app.get("/auth/me")
 async def get_current_user():
     """Get current user info"""
-    return {
-        "id": 1,
-        "email": "admin@fado.vn",
-        "ho_ten": "Admin FADO",
-        "vai_tro": "admin"
-    }
+    return {"id": 1, "email": "admin@fado.vn", "ho_ten": "Admin FADO", "vai_tro": "admin"}
+
 
 @app.post("/auth/logout")
 async def logout():
     """Logout endpoint"""
     return {"success": True, "message": "Đăng xuất thành công"}
+
 
 # Test endpoints for basic functionality
 @app.get("/test/status")
@@ -376,9 +410,11 @@ async def test_status():
     return {
         "status": "FADO CRM API is running!",
         "timestamp": datetime.utcnow().isoformat(),
-        "version": "1.0.0-fixed"
+        "version": "1.0.0-fixed",
     }
+
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="127.0.0.1", port=8000)

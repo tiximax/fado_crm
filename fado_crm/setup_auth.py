@@ -2,8 +2,9 @@
 # Script setup hệ thống xác thực Phase 2! 🔐
 
 import os
-import sys
 import subprocess
+import sys
+
 
 def main():
     print("🚀 FADO CRM - Setup Authentication System Phase 2")
@@ -12,7 +13,9 @@ def main():
     # Install additional dependencies
     print("📦 Cài đặt dependencies bổ sung...")
     try:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "python-jose[cryptography]==3.3.0"])
+        subprocess.check_call(
+            [sys.executable, "-m", "pip", "install", "python-jose[cryptography]==3.3.0"]
+        )
         subprocess.check_call([sys.executable, "-m", "pip", "install", "passlib[bcrypt]==1.7.4"])
         print("✅ Dependencies đã được cài đặt!")
     except subprocess.CalledProcessError:
@@ -31,8 +34,10 @@ def main():
     print("🗄️  Tạo database tables...")
     try:
         import sys
+
         sys.path.append(os.getcwd())
         from database import create_tables
+
         create_tables()
         print("✅ Database tables đã được tạo!")
     except Exception as e:
@@ -65,11 +70,24 @@ def main():
 
     try:
         print("\n⚡ Starting server...")
-        subprocess.check_call([sys.executable, "-m", "uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"])
+        subprocess.check_call(
+            [
+                sys.executable,
+                "-m",
+                "uvicorn",
+                "main:app",
+                "--reload",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8000",
+            ]
+        )
     except KeyboardInterrupt:
         print("\n👋 Server đã dừng!")
     except Exception as e:
         print(f"❌ Lỗi khởi động server: {str(e)}")
+
 
 if __name__ == "__main__":
     main()

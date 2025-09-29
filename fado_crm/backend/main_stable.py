@@ -3,22 +3,24 @@ FADO CRM - Stable Production Version
 Core functionality only với minimal dependencies
 """
 
-from fastapi import FastAPI, HTTPException, Depends
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Boolean, Text
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
-from pydantic import BaseModel
+import os
 from datetime import datetime
 from typing import List, Optional
-import os
+
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, Text, create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import Session, sessionmaker
 
 # Database setup
 DATABASE_URL = "sqlite:///./fado_crm_stable.db"
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
 
 # Models
 class Customer(Base):
@@ -32,6 +34,7 @@ class Customer(Base):
     loai_khach_hang = Column(String(20), default="Mới")
     ngay_tao = Column(DateTime, default=datetime.now)
     trang_thai = Column(Boolean, default=True)
+
 
 class Product(Base):
     __tablename__ = "products"
@@ -48,6 +51,7 @@ class Product(Base):
     ngay_tao = Column(DateTime, default=datetime.now)
     trang_thai = Column(Boolean, default=True)
 
+
 class Order(Base):
     __tablename__ = "orders"
 
@@ -59,8 +63,10 @@ class Order(Base):
     ngay_tao = Column(DateTime, default=datetime.now)
     ghi_chu = Column(Text)
 
+
 # Create tables
 Base.metadata.create_all(bind=engine)
+
 
 # Pydantic schemas
 class CustomerCreate(BaseModel):
@@ -68,6 +74,7 @@ class CustomerCreate(BaseModel):
     email: str
     so_dien_thoai: Optional[str] = None
     dia_chi: Optional[str] = None
+
 
 class CustomerResponse(BaseModel):
     id: int
@@ -79,6 +86,7 @@ class CustomerResponse(BaseModel):
     ngay_tao: datetime
     trang_thai: bool
 
+
 class ProductCreate(BaseModel):
     ten_san_pham: str
     mo_ta: Optional[str] = None
@@ -87,6 +95,7 @@ class ProductCreate(BaseModel):
     danh_muc: Optional[str] = None
     xuat_xu: Optional[str] = None
     link_goc: Optional[str] = None
+
 
 class ProductResponse(BaseModel):
     id: int
@@ -101,10 +110,12 @@ class ProductResponse(BaseModel):
     ngay_tao: datetime
     trang_thai: bool
 
+
 class OrderCreate(BaseModel):
     khach_hang_id: int
     tong_tien: float = 0
     ghi_chu: Optional[str] = None
+
 
 class OrderResponse(BaseModel):
     id: int
@@ -115,11 +126,12 @@ class OrderResponse(BaseModel):
     ngay_tao: datetime
     ghi_chu: Optional[str]
 
+
 # FastAPI app
 app = FastAPI(
     title="FADO CRM - Stable Version",
     description="Production-ready core CRM functionality",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # CORS
@@ -135,6 +147,7 @@ app.add_middleware(
 if os.path.exists("uploads"):
     app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
+
 # Database dependency
 def get_db():
     db = SessionLocal()
@@ -143,23 +156,18 @@ def get_db():
     finally:
         db.close()
 
+
 # Root endpoint
 @app.get("/")
 async def root():
-    return {
-        "message": "FADO CRM Stable Version",
-        "status": "running",
-        "version": "1.0.0"
-    }
+    return {"message": "FADO CRM Stable Version", "status": "running", "version": "1.0.0"}
+
 
 # Health check
 @app.get("/health")
 async def health_check():
-    return {
-        "status": "healthy",
-        "timestamp": datetime.now().isoformat(),
-        "database": "connected"
-    }
+    return {"status": "healthy", "timestamp": datetime.now().isoformat(), "database": "connected"}
+
 
 # Dashboard stats
 @app.get("/api/dashboard/stats")
@@ -173,16 +181,20 @@ async def dashboard_stats(db: Session = Depends(get_db)):
             "customers": customer_count,
             "products": product_count,
             "orders": order_count,
-            "revenue": db.query(Order).count() * 1000  # Mock revenue
+            "revenue": db.query(Order).count() * 1000,  # Mock revenue
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
+
 # Customer endpoints
 @app.get("/api/customers", response_model=List[CustomerResponse])
 async def get_customers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    customers = db.query(Customer).filter(Customer.trang_thai == True).offset(skip).limit(limit).all()
+    customers = (
+        db.query(Customer).filter(Customer.trang_thai == True).offset(skip).limit(limit).all()
+    )
     return customers
+
 
 @app.post("/api/customers", response_model=CustomerResponse)
 async def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
@@ -192,6 +204,7 @@ async def create_customer(customer: CustomerCreate, db: Session = Depends(get_db
     db.refresh(db_customer)
     return db_customer
 
+
 @app.get("/api/customers/{customer_id}", response_model=CustomerResponse)
 async def get_customer(customer_id: int, db: Session = Depends(get_db)):
     customer = db.query(Customer).filter(Customer.id == customer_id).first()
@@ -199,8 +212,11 @@ async def get_customer(customer_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Customer not found")
     return customer
 
+
 @app.put("/api/customers/{customer_id}", response_model=CustomerResponse)
-async def update_customer(customer_id: int, customer: CustomerCreate, db: Session = Depends(get_db)):
+async def update_customer(
+    customer_id: int, customer: CustomerCreate, db: Session = Depends(get_db)
+):
     db_customer = db.query(Customer).filter(Customer.id == customer_id).first()
     if not db_customer:
         raise HTTPException(status_code=404, detail="Customer not found")
@@ -212,6 +228,7 @@ async def update_customer(customer_id: int, customer: CustomerCreate, db: Sessio
     db.refresh(db_customer)
     return db_customer
 
+
 @app.delete("/api/customers/{customer_id}")
 async def delete_customer(customer_id: int, db: Session = Depends(get_db)):
     customer = db.query(Customer).filter(Customer.id == customer_id).first()
@@ -222,11 +239,13 @@ async def delete_customer(customer_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Customer deleted successfully"}
 
+
 # Product endpoints
 @app.get("/api/products", response_model=List[ProductResponse])
 async def get_products(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     products = db.query(Product).filter(Product.trang_thai == True).offset(skip).limit(limit).all()
     return products
+
 
 @app.post("/api/products", response_model=ProductResponse)
 async def create_product(product: ProductCreate, db: Session = Depends(get_db)):
@@ -236,12 +255,14 @@ async def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     db.refresh(db_product)
     return db_product
 
+
 @app.get("/api/products/{product_id}", response_model=ProductResponse)
 async def get_product(product_id: int, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
+
 
 @app.put("/api/products/{product_id}", response_model=ProductResponse)
 async def update_product(product_id: int, product: ProductCreate, db: Session = Depends(get_db)):
@@ -256,6 +277,7 @@ async def update_product(product_id: int, product: ProductCreate, db: Session = 
     db.refresh(db_product)
     return db_product
 
+
 @app.delete("/api/products/{product_id}")
 async def delete_product(product_id: int, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.id == product_id).first()
@@ -266,11 +288,13 @@ async def delete_product(product_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Product deleted successfully"}
 
+
 # Order endpoints
 @app.get("/api/orders", response_model=List[OrderResponse])
 async def get_orders(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     orders = db.query(Order).offset(skip).limit(limit).all()
     return orders
+
 
 @app.post("/api/orders", response_model=OrderResponse)
 async def create_order(order: OrderCreate, db: Session = Depends(get_db)):
@@ -284,12 +308,14 @@ async def create_order(order: OrderCreate, db: Session = Depends(get_db)):
     db.refresh(db_order)
     return db_order
 
+
 @app.get("/api/orders/{order_id}", response_model=OrderResponse)
 async def get_order(order_id: int, db: Session = Depends(get_db)):
     order = db.query(Order).filter(Order.id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     return order
+
 
 @app.put("/api/orders/{order_id}", response_model=OrderResponse)
 async def update_order(order_id: int, order: OrderCreate, db: Session = Depends(get_db)):
@@ -305,6 +331,7 @@ async def update_order(order_id: int, order: OrderCreate, db: Session = Depends(
     db.refresh(db_order)
     return db_order
 
+
 @app.delete("/api/orders/{order_id}")
 async def delete_order(order_id: int, db: Session = Depends(get_db)):
     order = db.query(Order).filter(Order.id == order_id).first()
@@ -315,6 +342,7 @@ async def delete_order(order_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Order deleted successfully"}
 
+
 # Order status update
 @app.patch("/api/orders/{order_id}/status")
 async def update_order_status(order_id: int, status: str, db: Session = Depends(get_db)):
@@ -323,8 +351,13 @@ async def update_order_status(order_id: int, status: str, db: Session = Depends(
         raise HTTPException(status_code=404, detail="Order not found")
 
     valid_statuses = [
-        "Chờ xác nhận", "Đã xác nhận", "Đang mua",
-        "Đã mua", "Đang ship", "Đã nhận", "Hoàn thành"
+        "Chờ xác nhận",
+        "Đã xác nhận",
+        "Đang mua",
+        "Đã mua",
+        "Đang ship",
+        "Đã nhận",
+        "Hoàn thành",
     ]
 
     if status not in valid_statuses:
@@ -335,6 +368,8 @@ async def update_order_status(order_id: int, status: str, db: Session = Depends(
 
     return {"message": f"Order status updated to {status}"}
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
