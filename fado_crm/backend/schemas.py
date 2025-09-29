@@ -2,15 +2,18 @@
 # FADO CRM - Pydantic Schemas (Reconstructed Minimal)
 # Mục tiêu: cung cấp các model cần thiết để server hoạt động ổn định.
 
-from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, List
 from datetime import datetime
-from models import TrangThaiDonHang, LoaiKhachHang, VaiTro
+from typing import List, Optional
+
+from models import LoaiKhachHang, TrangThaiDonHang, VaiTro
+from pydantic import BaseModel, EmailStr, Field
+
 
 # Generic message
 class MessageResponse(BaseModel):
     message: str
     success: bool = True
+
 
 # Dashboard stats
 class ThongKeResponse(BaseModel):
@@ -19,6 +22,7 @@ class ThongKeResponse(BaseModel):
     doanh_thu_thang: float
     don_cho_xu_ly: int
     khach_moi_thang: int
+
 
 # User schemas
 class NguoiDung(BaseModel):
@@ -29,8 +33,10 @@ class NguoiDung(BaseModel):
     is_active: bool = True
     ngay_tao: datetime
     lan_dang_nhap_cuoi: Optional[datetime] = None
+
     class Config:
         from_attributes = True
+
 
 # Customer
 # Customer create/update
@@ -42,6 +48,7 @@ class KhachHangCreate(BaseModel):
     loai_khach: Optional[LoaiKhachHang] = None
     ghi_chu: Optional[str] = None
 
+
 class KhachHangUpdate(BaseModel):
     ho_ten: Optional[str] = None
     email: Optional[EmailStr] = None
@@ -49,6 +56,7 @@ class KhachHangUpdate(BaseModel):
     dia_chi: Optional[str] = None
     loai_khach: Optional[LoaiKhachHang] = None
     ghi_chu: Optional[str] = None
+
 
 class KhachHang(BaseModel):
     id: int
@@ -59,8 +67,10 @@ class KhachHang(BaseModel):
     tong_tien_da_mua: float = 0.0
     so_don_thanh_cong: int = 0
     ngay_tao: datetime
+
     class Config:
         from_attributes = True
+
 
 # Product create/update
 class SanPhamCreate(BaseModel):
@@ -75,6 +85,7 @@ class SanPhamCreate(BaseModel):
     danh_muc: Optional[str] = None
     quoc_gia_nguon: Optional[str] = None
 
+
 class SanPhamUpdate(BaseModel):
     ten_san_pham: Optional[str] = None
     link_goc: Optional[str] = None
@@ -87,6 +98,7 @@ class SanPhamUpdate(BaseModel):
     danh_muc: Optional[str] = None
     quoc_gia_nguon: Optional[str] = None
 
+
 # Product
 class SanPham(BaseModel):
     id: int
@@ -97,8 +109,10 @@ class SanPham(BaseModel):
     gia_ban: Optional[float] = None
     is_active: bool = True
     ngay_tao: datetime
+
     class Config:
         from_attributes = True
+
 
 # Order detail
 class ChiTietDonHang(BaseModel):
@@ -107,8 +121,10 @@ class ChiTietDonHang(BaseModel):
     san_pham: Optional[SanPham] = None
     so_luong: int
     gia_mua: Optional[float] = None
+
     class Config:
         from_attributes = True
+
 
 # Order create/update
 class DonHangCreate(BaseModel):
@@ -120,7 +136,8 @@ class DonHangCreate(BaseModel):
     ngay_giao_hang: Optional[datetime] = None
     ghi_chu_khach: Optional[str] = None
     ghi_chu_noi_bo: Optional[str] = None
-    chi_tiet_list: List['ChiTietDonHangCreate']
+    chi_tiet_list: List["ChiTietDonHangCreate"]
+
 
 class DonHangUpdate(BaseModel):
     trang_thai: Optional[TrangThaiDonHang] = None
@@ -131,6 +148,7 @@ class DonHangUpdate(BaseModel):
     ghi_chu_khach: Optional[str] = None
     ghi_chu_noi_bo: Optional[str] = None
     ma_van_don: Optional[str] = None
+
 
 # Order
 class DonHang(BaseModel):
@@ -143,8 +161,10 @@ class DonHang(BaseModel):
     ngay_cap_nhat: Optional[datetime] = None
     ma_van_don: Optional[str] = None
     chi_tiet_list: List[ChiTietDonHang] = []
+
     class Config:
         from_attributes = True
+
 
 # Contact history
 class LichSuLienHe(BaseModel):
@@ -155,13 +175,16 @@ class LichSuLienHe(BaseModel):
     nhan_vien_xu_ly: str
     ket_qua: Optional[str] = None
     ngay_lien_he: datetime
+
     class Config:
         from_attributes = True
+
 
 # Auth schemas
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
+
 
 class LoginResponse(BaseModel):
     access_token: str
@@ -170,17 +193,21 @@ class LoginResponse(BaseModel):
     expires_in: int
     user: NguoiDung
 
+
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
+
 
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     expires_in: int
 
+
 class ChangePasswordRequest(BaseModel):
     old_password: str
     new_password: str
+
 
 # System settings
 class SystemSetting(BaseModel):
@@ -188,17 +215,21 @@ class SystemSetting(BaseModel):
     value: str
     description: Optional[str] = None
     updated_at: datetime
+
     class Config:
         from_attributes = True
+
 
 # Payments
 class PaymentCreateRequest(BaseModel):
     order_id: int
 
+
 class PaymentCreateResponse(BaseModel):
     transaction_id: str
     txn_ref: str
     redirect_url: str
+
 
 # Audit log
 class AuditLog(BaseModel):
@@ -211,24 +242,29 @@ class AuditLog(BaseModel):
     user_agent: Optional[str] = None
     details: Optional[str] = None
     created_at: datetime
+
     class Config:
         from_attributes = True
+
 
 # Order management enhancements
 class OrderStatusUpdate(BaseModel):
     trang_thai: TrangThaiDonHang
     ghi_chu: Optional[str] = None
 
+
 # Backward-compat name used in some modules
 class TrangThaiUpdate(BaseModel):
     trang_thai: TrangThaiDonHang
     ghi_chu: Optional[str] = None
+
 
 class ChiTietDonHangCreate(BaseModel):
     san_pham_id: int
     so_luong: int
     gia_mua: Optional[float] = None
     ghi_chu: Optional[str] = None
+
 
 class OrderDetailsUpdate(BaseModel):
     chi_tiet_list: List[ChiTietDonHangCreate]

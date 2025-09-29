@@ -5,9 +5,10 @@ Guaranteed to work with minimal dependencies
 """
 
 import os
-import sys
 import subprocess
+import sys
 from pathlib import Path
+
 
 def print_banner():
     print("=" * 60)
@@ -19,18 +20,21 @@ def print_banner():
     print("✅ Error-free startup")
     print("=" * 60)
 
+
 def check_stable_requirements():
     """Check if stable requirements are installed"""
     try:
         import fastapi
-        import uvicorn
-        import sqlalchemy
         import pydantic
+        import sqlalchemy
+        import uvicorn
+
         print("✅ All stable requirements installed")
         return True
     except ImportError as e:
         print(f"❌ Missing requirement: {e}")
         return False
+
 
 def install_stable_requirements():
     """Install only stable requirements"""
@@ -42,14 +46,17 @@ def install_stable_requirements():
 
     print("📦 Installing stable requirements...")
     try:
-        subprocess.run([
-            sys.executable, "-m", "pip", "install", "-r", str(requirements_file)
-        ], check=True, capture_output=True)
+        subprocess.run(
+            [sys.executable, "-m", "pip", "install", "-r", str(requirements_file)],
+            check=True,
+            capture_output=True,
+        )
         print("✅ Stable requirements installed successfully!")
         return True
     except subprocess.CalledProcessError:
         print("❌ Failed to install requirements!")
         return False
+
 
 def setup_stable_database():
     """Setup stable database"""
@@ -75,6 +82,7 @@ def setup_stable_database():
     finally:
         os.chdir(original_dir)
 
+
 def start_stable_server():
     """Start the ultra-stable server"""
     backend_dir = Path("backend")
@@ -83,7 +91,17 @@ def start_stable_server():
 
     try:
         print("🚀 Starting FADO CRM Stable Server...")
-        cmd = [sys.executable, "-m", "uvicorn", "main_stable:app", "--host", "0.0.0.0", "--port", "8002", "--reload"]
+        cmd = [
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "main_stable:app",
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "8002",
+            "--reload",
+        ]
         print("Command:", " ".join(cmd))
 
         subprocess.run(cmd)
@@ -93,6 +111,7 @@ def start_stable_server():
         print(f"❌ Server error: {e}")
     finally:
         os.chdir(original_dir)
+
 
 def main():
     print_banner()
@@ -116,6 +135,7 @@ def main():
     print("\n🚀 Press Ctrl+C to stop\n")
 
     start_stable_server()
+
 
 if __name__ == "__main__":
     main()

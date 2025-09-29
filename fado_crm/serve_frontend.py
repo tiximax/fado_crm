@@ -3,20 +3,21 @@
 # HTTP server cho frontend de tranh CORS issues
 
 import http.server
-import socketserver
 import os
+import socketserver
 import threading
-import webbrowser
 import time
+import webbrowser
+
 
 class CORSHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     """HTTP handler voi CORS headers"""
 
     def end_headers(self):
         # Add CORS headers
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         super().end_headers()
 
     def do_OPTIONS(self):
@@ -24,11 +25,12 @@ class CORSHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_response(200)
         self.end_headers()
 
+
 def serve_frontend(port=3000):
     """Khoi dong HTTP server cho frontend"""
 
     # Change to frontend directory
-    frontend_dir = os.path.join(os.getcwd(), 'frontend')
+    frontend_dir = os.path.join(os.getcwd(), "frontend")
     if os.path.exists(frontend_dir):
         os.chdir(frontend_dir)
         print(f"Serving from: {frontend_dir}")
@@ -48,7 +50,7 @@ def serve_frontend(port=3000):
             # Auto open browser
             def open_browser():
                 time.sleep(1)
-                webbrowser.open(f'http://localhost:{port}')
+                webbrowser.open(f"http://localhost:{port}")
 
             browser_thread = threading.Thread(target=open_browser)
             browser_thread.daemon = True
@@ -61,9 +63,10 @@ def serve_frontend(port=3000):
     except OSError as e:
         if "Address already in use" in str(e):
             print(f"Port {port} already in use. Trying port {port+1}...")
-            serve_frontend(port+1)
+            serve_frontend(port + 1)
         else:
             print(f"Error starting server: {e}")
+
 
 if __name__ == "__main__":
     print("FADO CRM Frontend Server")

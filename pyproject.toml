@@ -1,0 +1,13 @@
+[tool.black]
+line-length = 100
+extend-exclude = '''
+(
+  ^fado_crm/backend/generate_token\.py$
+| ^fado_crm/backend/dev_put_setting\.py$
+| ^fado_crm/backend/services/template_engine\.py$
+)
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 100

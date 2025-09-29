@@ -5,9 +5,9 @@ FADO CRM - Server Test Script
 Quick test server without Docker
 """
 
-import sys
-import os
 import asyncio
+import os
+import sys
 import threading
 import time
 from pathlib import Path
@@ -17,13 +17,14 @@ backend_path = Path(__file__).parent / "backend"
 sys.path.insert(0, str(backend_path))
 
 try:
+    import requests
     import uvicorn
     from backend.main import app
-    import requests
 except ImportError as e:
     print(f"Missing dependency: {e}")
     print("Install with: pip install fastapi uvicorn requests")
     sys.exit(1)
+
 
 def test_server():
     """Test server functionality"""
@@ -43,13 +44,7 @@ def test_server():
 
     # Start server in background
     def run_server():
-        uvicorn.run(
-            "backend.main:app",
-            host="127.0.0.1",
-            port=8000,
-            log_level="info",
-            reload=False
-        )
+        uvicorn.run("backend.main:app", host="127.0.0.1", port=8000, log_level="info", reload=False)
 
     print("🔄 Starting server on http://127.0.0.1:8000")
     server_thread = threading.Thread(target=run_server, daemon=True)
@@ -123,6 +118,7 @@ def test_server():
     print("   3. Test with production Docker setup")
 
     return True
+
 
 if __name__ == "__main__":
     try:

@@ -5,25 +5,29 @@ Enhanced database performance with connection pooling and query caching
 """
 
 import os
+
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool, QueuePool
+from sqlalchemy.pool import QueuePool, StaticPool
+
 # Redis có thể không sẵn trong môi trường test
 try:
     import redis  # type: ignore
+
     REDIS_AVAILABLE = True
 except Exception:
     redis = None  # type: ignore
     REDIS_AVAILABLE = False
-import json
 import hashlib
+import json
 import logging
-from typing import Optional, Any, Dict
-from functools import wraps
 import time
+from functools import wraps
+from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
+
 
 class DatabasePoolManager:
     """Enhanced database manager with connection pooling"""
@@ -54,11 +58,7 @@ class DatabasePoolManager:
     def SessionLocal(self):
         """Get session factory"""
         if self._session_local is None:
-            self._session_local = sessionmaker(
-                autocommit=False,
-                autoflush=False,
-                bind=self.engine
-            )
+            self._session_local = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
         return self._session_local
 
     @property
@@ -97,7 +97,7 @@ class DatabasePoolManager:
                     "timeout": 20,
                     # SQLite performance settings
                     "isolation_level": None,  # autocommit mode
-                }
+                },
             )
         else:
             # PostgreSQL optimizations
@@ -109,7 +109,7 @@ class DatabasePoolManager:
                 pool_timeout=self.pool_timeout,
                 pool_pre_ping=True,
                 pool_recycle=3600,
-                echo=os.getenv("SQL_ECHO", "false").lower() == "true"
+                echo=os.getenv("SQL_ECHO", "false").lower() == "true",
             )
 
         # Add performance monitoring
@@ -120,7 +120,9 @@ class DatabasePoolManager:
         """Setup engine events for performance monitoring"""
 
         @event.listens_for(engine, "before_cursor_execute")
-        def receive_before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+        def receive_before_cursor_execute(
+            conn, cursor, statement, parameters, context, executemany
+        ):
             context._query_start_time = time.time()
 
         @event.listens_for(engine, "after_cursor_execute")
@@ -137,13 +139,16 @@ class DatabasePoolManager:
         finally:
             db.close()
 
+
 # Global pool manager instance
 pool_manager = DatabasePoolManager()
+
 
 # Enhanced database dependency
 def get_db():
     """Database dependency with connection pooling"""
     return next(pool_manager.get_db_session())
+
 
 class QueryCache:
     """Query result caching system"""
@@ -155,10 +160,7 @@ class QueryCache:
 
     def _generate_cache_key(self, query: str, params: dict = None) -> str:
         """Generate cache key from query and parameters"""
-        cache_data = {
-            'query': query,
-            'params': params or {}
-        }
+        cache_data = {"query": query, "params": params or {}}
         cache_str = json.dumps(cache_data, sort_keys=True)
         return f"query_cache:{hashlib.md5(cache_str.encode()).hexdigest()}"
 
@@ -206,11 +208,14 @@ class QueryCache:
         except Exception as e:
             logger.warning(f"Cache invalidation error: {e}")
 
+
 # Global cache instance
 query_cache = QueryCache()
 
+
 def cached_query(ttl: int = 300, cache_key_params: list = None):
     """Decorator for caching query results"""
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -235,8 +240,11 @@ def cached_query(ttl: int = 300, cache_key_params: list = None):
             logger.debug(f"Cached result for {func.__name__}")
 
             return result
+
         return wrapper
+
     return decorator
+
 
 class DatabasePerformanceMonitor:
     """Monitor database performance metrics"""
@@ -283,11 +291,11 @@ class DatabasePerformanceMonitor:
 
                 if execution_times:
                     stats[query_type] = {
-                        'count': len(execution_times),
-                        'avg_time': sum(execution_times) / len(execution_times),
-                        'min_time': min(execution_times),
-                        'max_time': max(execution_times),
-                        'total_time': sum(execution_times)
+                        "count": len(execution_times),
+                        "avg_time": sum(execution_times) / len(execution_times),
+                        "min_time": min(execution_times),
+                        "max_time": max(execution_times),
+                        "total_time": sum(execution_times),
                     }
 
             return stats
@@ -296,8 +304,10 @@ class DatabasePerformanceMonitor:
             logger.warning(f"Performance stats error: {e}")
             return {}
 
+
 # Global performance monitor
 performance_monitor = DatabasePerformanceMonitor()
+
 
 # Optimized query functions
 def get_dashboard_stats_optimized(db):
@@ -308,7 +318,8 @@ def get_dashboard_stats_optimized(db):
         from sqlalchemy import text
 
         # Single optimized query using indexes
-        query = text("""
+        query = text(
+            """
             SELECT
                 (SELECT COUNT(*) FROM khach_hang) as total_customers,
                 (SELECT COUNT(*) FROM don_hang) as total_orders,
@@ -316,7 +327,8 @@ def get_dashboard_stats_optimized(db):
                 (SELECT COUNT(*) FROM don_hang WHERE trang_thai = 'cho_xac_nhan') as pending_orders,
                 (SELECT COALESCE(SUM(tong_tien), 0) FROM don_hang
                  WHERE trang_thai != 'huy' AND strftime('%Y-%m', ngay_tao) = strftime('%Y-%m', 'now')) as revenue_month
-        """)
+        """
+        )
 
         start_time = time.time()
         result = db.execute(query).fetchone()
@@ -325,16 +337,19 @@ def get_dashboard_stats_optimized(db):
         performance_monitor.record_query_time("dashboard_stats", execution_time)
 
         return {
-            'tong_khach_hang': result[0],
-            'tong_don_hang': result[1],
-            'khach_moi_thang': result[2],
-            'don_cho_xu_ly': result[3],
-            'doanh_thu_thang': result[4]
+            "tong_khach_hang": result[0],
+            "tong_don_hang": result[1],
+            "khach_moi_thang": result[2],
+            "don_cho_xu_ly": result[3],
+            "doanh_thu_thang": result[4],
         }
 
     return _get_stats()
 
-def get_customers_optimized(db, skip: int = 0, limit: int = 100, search: str = None, loai_khach: str = None):
+
+def get_customers_optimized(
+    db, skip: int = 0, limit: int = 100, search: str = None, loai_khach: str = None
+):
     """Optimized customer listing with search and filtering"""
     from sqlalchemy import text
 
@@ -352,12 +367,14 @@ def get_customers_optimized(db, skip: int = 0, limit: int = 100, search: str = N
 
     where_clause = " AND ".join(conditions)
 
-    query = text(f"""
+    query = text(
+        f"""
         SELECT * FROM khach_hang
         WHERE {where_clause}
         ORDER BY ngay_tao DESC
         LIMIT :limit OFFSET :skip
-    """)
+    """
+    )
 
     start_time = time.time()
     result = db.execute(query, params).fetchall()
@@ -367,13 +384,14 @@ def get_customers_optimized(db, skip: int = 0, limit: int = 100, search: str = N
 
     return result
 
+
 # Export optimized database components
 __all__ = [
-    'pool_manager',
-    'get_db',
-    'query_cache',
-    'cached_query',
-    'performance_monitor',
-    'get_dashboard_stats_optimized',
-    'get_customers_optimized'
+    "pool_manager",
+    "get_db",
+    "query_cache",
+    "cached_query",
+    "performance_monitor",
+    "get_dashboard_stats_optimized",
+    "get_customers_optimized",
 ]

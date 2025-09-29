@@ -2,30 +2,34 @@
 # Simple FADO CRM Server - Skip complex package installation
 
 import os
-import sys
-import subprocess
 import platform
+import subprocess
+import sys
 from pathlib import Path
+
 
 def print_banner():
     """Print startup banner"""
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("    FADO.VN CRM SYSTEM")
-    print("="*50)
+    print("=" * 50)
     print("API Backend: FastAPI + SQLAlchemy")
     print("Frontend: HTML + CSS + JavaScript")
     print("Features: Dashboard, CRM, Analytics")
-    print("="*50)
+    print("=" * 50)
+
 
 def check_existing_packages():
     """Check if FastAPI is already installed"""
     try:
         import fastapi
+
         print("OK: FastAPI found")
         return True
     except ImportError:
         print("WARNING: FastAPI not found. Installing basic packages...")
         return False
+
 
 def install_basic_packages():
     """Install only the most essential packages"""
@@ -34,22 +38,23 @@ def install_basic_packages():
         "uvicorn[standard]",
         "python-multipart",
         "sqlalchemy",
-        "python-dotenv"
+        "python-dotenv",
     ]
 
     print("Installing basic packages...")
     for package in basic_packages:
         print(f"Installing {package}...")
         try:
-            subprocess.run([
-                sys.executable, "-m", "pip", "install", package
-            ], check=True, capture_output=True)
+            subprocess.run(
+                [sys.executable, "-m", "pip", "install", package], check=True, capture_output=True
+            )
             print(f"OK: {package} installed")
         except subprocess.CalledProcessError as e:
             print(f"WARNING: Failed to install {package}: {e}")
             # Continue with other packages
 
     return True
+
 
 def setup_database():
     """Setup database"""
@@ -64,8 +69,9 @@ def setup_database():
     os.chdir(backend_dir)
 
     try:
-        sys.path.insert(0, '.')
+        sys.path.insert(0, ".")
         from database import create_tables
+
         create_tables()
         print("OK: Database setup complete!")
         return True
@@ -75,6 +81,7 @@ def setup_database():
         return True  # Continue anyway
     finally:
         os.chdir(original_dir)
+
 
 def start_backend():
     """Start the backend server"""
@@ -89,7 +96,17 @@ def start_backend():
     os.chdir(backend_dir)
 
     try:
-        cmd = [sys.executable, "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+        cmd = [
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "main:app",
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "8000",
+            "--reload",
+        ]
         process = subprocess.Popen(cmd)
         print(f"OK: Backend server started with PID {process.pid}")
         print("Backend running at: http://localhost:8000")
@@ -99,6 +116,7 @@ def start_backend():
         return None
     finally:
         os.chdir(original_dir)
+
 
 def start_frontend():
     """Start the frontend server"""
@@ -119,6 +137,7 @@ def start_frontend():
         print(f"ERROR: Failed to start frontend: {str(e)}")
         return None
 
+
 def main():
     """Main function"""
     print_banner()
@@ -138,9 +157,9 @@ def main():
     setup_database()
 
     # Start servers
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("STARTING SERVERS")
-    print("="*50)
+    print("=" * 50)
 
     backend_process = start_backend()
     if not backend_process:
@@ -154,24 +173,26 @@ def main():
         return
 
     # Success
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("SUCCESS! FADO CRM IS RUNNING")
-    print("="*50)
+    print("=" * 50)
     print("Backend API: http://localhost:8000")
     print("Frontend UI: http://localhost:8001")
     print("API Docs: http://localhost:8000/docs")
-    print("="*50)
+    print("=" * 50)
     print("\nPress Ctrl+C to stop...")
 
     try:
         while True:
             import time
+
             time.sleep(1)
     except KeyboardInterrupt:
         print("\n\nShutting down...")
         backend_process.terminate()
         frontend_process.terminate()
         print("Servers stopped!")
+
 
 if __name__ == "__main__":
     main()

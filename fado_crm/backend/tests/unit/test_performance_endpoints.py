@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 # Basic tests for performance endpoints
 
+import os
+import sys
+
 from fastapi.testclient import TestClient
-import os, sys
+
 # Đảm bảo có thể import gói 'backend' khi chạy pytest từ root hoặc từ backend
 TEST_DIR = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.join(TEST_DIR, "..", "..", ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
-from fastapi import FastAPI
 from backend.performance_endpoints import router as performance_router
+from fastapi import FastAPI
 
 # Tạo app tối thiểu chỉ để kiểm tra router /performance
 app = FastAPI()

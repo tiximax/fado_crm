@@ -4,8 +4,10 @@
 
 import asyncio
 import os
-from playwright.async_api import async_playwright
 import time
+
+from playwright.async_api import async_playwright
+
 
 async def test_fado_crm_frontend():
     """Test frontend CRM voi Playwright - Detective mode!"""
@@ -96,7 +98,10 @@ async def test_fado_crm_frontend():
 
             # Check console errors
             console_errors = []
-            page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
+            page.on(
+                "console",
+                lambda msg: console_errors.append(msg.text) if msg.type == "error" else None,
+            )
 
             # Wait a bit for any console errors
             await page.wait_for_timeout(2000)
@@ -109,7 +114,9 @@ async def test_fado_crm_frontend():
                 print("✅ No console errors detected")
 
             # Test JavaScript execution
-            api_base_url = await page.evaluate("() => window.API_BASE_URL || 'http://localhost:8000'")
+            api_base_url = await page.evaluate(
+                "() => window.API_BASE_URL || 'http://localhost:8000'"
+            )
             print(f"🔗 API Base URL from frontend: {api_base_url}")
 
             # Test if JavaScript variables are loaded
@@ -120,9 +127,9 @@ async def test_fado_crm_frontend():
             await page.screenshot(path="frontend_final.png")
             print("📸 Final screenshot saved: frontend_final.png")
 
-            print("\n" + "="*50)
+            print("\n" + "=" * 50)
             print("🎉 FRONTEND TEST COMPLETED!")
-            print("="*50)
+            print("=" * 50)
             print("✅ HTML structure: OK")
             print("✅ Navigation: Working")
             print("✅ CSS styling: Loaded")
@@ -139,6 +146,7 @@ async def test_fado_crm_frontend():
             print("Press Enter to close browser...")
             input()
             await browser.close()
+
 
 async def test_api_integration():
     """Test API integration from frontend"""
@@ -171,7 +179,9 @@ async def test_api_integration():
             await page.wait_for_timeout(2000)
 
             # Check network requests
-            api_requests = [req for req in requests if "127.0.0.1:8000" in req or "localhost:8000" in req]
+            api_requests = [
+                req for req in requests if "127.0.0.1:8000" in req or "localhost:8000" in req
+            ]
 
             print(f"🌐 API requests detected: {len(api_requests)}")
             for req in api_requests:
@@ -181,7 +191,8 @@ async def test_api_integration():
                 print("⚠️ No API requests detected - might be CORS or connection issue")
 
                 # Try to execute API call manually
-                result = await page.evaluate("""
+                result = await page.evaluate(
+                    """
                     async () => {
                         try {
                             const response = await fetch('http://127.0.0.1:8000/');
@@ -191,7 +202,8 @@ async def test_api_integration():
                             return { success: false, error: error.message };
                         }
                     }
-                """)
+                """
+                )
 
                 print(f"🧪 Manual API test result: {result}")
 
@@ -201,10 +213,11 @@ async def test_api_integration():
         finally:
             await browser.close()
 
+
 async def main():
     """Main test function"""
     print("🎭 FADO CRM Frontend Testing with Playwright")
-    print("="*50)
+    print("=" * 50)
 
     # Test 1: Frontend structure and UI
     await test_fado_crm_frontend()
@@ -213,6 +226,7 @@ async def main():
     await test_api_integration()
 
     print("\n🎉 All tests completed!")
+
 
 if __name__ == "__main__":
     asyncio.run(main())
