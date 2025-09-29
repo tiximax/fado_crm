@@ -1,3 +1,4 @@
+# fmt: off
 import pathlib
 
 import pytest
@@ -74,3 +75,4 @@ def test_compose_alertmanager_and_prometheus():
     else:
         dep_keys = set(depends)
     assert "alertmanager" in dep_keys, f"Prometheus must depend_on alertmanager, got: {dep_keys}"
+# fmt: on

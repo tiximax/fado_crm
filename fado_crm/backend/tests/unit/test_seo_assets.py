@@ -1,3 +1,4 @@
+# fmt: off
 import pathlib
 import xml.etree.ElementTree as ET
 
@@ -27,3 +28,4 @@ def test_index_html_canonical_and_og_url():
     # crude checks without parsing HTML
     assert "<link rel=\"canonical\" href=\"https://crm.example.com/\">" in text
     assert "<meta property=\"og:url\" content=\"https://crm.example.com/\">" in text
+# fmt: on

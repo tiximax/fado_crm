@@ -1,3 +1,4 @@
+# fmt: off
 import pathlib
 
 import pytest
@@ -90,3 +91,4 @@ def test_alertmanager_config():
     receivers = data.get("receivers", []) or []
     names = {r.get("name") for r in receivers if isinstance(r, dict)}
     assert "devnull" in names, f"Expected a 'devnull' receiver in receivers, got {names}"
+# fmt: on

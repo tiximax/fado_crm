@@ -1,3 +1,4 @@
+# fmt: off
 import pathlib
 
 import pytest
@@ -38,3 +39,4 @@ def test_prometheus_datasource_defaults():
         f"Unexpected Prometheus URL: {prom.get('url')}"
     )
     assert prom.get("isDefault") is True, "Prometheus datasource should be default"
+# fmt: on
