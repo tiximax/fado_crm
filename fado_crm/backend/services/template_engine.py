@@ -1,1 +1,119 @@
-# -*- coding: utf-8 -*- """ Template Engine Service Advanced template engine cho dynamic messages trong FADO CRM """ import re import json from datetime import datetime, timedelta from typing import Dict, List, Optional, Any, Union from dataclasses import dataclass from enum import Enum import html from logging_config import app_logger class TemplateType(Enum): """Template types""" EMAIL = "email" SMS = "sms" WHATSAPP = "whatsapp" PUSH = "push" class ContentFormat(Enum): """Content formats""" HTML = "html" TEXT = "text" MARKDOWN = "markdown" @dataclass class TemplateVariable: """Template variable definition""" name: str type: str # string, number, date, boolean, array, object required: bool = True default_value: Any = None description: str = "" @dataclass class MessageTemplate: """Advanced message template""" id: str name: str type: TemplateType format: ContentFormat subject: Optional[str] = None content: str = "" variables: List[TemplateVariable] = None conditions: Dict[str, Any] = None metadata: Dict[str, Any] = None created_at: datetime = None updated_at: datetime = None def __post_init__(self): if self.variables is None: self.variables = [] if self.conditions is None: self.conditions = {} if self.metadata is None: self.metadata = {} if self.created_at is None: self.created_at = datetime.now() if self.updated_at is None: self.updated_at = datetime.now() class TemplateEngine: """< Advanced Template Engine cho FADO CRM""" def __init__(self): self.templates = {} self.global_variables = {} # Built-in helper functions self.helpers = { 'format_currency': self._format_currency, 'format_date': self._format_date, 'format_phone': self._format_phone, 'truncate': self._truncate, 'upper': lambda x: str(x).upper(), 'lower': lambda x: str(x).lower(), 'title': lambda x: str(x).title(), 'escape_html': html.escape, 'now': lambda: datetime.now(), 'today': lambda: datetime.now().strftime('%d/%m/%Y') } # Initialize with FADO business templates self._initialize_fado_templates() app_logger.info("< Template Engine initialized with advanced features") def _initialize_fado_templates(self): """= Initialize FADO business templates""" # Email Templates self.register_template(MessageTemplate( id="email_order_confirmed", name="Email - Xac nh n  n hang", type=TemplateType.EMAIL, format=ContentFormat.HTML, subject="  n hang #{order_code} a  ac xac nh n - FADO", content=""" <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;"> <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;"> <h1 style="color: white; margin: 0;">< FADO</h1> <p style="color: white; margin: 10px 0 0 0;">Mua s m toan c u</p> </div> <div style="padding: 30px; background: white;"> <h2 style="color: #333;">Xin chao {{customer_name}}!</h2> <p> n hang c a b n a  ac xac nh n thanh cong. Chung toi ang xi ly va s giao hang trong th i gian s m nh t.</p> <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;"> <h3 style="margin: 0 0 15px 0; color: #495057;">= Thong tin  n hang</h3> <table style="width: 100%; border-collapse: collapse;"> <tr> <td style="padding: 8px 0; border-bottom: 1px solid #dee2e6;"><strong>Ma  n hang:</strong></td> <td style="padding: 8px 0; border-bottom: 1px solid #dee2e6;">#{{order_code}}</td> </tr> <tr> <td style="padding: 8px 0; border-bottom: 1px solid #dee2e6;"><strong>T ng ti n:</strong></td> <td style="padding: 8px 0; border-bottom: 1px solid #dee2e6; color: #e74c3c; font-weight: bold;">{{format_currency total_amount}}</td> </tr> <tr> <td style="padding: 8px 0;"><strong>Ngay  t:</strong></td> <td style="padding: 8px 0;">{{format_date order_date}}</td> </tr> </table> </div> {% if payment_method %} <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0;"> <h4 style="margin: 0 0 10px 0; color: #1976d2;">= Thong tin thanh toan</h4> <p style="margin: 0;">Ph ng thec: {{payment_method}}</p> {% if payment_status == 'pending' %} <p style="color: #f57c00; margin: 5px 0 0 0;"><strong>  Ch a thanh toan - Vui long thanh toan  xi ly  n hang</strong></p> {% endif %} </div> {% endif %} <div style="margin: 30px 0; text-align: center;"> <a href="{{tracking_url}}" style="background: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;"> = Theo doi  n hang </a> </div> <p style="color: #666; font-size: 14px; margin-top: 30px;"> C m n b n a tin t ng FADO! N u co b t ko th c m c nao, vui long lien h v i chung toi. </p> </div> <div style="background: #f8f9fa; padding: 20px; text-align: center; color: #666; font-size: 12px;"> <p>FADO - K t n i toan c u, giao hang t n nha < </p> <p>= Hotline: 1900 1234 | = support@fado.vn</p> </div> </div> """, variables=[ TemplateVariable("customer_name", "string", True, "", "Ten khach hang"), TemplateVariable("order_code", "string", True, "", "Ma  n hang"), TemplateVariable("total_amount", "number", True, 0, "T ng ti n"), TemplateVariable("order_date", "date", True, "", "Ngay  t hang"), TemplateVariable("payment_method", "string", False, "", "Ph ng thec thanh toan"), TemplateVariable("payment_status", "string", False, "paid", "Tr ng thai thanh toan"), TemplateVariable("tracking_url", "string", False, "https://fado.vn/track", "Link theo doi") ] )) # SMS Templates self.register_template(MessageTemplate( id="sms_order_confirmed", name="SMS - Xac nh n  n hang", type=TemplateType.SMS, format=ContentFormat.TEXT, content="FADO: Xin chao {{customer_name}}!  n hang #{{order_code}} a  ac xac nh n. T ng ti n: {{format_currency total_amount}}. Theo doi t i: {{tracking_url}} = ", variables=[ TemplateVariable("customer_name", "string", True), TemplateVariable("order_code", "string", True), TemplateVariable("total_amount", "number", True), TemplateVariable("tracking_url", "string", False, "https://fado.vn/track") ] )) # WhatsApp Templates self.register_template(MessageTemplate( id="whatsapp_order_shipped", name="WhatsApp -  n hang a ship", type=TemplateType.WHATSAPP, format=ContentFormat.TEXT, content="""= * n hang a  ac giao ship!* Xin chao {{customer_name}},  n hang #{{order_code}} a  ac giao cho  n v v n chuy n {{shipping_company}}. = *Thong tin v n chuy n:* " Ma v n  n: `{{tracking_code}}` " D ki n giao: {{estimated_delivery}} " Theo doi t i: {{tracking_url}} C m n b n a tin t ng FADO! < _FADO - Mua s m toan c u_ < """, variables=[ TemplateVariable("customer_name", "string", True), TemplateVariable("order_code", "string", True), TemplateVariable("shipping_company", "string", True), TemplateVariable("tracking_code", "string", True), TemplateVariable("estimated_delivery", "string", False, "2-3 ngay"), TemplateVariable("tracking_url", "string", False, "https://fado.vn/track") ] )) # Promotional templates self.register_template(MessageTemplate( id="email_promo_campaign", name="Email - Campaign khuy n mai", type=TemplateType.EMAIL, format=ContentFormat.HTML, subject="< {{promo_title}} - Gi m gia  n {{discount_percent}}%!", content=""" <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;"> <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); padding: 40px; text-align: center;"> <h1 style="color: white; margin: 0; font-size: 36px;">< </h1> <h2 style="color: white; margin: 10px 0;">{{promo_title}}</h2> <p style="color: white; font-size: 18px;">Gi m gia len  n {{discount_percent}}%</p> </div> <div style="padding: 30px; background: white;"> <h2 style="color: #333;">Xin chao {{customer_name}}!</h2> <p style="font-size: 16px; line-height: 1.6;">{{promo_description}}</p> {% if promo_code %} <div style="background: #fff3cd; border: 2px dashed #ffc107; padding: 20px; text-align: center; margin: 25px 0; border-radius: 8px;"> <h3 style="margin: 0 0 10px 0; color: #856404;">< Ma gi m gia</h3> <div style="font-size: 24px; font-weight: bold; color: #856404; letter-spacing: 2px;">{{promo_code}}</div> <p style="margin: 10px 0 0 0; font-size: 14px; color: #856404;">Sao chep ma va si d ng khi thanh toan</p> </div> {% endif %} <div style="text-align: center; margin: 30px 0;"> <a href="{{shop_url}}" style="background: #28a745; color: white; padding: 15px 40px; text-decoration: none; border-radius: 25px; display: inline-block; font-size: 18px;"> = Mua ngay </a> </div> <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 20px;"> <p style="margin: 0; font-size: 14px; color: #666;"> <strong> u ai co h n:</strong>  n {{expiry_date}}<br> = <strong> p d ng:</strong> {{promo_conditions}} </p> </div> </div> <div style="background: #f8f9fa; padding: 20px; text-align: center; color: #666; font-size: 12px;"> <p>FADO - N i c m mua s m tr thanh hi n th c = </p> </div> </div> """, variables=[ TemplateVariable("customer_name", "string", True), TemplateVariable("promo_title", "string", True), TemplateVariable("promo_description", "string", True), TemplateVariable("discount_percent", "number", True), TemplateVariable("promo_code", "string", False), TemplateVariable("shop_url", "string", False, "https://fado.vn"), TemplateVariable("expiry_date", "date", True), TemplateVariable("promo_conditions", "string", False, "T t c s n ph m") ] )) def register_template(self, template: MessageTemplate): """= Register a new template""" try: self.templates[template.id] = template app_logger.info(f"= Template registered: {template.id} - {template.name}") except Exception as e: app_logger.error(f"L Error registering template {template.id}: {str(e)}") def render_template(self, template_id: str, variables: Dict[str, Any], format_output: bool = True) -> Dict[str, Any]: """< Render template v i variables""" try: # Get template template = self.templates.get(template_id) if not template: return { 'success': False, 'error': f'Template {template_id} khong t n t i' } # Validate required variables validation_result = self._validate_variables(template, variables) if not validation_result['valid']: return { 'success': False, 'error': f"Missing variables: {validation_result['missing']}" } # Merge with defaults final_variables = self._merge_with_defaults(template, variables) # Add global variables and helpers render_context = { **self.global_variables, **final_variables, **self.helpers } # Render subject (if exists) rendered_subject = None if template.subject: rendered_subject = self._render_content(template.subject, render_context) # Render main content rendered_content = self._render_content(template.content, render_context) # Apply conditional logic if template.conditions: rendered_content = self._apply_conditions(rendered_content, render_context, template.conditions) # Format output based on template type if format_output: rendered_content = self._format_output(rendered_content, template.format) result = { 'success': True, 'template_id': template_id, 'template_name': template.name, 'content': rendered_content, 'type': template.type.value, 'format': template.format.value, 'rendered_at': datetime.now().isoformat() } if rendered_subject: result['subject'] = rendered_subject app_logger.info(f"< Template rendered successfully: {template_id}") return result except Exception as e: app_logger.error(f"L Error rendering template {template_id}: {str(e)}") return { 'success': False, 'error': f'Template rendering error: {str(e)}' } def render_dynamic_template(self, content: str, variables: Dict[str, Any], template_type: TemplateType = TemplateType.TEXT, content_format: ContentFormat = ContentFormat.TEXT) -> Dict[str, Any]: """= Render dynamic content without predefined template""" try: # Create temporary template temp_template = MessageTemplate( id="dynamic_temp", name="Dynamic Template", type=template_type, format=content_format, content=content ) # Render context render_context = { **self.global_variables, **variables, **self.helpers } # Render content rendered_content = self._render_content(content, render_context) # Format output rendered_content = self._format_output(rendered_content, content_format) return { 'success': True, 'content': rendered_content, 'type': template_type.value, 'format': content_format.value, 'rendered_at': datetime.now().isoformat() } except Exception as e: app_logger.error(f"L Error rendering dynamic template: {str(e)}") return { 'success': False, 'error': f'Dynamic template error: {str(e)}' } def _render_content(self, content: str, context: Dict[str, Any]) -> str: """= Core content rendering with advanced features""" # Simple variable replacement {{variable}} def replace_simple_vars(match): var_name = match.group(1).strip() # Support nested properties: {{user.name}} if '.' in var_name: return self._get_nested_value(context, var_name) # Support helper functions: {{format_currency amount}} if ' ' in var_name: parts = var_name.split(' ', 1) func_name = parts[0] arg_name = parts[1] if len(parts) > 1 else None if func_name in context and callable(context[func_name]): try: if arg_name and arg_name in context: return str(context[func_name](context[arg_name])) elif arg_name: return str(context[func_name](arg_name)) else: return str(context[func_name]()) except Exception as e: app_logger.warning(f"Helper function error {func_name}: {str(e)}") return f"{{{{{var_name}}}}}" # Regular variable return str(context.get(var_name, f"{{{{{var_name}}}}}")) # Replace {{variable}} patterns content = re.sub(r'\{\{\s*([^}]+)\s*\}\}', replace_simple_vars, content) # Handle conditional blocks: {% if condition %}...{% endif %} content = self._process_conditionals(content, context) return content def _process_conditionals(self, content: str, context: Dict[str, Any]) -> str: """=  Process conditional blocks""" # Simple if blocks: {% if variable %}...{% endif %} if_pattern = r'\{% if\s+(\w+)\s*%\}(.*?)\{% endif %\}' def process_if_block(match): condition_var = match.group(1) block_content = match.group(2) # Evaluate condition if condition_var in context and context[condition_var]: return block_content else: return "" content = re.sub(if_pattern, process_if_block, content, flags=re.DOTALL) # Conditional with value check: {% if payment_status == 'pending' %} if_equals_pattern = r'\{% if\s+(\w+)\s*==\s*[\'"]([^\'"]*)[\'\"]\s*%\}(.*?)\{% endif %\}' def process_if_equals_block(match): var_name = match.group(1) expected_value = match.group(2) block_content = match.group(3) if var_name in context and str(context[var_name]) == expected_value: return block_content else: return "" content = re.sub(if_equals_pattern, process_if_equals_block, content, flags=re.DOTALL) return content def _get_nested_value(self, context: Dict[str, Any], path: str) -> str: """= Get nested dictionary value using dot notation""" try: keys = path.split('.') value = context for key in keys: if isinstance(value, dict) and key in value: value = value[key] else: return f"{{{{{path}}}}}" return str(value) except: return f"{{{{{path}}}}}" def _validate_variables(self, template: MessageTemplate, variables: Dict[str, Any]) -> Dict[str, Any]: """ Validate template variables""" missing = [] for var in template.variables: if var.required and var.name not in variables: missing.append(var.name) return { 'valid': len(missing) == 0, 'missing': missing } def _merge_with_defaults(self, template: MessageTemplate, variables: Dict[str, Any]) -> Dict[str, Any]: """= Merge variables with defaults""" result = variables.copy() for var in template.variables: if var.name not in result and var.default_value is not None: result[var.name] = var.default_value return result def _apply_conditions(self, content: str, context: Dict[str, Any], conditions: Dict[str, Any]) -> str: """< Apply template conditions""" # This would implement more complex conditional logic # For now, return content as-is return content def _format_output(self, content: str, content_format: ContentFormat) -> str: """= Format output based on content format""" if content_format == ContentFormat.HTML: # Clean up HTML formatting content = re.sub(r'\n\s*\n', '\n', content) # Remove extra newlines content = re.sub(r'^\s+', '', content, flags=re.MULTILINE) # Remove leading spaces elif content_format == ContentFormat.TEXT: # Convert basic HTML to text content = re.sub(r'<br\s*/?>', '\n', content) content = re.sub(r'<[^>]+>', '', content) # Remove HTML tags content = html.unescape(content) # Decode HTML entities elif content_format == ContentFormat.MARKDOWN: # Markdown processing could be added here pass return content.strip() # Helper functions def _format_currency(self, amount: Union[int, float]) -> str: """= Format currency (Vietnamese VND)""" try: return f"{float(amount):,.0f}".replace(',', '.') except: return str(amount) def _format_date(self, date_value: Union[str, datetime], format_str: str = "%d/%m/%Y") -> str: """= Format date""" try: if isinstance(date_value, str): # Try to parse string date date_obj = datetime.fromisoformat(date_value.replace('Z', '+00:00')) elif isinstance(date_value, datetime): date_obj = date_value else: return str(date_value) return date_obj.strftime(format_str) except: return str(date_value) def _format_phone(self, phone: str) -> str: """= Format Vietnamese phone number""" try: # Remove non-digits digits = re.sub(r'\D', '', phone) if digits.startswith('84'): return f"+{digits[:2]} {digits[2:5]} {digits[5:8]} {digits[8:]}" elif digits.startswith('0'): return f"{digits[:4]} {digits[4:7]} {digits[7:]}" else: return phone except: return phone def _truncate(self, text: str, length: int = 100, suffix: str = "...") -> str: """ Truncate text""" try: if len(text) <= length: return text return text[:length].rstrip() + suffix except: return str(text) def get_template_list(self) -> Dict[str, Any]: """= Get list of available templates""" template_list = [] for template_id, template in self.templates.items(): template_info = { 'id': template_id, 'name': template.name, 'type': template.type.value, 'format': template.format.value, 'variables': [ { 'name': var.name, 'type': var.type, 'required': var.required, 'description': var.description } for var in template.variables ], 'created_at': template.created_at.isoformat(), 'updated_at': template.updated_at.isoformat() } template_list.append(template_info) return { 'success': True, 'total_templates': len(template_list), 'templates': template_list } def get_template_preview(self, template_id: str, sample_data: Dict[str, Any] = None) -> Dict[str, Any]: """=A Get template preview with sample data""" if sample_data is None: sample_data = { 'customer_name': 'Nguy n Vn A', 'order_code': 'FD123456', 'total_amount': 1250000, 'order_date': datetime.now(), 'tracking_url': 'https://fado.vn/track/FD123456' } return self.render_template(template_id, sample_data) def create_template_engine() -> TemplateEngine: """<i Factory  t o Template Engine""" return TemplateEngine()
+"""Simple Template Engine (clean version)
+
+This is a minimal, safe implementation that supports:
+- Registering templates with variables
+- Rendering with {{var}} replacements
+- Basic helpers: upper, lower, title
+It intentionally avoids advanced parsing to keep it robust.
+"""
+from __future__ import annotations
+
+import html
+import re
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
+
+class TemplateType(Enum):
+    EMAIL = "email"
+    SMS = "sms"
+    WHATSAPP = "whatsapp"
+    PUSH = "push"
+
+
+class ContentFormat(Enum):
+    HTML = "html"
+    TEXT = "text"
+    MARKDOWN = "markdown"
+
+
+@dataclass
+class TemplateVariable:
+    name: str
+    type: str
+    required: bool = True
+    default_value: Any = None
+    description: str = ""
+
+
+@dataclass
+class MessageTemplate:
+    id: str
+    name: str
+    type: TemplateType
+    format: ContentFormat
+    content: str
+    subject: Optional[str] = None
+    variables: List[TemplateVariable] = field(default_factory=list)
+    created_at: datetime = field(default_factory=datetime.now)
+    updated_at: datetime = field(default_factory=datetime.now)
+
+
+class TemplateEngine:
+    def __init__(self) -> None:
+        self.templates: Dict[str, MessageTemplate] = {}
+        self.helpers = {
+            "upper": lambda x: str(x).upper(),
+            "lower": lambda x: str(x).lower(),
+            "title": lambda x: str(x).title(),
+            "escape_html": html.escape,
+        }
+
+    def register_template(self, template: MessageTemplate) -> None:
+        self.templates[template.id] = template
+
+    def render_template(self, template_id: str, variables: Dict[str, Any]) -> Dict[str, Any]:
+        tpl = self.templates.get(template_id)
+        if not tpl:
+            return {"success": False, "error": f"Template {template_id} not found"}
+
+        # Validate required vars
+        missing = [v.name for v in tpl.variables if v.required and v.name not in variables]
+        if missing:
+            return {"success": False, "error": f"Missing variables: {missing}"}
+
+        # Merge defaults
+        ctx = {v.name: v.default_value for v in tpl.variables if v.default_value is not None}
+        ctx.update(variables)
+        ctx.update(self.helpers)
+
+        # Subject
+        subject = self._render_content(tpl.subject, ctx) if tpl.subject else None
+        content = self._render_content(tpl.content, ctx)
+        return {
+            "success": True,
+            "template_id": tpl.id,
+            "template_name": tpl.name,
+            "type": tpl.type.value,
+            "format": tpl.format.value,
+            "subject": subject,
+            "content": content,
+            "rendered_at": datetime.now().isoformat(),
+        }
+
+    def _render_content(self, content: Optional[str], ctx: Dict[str, Any]) -> Optional[str]:
+        if content is None:
+            return None
+
+        def replace_var(match: re.Match) -> str:
+            expr = match.group(1).strip()
+            # Helper call: {{ upper name }}
+            parts = expr.split(" ", 1)
+            if len(parts) == 2 and parts[0] in self.helpers:
+                func = self.helpers[parts[0]]
+                arg = parts[1]
+                val = ctx.get(arg, arg)
+                try:
+                    return str(func(val))
+                except Exception:
+                    return str(val)
+            # Plain variable
+            return str(ctx.get(expr, f"{{{{{expr}}}}}"))
+
+        return re.sub(r"\{\{\s*([^}]+)\s*\}\}", replace_var, content)
+
+
+def create_template_engine() -> TemplateEngine:
+    return TemplateEngine()
