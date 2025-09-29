@@ -2,10 +2,11 @@
 # FADO CRM Server Launcher - Simple ASCII version to avoid encoding issues
 
 import os
-import sys
-import subprocess
 import platform
+import subprocess
+import sys
 from pathlib import Path
+
 
 def print_banner():
     """Print startup banner"""
@@ -20,6 +21,7 @@ def print_banner():
     """
     print(banner)
 
+
 def check_python_version():
     """Check Python version"""
     if sys.version_info < (3, 8):
@@ -29,15 +31,19 @@ def check_python_version():
     else:
         print(f"OK: Python version: {sys.version}")
 
+
 def check_virtual_environment():
     """Check virtual environment"""
-    if hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
+    if hasattr(sys, "real_prefix") or (
+        hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix
+    ):
         print("OK: Running in virtual environment")
         return True
     else:
         print("WARNING: No virtual environment detected!")
         print("ADVICE: Create venv: python -m venv venv")
         return False
+
 
 def install_requirements():
     """Install dependencies"""
@@ -53,9 +59,7 @@ def install_requirements():
 
     print(f"Installing dependencies from {target_file.name}...")
     try:
-        subprocess.run([
-            sys.executable, "-m", "pip", "install", "-r", str(target_file)
-        ], check=True)
+        subprocess.run([sys.executable, "-m", "pip", "install", "-r", str(target_file)], check=True)
         print("OK: Dependencies installed successfully!")
         return True
     except subprocess.CalledProcessError:
@@ -64,14 +68,16 @@ def install_requirements():
         if target_file == requirements_file and requirements_minimal.exists():
             print("Trying minimal requirements...")
             try:
-                subprocess.run([
-                    sys.executable, "-m", "pip", "install", "-r", str(requirements_minimal)
-                ], check=True)
+                subprocess.run(
+                    [sys.executable, "-m", "pip", "install", "-r", str(requirements_minimal)],
+                    check=True,
+                )
                 print("OK: Minimal dependencies installed successfully!")
                 return True
             except subprocess.CalledProcessError:
                 print("ERROR: Failed to install even minimal dependencies!")
         return False
+
 
 def setup_database():
     """Setup database"""
@@ -88,8 +94,9 @@ def setup_database():
 
     try:
         # Import and run database setup
-        sys.path.insert(0, '.')
+        sys.path.insert(0, ".")
         from database import create_tables
+
         create_tables()
         print("OK: Database setup complete!")
         return True
@@ -99,6 +106,7 @@ def setup_database():
     finally:
         os.chdir(original_dir)
 
+
 def check_ports():
     """Check if required ports are available"""
     import socket
@@ -106,7 +114,7 @@ def check_ports():
     def is_port_available(port):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             try:
-                s.bind(('localhost', port))
+                s.bind(("localhost", port))
                 return True
             except OSError:
                 return False
@@ -120,6 +128,7 @@ def check_ports():
 
     print("OK: Required ports are available")
     return True
+
 
 def start_backend():
     """Start the backend server"""
@@ -136,7 +145,17 @@ def start_backend():
 
     try:
         # Start uvicorn server
-        cmd = [sys.executable, "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+        cmd = [
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "main:app",
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "8000",
+            "--reload",
+        ]
         process = subprocess.Popen(cmd)
         print(f"OK: Backend server started with PID {process.pid}")
         print("Backend running at: http://localhost:8000")
@@ -146,6 +165,7 @@ def start_backend():
         return None
     finally:
         os.chdir(original_dir)
+
 
 def start_frontend():
     """Start the frontend server"""
@@ -167,11 +187,12 @@ def start_frontend():
         print(f"ERROR: Failed to start frontend: {str(e)}")
         return None
 
+
 def show_system_info():
     """Display system information"""
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("SYSTEM INFORMATION")
-    print("="*50)
+    print("=" * 50)
     print(f"Platform: {platform.system()} {platform.release()}")
     print(f"Python: {sys.version}")
     print(f"Working Directory: {os.getcwd()}")
@@ -185,6 +206,7 @@ def show_system_info():
         print(f"WARNING: Missing directories: {missing_dirs}")
     else:
         print("OK: All required directories found")
+
 
 def main():
     """Main function to run the server"""
@@ -212,9 +234,9 @@ def main():
             sys.exit(1)
 
         # Start servers
-        print("\n" + "="*50)
+        print("\n" + "=" * 50)
         print("STARTING SERVERS")
-        print("="*50)
+        print("=" * 50)
 
         backend_process = start_backend()
         if not backend_process:
@@ -228,20 +250,21 @@ def main():
             sys.exit(1)
 
         # Success message
-        print("\n" + "="*50)
+        print("\n" + "=" * 50)
         print("SUCCESS! FADO CRM IS RUNNING")
-        print("="*50)
+        print("=" * 50)
         print("Backend API: http://localhost:8000")
         print("Frontend UI: http://localhost:8001")
         print("API Docs: http://localhost:8000/docs")
         print("Admin Panel: http://localhost:8001/admin")
-        print("="*50)
+        print("=" * 50)
         print("\nPress Ctrl+C to stop the servers")
 
         # Keep the script running
         try:
             while True:
                 import time
+
                 time.sleep(1)
         except KeyboardInterrupt:
             print("\n\nShutting down servers...")
@@ -252,6 +275,7 @@ def main():
     except Exception as e:
         print(f"FATAL ERROR: {str(e)}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

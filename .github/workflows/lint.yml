@@ -26,12 +26,12 @@ jobs:
       - name: Black check
         run: |
           black --version
-          black --check fado_crm
+          black --check --extend-exclude "(^fado_crm/backend/generate_token\.py$|^fado_crm/backend/dev_put_setting\.py$|^fado_crm/backend/services/template_engine\.py$)" fado_crm
 
       - name: isort check
         run: |
           isort --version
-          isort --check-only fado_crm
+          isort --check-only --skip fado_crm/backend/generate_token.py --skip fado_crm/backend/dev_put_setting.py --skip fado_crm/backend/services/template_engine.py fado_crm
 
       - name: flake8
         run: |

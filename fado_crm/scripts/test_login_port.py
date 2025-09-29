@@ -1,8 +1,12 @@
-import requests, json, sys
+import json
+import sys
+
+import requests
+
 base = sys.argv[1]
 email = sys.argv[2]
 pw = sys.argv[3]
-r = requests.post(base.rstrip('/') + '/auth/login', json={'email': email, 'password': pw})
+r = requests.post(base.rstrip("/") + "/auth/login", json={"email": email, "password": pw})
 print(r.status_code)
 try:
     print(json.dumps(r.json()))

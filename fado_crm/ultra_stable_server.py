@@ -5,9 +5,10 @@ FADO CRM - Ultra Stable Production Server
 """
 
 import os
-import sys
 import subprocess
+import sys
 from pathlib import Path
+
 
 def print_banner():
     print("=" * 60)
@@ -19,18 +20,21 @@ def print_banner():
     print("OK: Error-free startup")
     print("=" * 60)
 
+
 def check_stable_requirements():
     """Check if stable requirements are installed"""
     try:
         import fastapi
-        import uvicorn
-        import sqlalchemy
         import pydantic
+        import sqlalchemy
+        import uvicorn
+
         print("OK: All stable requirements installed")
         return True
     except ImportError as e:
         print(f"ERROR: Missing requirement: {e}")
         return False
+
 
 def install_stable_requirements():
     """Install only stable requirements"""
@@ -42,14 +46,15 @@ def install_stable_requirements():
 
     print("Installing stable requirements...")
     try:
-        subprocess.run([
-            sys.executable, "-m", "pip", "install", "-r", str(requirements_file)
-        ], check=True)
+        subprocess.run(
+            [sys.executable, "-m", "pip", "install", "-r", str(requirements_file)], check=True
+        )
         print("OK: Stable requirements installed successfully!")
         return True
     except subprocess.CalledProcessError:
         print("ERROR: Failed to install requirements!")
         return False
+
 
 def start_stable_server():
     """Start the ultra-stable server"""
@@ -59,7 +64,17 @@ def start_stable_server():
 
     try:
         print("Starting FADO CRM Stable Server...")
-        cmd = [sys.executable, "-m", "uvicorn", "main_stable:app", "--host", "0.0.0.0", "--port", "8002", "--reload"]
+        cmd = [
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "main_stable:app",
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "8002",
+            "--reload",
+        ]
         print("Command:", " ".join(cmd))
         print("")
         print("Backend API: http://localhost:8002")
@@ -77,6 +92,7 @@ def start_stable_server():
     finally:
         os.chdir(original_dir)
 
+
 def main():
     print_banner()
 
@@ -87,6 +103,7 @@ def main():
             return
 
     start_stable_server()
+
 
 if __name__ == "__main__":
     main()

@@ -4,7 +4,9 @@
 
 import asyncio
 import os
+
 from playwright.async_api import async_playwright
+
 
 async def test_frontend_simple():
     """Test frontend CRM with Playwright"""
@@ -120,7 +122,8 @@ async def test_frontend_simple():
             # Test API connectivity from frontend
             print("Testing API connectivity...")
 
-            api_test = await page.evaluate("""
+            api_test = await page.evaluate(
+                """
                 async () => {
                     try {
                         const response = await fetch('http://127.0.0.1:8000/');
@@ -130,12 +133,14 @@ async def test_frontend_simple():
                         return { success: false, error: error.message };
                     }
                 }
-            """)
+            """
+            )
 
             print(f"API test result: {api_test}")
 
             # Test dashboard API call
-            dashboard_test = await page.evaluate("""
+            dashboard_test = await page.evaluate(
+                """
                 async () => {
                     try {
                         const response = await fetch('http://127.0.0.1:8000/dashboard');
@@ -145,7 +150,8 @@ async def test_frontend_simple():
                         return { success: false, error: error.message };
                     }
                 }
-            """)
+            """
+            )
 
             print(f"Dashboard API test: {dashboard_test}")
 
@@ -153,15 +159,15 @@ async def test_frontend_simple():
             await page.screenshot(path="frontend_final.png", full_page=True)
             print("Final screenshot saved: frontend_final.png")
 
-            print("\n" + "="*50)
+            print("\n" + "=" * 50)
             print("FRONTEND TEST RESULTS:")
-            print("="*50)
+            print("=" * 50)
             print(f"HTML structure: {'OK' if navbar_count > 0 else 'FAIL'}")
             print(f"Navigation: {'OK' if nav_items >= 4 else 'FAIL'}")
             print(f"Dashboard: {'OK' if dashboard_visible else 'FAIL'}")
             print(f"Tab switching: {'OK' if customers_active and products_active else 'FAIL'}")
             print(f"API connectivity: {'OK' if api_test.get('success') else 'FAIL'}")
-            print("="*50)
+            print("=" * 50)
 
             # Check if we should test forms
             print("\nTesting Add Customer form...")
@@ -188,7 +194,7 @@ async def test_frontend_simple():
                     print("Modal screenshot saved: modal_test.png")
 
                     # Close modal
-                    await page.click('.close')
+                    await page.click(".close")
                     await page.wait_for_timeout(500)
 
             print("\nKeeping browser open for manual inspection...")
@@ -206,7 +212,8 @@ async def test_frontend_simple():
                 pass
             await browser.close()
 
+
 if __name__ == "__main__":
     print("FADO CRM Frontend Testing with Playwright")
-    print("="*40)
+    print("=" * 40)
     asyncio.run(test_frontend_simple())
