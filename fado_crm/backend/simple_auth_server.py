@@ -68,7 +68,8 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
     try:
         result = login_user(db, login_data.email, login_data.password)
         return LoginResponse(**result)
-    except Exception as e:
+    except Exception:
+        # Avoid leaking details; return generic auth error
         raise HTTPException(status_code=401, detail="Email hoac mat khau khong chinh xac")
 
 
