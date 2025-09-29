@@ -4,4 +4,4 @@ Disallow: /analytics-dashboard.html
 Disallow: /advanced-dashboard.html
 Allow: /
 
-Sitemap: https://example.com/sitemap.xml
+Sitemap: https://crm.example.com/sitemap.xml
