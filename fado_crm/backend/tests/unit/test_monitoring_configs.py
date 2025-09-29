@@ -4,7 +4,7 @@ import pytest
 
 try:
     import yaml  # type: ignore
-except Exception as e:  # pragma: no cover
+except Exception:  # pragma: no cover
     pytest.skip(
         "pyyaml not installed; skipping monitoring config tests",
         allow_module_level=True,
