@@ -1,0 +1,14 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: 'devnull'
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 2h
+
+# Define a placeholder receiver. Replace with Slack/Email/Webhook later.
+receivers:
+  - name: 'devnull'
+    webhook_configs: []
