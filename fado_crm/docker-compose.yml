@@ -89,9 +89,18 @@ services:
   # Alertmanager for routing alerts (configure receivers in monitoring/alertmanager/alertmanager.yml)
   alertmanager:
     image: prom/alertmanager:latest
+    environment:
+      - ALERT_SLACK_WEBHOOK_URL=${ALERT_SLACK_WEBHOOK_URL}
+      - ALERT_SLACK_CHANNEL=${ALERT_SLACK_CHANNEL:-#alerts}
+      - ALERT_EMAIL_TO=${ALERT_EMAIL_TO}
+      - ALERT_EMAIL_FROM=${ALERT_EMAIL_FROM}
+      - ALERT_SMTP_HOST=${ALERT_SMTP_HOST}
+      - ALERT_SMTP_PORT=${ALERT_SMTP_PORT:-587}
+      - ALERT_SMTP_USER=${ALERT_SMTP_USER}
+      - ALERT_SMTP_PASSWORD=${ALERT_SMTP_PASSWORD}
     volumes:
       - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
-    command: ["--config.file=/etc/alertmanager/alertmanager.yml", "--storage.path=/alertmanager"]
+    command: ["--config.file=/etc/alertmanager/alertmanager.yml", "--storage.path=/alertmanager", "--config.expand-env"]
     ports:
       - "9093:9093"
     restart: unless-stopped

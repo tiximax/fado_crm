@@ -137,6 +137,46 @@ Hệ thống có bộ tài liệu đầy đủ và chuyên nghiệp cho develope
 - **Test Coverage Report**: `backend/htmlcov/index.html`
 - **Application Logs**: `backend/logs/`
 
+## Monitoring & Observability
+
+Stack gồm Prometheus + Grafana + Alertmanager để theo dõi metrics, dashboard và cảnh báo:
+- Prometheus: scrape backend tại `/performance/metrics`
+- Grafana: auto-provision datasource Prometheus và các dashboards trong folder `FADO`
+- Alertmanager: cấu hình tối thiểu, có thể bật Slack/Email qua biến môi trường
+
+Chạy nhanh (dev):
+
+```bash
+# từ repo root
+docker compose up -d
+# Grafana: http://localhost:3001 (admin/admin)
+# Prometheus: http://localhost:9090
+# Alertmanager: http://localhost:9093
+```
+
+Provisioning & cấu hình:
+- Dashboards: `monitoring/grafana/provisioning/dashboards/json/`
+- Datasource: `monitoring/grafana/provisioning/datasources/datasources.yml`
+- Prometheus rules: `monitoring/prometheus/rules/fado_alerts.yml` (error rate, p95 latency, CPU/Mem, connections)
+- Alertmanager: `monitoring/alertmanager/alertmanager.yml` (mặc định devnull)
+
+Bật Slack/Email cho Alertmanager:
+1) Đặt biến môi trường trong `.env` (xem `.env.example`):
+```env
+ALERT_SLACK_WEBHOOK_URL=
+ALERT_SLACK_CHANNEL=#alerts
+ALERT_EMAIL_TO=ops@crm.example.com
+ALERT_EMAIL_FROM=no-reply@crm.example.com
+ALERT_SMTP_HOST=smtp.example.com
+ALERT_SMTP_PORT=587
+ALERT_SMTP_USER=
+ALERT_SMTP_PASSWORD=
+```
+2) Mở comment các receiver Slack/Email trong `monitoring/alertmanager/alertmanager.yml`
+3) (Tuỳ chọn) mở comment các routes để gửi cảnh báo warning/critical tới email/slack
+
+Lưu ý: Alertmanager đã bật `--config.expand-env` nên có thể dùng `${VAR}` trong cấu hình.
+
 ## 🚀 Cài Đặt và Chạy
 
 ### ☁️ Cấu Hình Storage (Local/S3/MinIO)
