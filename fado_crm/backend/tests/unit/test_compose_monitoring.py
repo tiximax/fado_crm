@@ -1,4 +1,3 @@
-# fmt: off
 import pathlib
 
 import pytest
@@ -6,13 +5,18 @@ import pytest
 try:
     import yaml  # type: ignore
 except Exception:
-    pytest.skip("pyyaml not installed; skipping compose monitoring tests", allow_module_level=True)
+    pytest.skip(
+        "pyyaml not installed; skipping compose monitoring tests",
+        allow_module_level=True,
+    )
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 
 
 def _parse_env_list(env_list):
-    """docker-compose 'environment' can be list of KEY=VALUE strings. Return set of keys.
+    """
+    docker-compose 'environment' can be list of KEY=VALUE strings.
+    Return set of keys.
     """
     keys = set()
     for item in env_list or []:
@@ -23,7 +27,7 @@ def _parse_env_list(env_list):
     return keys
 
 
-def test_compose_alertmanager_and_prometheus():
+def test_compose_alertmanager_and_prometheus() -> None:
     compose_path = REPO_ROOT / "docker-compose.yml"
     assert compose_path.exists(), f"docker-compose.yml not found at {compose_path}"
 
@@ -38,7 +42,9 @@ def test_compose_alertmanager_and_prometheus():
 
     # Command should include --config.expand-env
     cmd = am.get("command", []) or []
-    assert isinstance(cmd, list), f"Expected list command for alertmanager, got: {type(cmd)}"
+    assert isinstance(cmd, list), (
+        f"Expected list command for alertmanager, got: {type(cmd)}"
+    )
     assert any("--config.expand-env" in c for c in cmd), (
         f"Alertmanager command missing --config.expand-env: {cmd}"
     )
@@ -56,7 +62,9 @@ def test_compose_alertmanager_and_prometheus():
         "ALERT_SMTP_USER",
         "ALERT_SMTP_PASSWORD",
     ]:
-        assert key in env_keys, f"Missing environment placeholder for alertmanager: {key}"
+        assert key in env_keys, (
+            f"Missing environment placeholder for alertmanager: {key}"
+        )
 
     # Prometheus service assertions
     assert "prometheus" in services, "Prometheus service missing in compose"
@@ -74,5 +82,6 @@ def test_compose_alertmanager_and_prometheus():
         dep_keys = set(depends.keys())
     else:
         dep_keys = set(depends)
-    assert "alertmanager" in dep_keys, f"Prometheus must depend_on alertmanager, got: {dep_keys}"
-# fmt: on
+    assert "alertmanager" in dep_keys, (
+        f"Prometheus must depend_on alertmanager, got: {dep_keys}"
+    )

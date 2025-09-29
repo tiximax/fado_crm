@@ -1,4 +1,3 @@
-# fmt: off
 import pathlib
 
 import pytest
@@ -6,12 +5,15 @@ import pytest
 try:
     import yaml  # type: ignore
 except Exception:
-    pytest.skip("pyyaml not installed; skipping grafana provisioning tests", allow_module_level=True)
+    pytest.skip(
+        "pyyaml not installed; skipping grafana provisioning tests",
+        allow_module_level=True,
+    )
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 
 
-def test_prometheus_datasource_defaults():
+def test_prometheus_datasource_defaults() -> None:
     ds_path = (
         REPO_ROOT
         / "monitoring"
@@ -38,5 +40,6 @@ def test_prometheus_datasource_defaults():
     assert prom.get("url") == "http://prometheus:9090", (
         f"Unexpected Prometheus URL: {prom.get('url')}"
     )
-    assert prom.get("isDefault") is True, "Prometheus datasource should be default"
-# fmt: on
+    assert prom.get("isDefault") is True, (
+        "Prometheus datasource should be default"
+    )
