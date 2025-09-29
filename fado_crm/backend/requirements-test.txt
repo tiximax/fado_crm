@@ -29,6 +29,7 @@ pytest-xdist==3.5.0
 
 # Test data generation
 faker==20.1.0
+pyyaml==6.0.2
 
 # Linting và code quality (for CI/CD)
 flake8==6.1.0
