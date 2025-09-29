@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /login.html
+Disallow: /analytics-dashboard.html
+Disallow: /advanced-dashboard.html
+Allow: /
+
+Sitemap: https://example.com/sitemap.xml
