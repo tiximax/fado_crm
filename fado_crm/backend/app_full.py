@@ -4,6 +4,15 @@
 
 from backend.main_working import app  # Tái sử dụng toàn bộ app đã ổn định trong main_working
 
+# Đăng ký router hiệu năng (/performance)
+try:
+    from backend.performance_endpoints import router as performance_router
+    app.include_router(performance_router)
+except Exception as _e:
+    # Không chặn app nếu module hiệu năng lỗi; chỉ log nhẹ.
+    import sys
+    print(f"[app_full] Warning: could not include performance endpoints: {_e}", file=sys.stderr)
+
 # ===== Advanced Modules: Minimal Payments (VNPay) =====
 from fastapi import HTTPException, Request, Depends, UploadFile, File, Form, Query
 from typing import Dict, Any

@@ -1,8 +1,13 @@
 # FADO CRM - Database Connection
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Base
 import os
+
+# Hỗ trợ import Base linh hoạt khi chạy ở nhiều ngữ cảnh (uvicorn, pytest)
+try:
+    from models import Base  # khi chạy với --app-dir backend
+except ModuleNotFoundError:
+    from backend.models import Base  # khi import dạng package 'backend'
 
 # Database URL - SQLite for demo or PostgreSQL for production
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./fado_crm.db")
