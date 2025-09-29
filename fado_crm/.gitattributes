@@ -1,0 +1,5 @@
+# Normalize line endings in CI/checkout to avoid formatter diffs
+*.py text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

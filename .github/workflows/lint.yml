@@ -26,7 +26,7 @@ jobs:
       - name: Black check
         run: |
           black --version
-          black --check fado_crm
+          black --check --config pyproject.toml fado_crm
 
       - name: isort check
         run: |
