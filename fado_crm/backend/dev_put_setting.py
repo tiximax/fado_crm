@@ -7,6 +7,7 @@ Usage:
   python -m backend.dev_put_setting --backend http://127.0.0.1:8000 \
       --value "FADO CRM PRO" --description "Ten ung dung"
 """
+
 from __future__ import annotations
 
 import argparse

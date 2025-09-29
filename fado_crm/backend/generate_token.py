@@ -9,6 +9,7 @@ Defaults:
   Minutes: 30
   Role: admin
 """
+
 from __future__ import annotations
 
 import argparse

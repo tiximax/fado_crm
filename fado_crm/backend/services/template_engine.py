@@ -6,6 +6,7 @@ This is a minimal, safe implementation that supports:
 - Basic helpers: upper, lower, title
 It intentionally avoids advanced parsing to keep it robust.
 """
+
 from __future__ import annotations
 
 import html
