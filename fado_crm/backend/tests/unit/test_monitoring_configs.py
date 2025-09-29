@@ -74,3 +74,19 @@ def test_prometheus_rules_content():
     # Basic severity checks for present alerts
     for name, sev in severities.items():
         assert sev in {"warning", "critical"}, f"Unexpected severity for {name}: {sev}"
+
+
+def test_alertmanager_config():
+    """Sanity-check Alertmanager base config: uses devnull receiver by default."""
+    am_path = REPO_ROOT / "monitoring" / "alertmanager" / "alertmanager.yml"
+    assert am_path.exists(), f"Alertmanager config not found at {am_path}"
+
+    with am_path.open("r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+
+    route = data.get("route", {}) or {}
+    assert route.get("receiver") == "devnull", f"Expected default receiver 'devnull', got {route.get('receiver')}"
+
+    receivers = data.get("receivers", []) or []
+    names = {r.get("name") for r in receivers if isinstance(r, dict)}
+    assert "devnull" in names, f"Expected a 'devnull' receiver in receivers, got {names}"
